@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
+import startCase from 'lodash/startCase'
 
 import { NETWORKS } from '../constants'
 import { NetworkProvider } from '../contexts/network'
@@ -90,7 +91,7 @@ export default function Layout(props: { children?: ReactNode }) {
             rightIcon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
             onClick={onOpen}
           >
-            {params.network}
+            {startCase(params.network)}
           </MenuButton>
           <Portal>
             <MenuList>
