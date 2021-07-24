@@ -2,7 +2,6 @@ import { ReactNode, useCallback } from 'react'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import {
   Flex,
-  Spacer,
   Button,
   Menu,
   MenuButton,
@@ -19,6 +18,7 @@ import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/ic
 
 import { NETWORKS } from '../constants'
 import { NetworkProvider } from '../contexts/network'
+import SearchBar from '../components/search-bar'
 
 const networks = Object.values(NETWORKS)
 
@@ -37,6 +37,7 @@ export default function Layout(props: { children?: ReactNode }) {
     [history],
   )
   const buttonBackground = useColorModeValue('white', undefined)
+  const boxShadow = useColorModeValue('md', 'dark-lg')
 
   return (
     <NetworkProvider value={params.network}>
@@ -46,7 +47,7 @@ export default function Layout(props: { children?: ReactNode }) {
         alignItems="center"
         bg={colorMode === 'light' ? 'gray.100' : 'gray.900'}
         zIndex={1}
-        boxShadow="base"
+        boxShadow={boxShadow}
         css={css`
           position: sticky;
           top: 0;
@@ -57,6 +58,7 @@ export default function Layout(props: { children?: ReactNode }) {
           to={`/${params.network}`}
           bg={history.location.pathname === `/${params.network}` ? buttonBackground : undefined}
           variant={history.location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
+          mr={2}
         >
           StarAtlas
         </Button>
@@ -65,7 +67,7 @@ export default function Layout(props: { children?: ReactNode }) {
           to={`/${params.network}/blocks`}
           bg={/\/blocks/.test(history.location.pathname) ? buttonBackground : undefined}
           variant={/\/blocks/.test(history.location.pathname) ? 'solid' : 'ghost'}
-          ml={2}
+          mr={2}
         >
           Blocks
         </Button>
@@ -74,14 +76,15 @@ export default function Layout(props: { children?: ReactNode }) {
           to={`/${params.network}/txs`}
           bg={/\/txs/.test(history.location.pathname) ? buttonBackground : undefined}
           variant={/\/txs/.test(history.location.pathname) ? 'solid' : 'ghost'}
-          ml={2}
+          mr={4}
         >
           Transactions
         </Button>
-        <Spacer />
+        <SearchBar />
         <Menu isOpen={isOpen} onClose={onClose} autoSelect={false}>
           <MenuButton
             as={Button}
+            ml={4}
             bg={buttonBackground}
             rightIcon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
             onClick={onOpen}
