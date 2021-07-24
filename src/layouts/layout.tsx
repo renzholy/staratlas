@@ -12,9 +12,10 @@ import {
   useColorMode,
   IconButton,
   useColorModeValue,
+  useBreakpoint,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, ChevronUpIcon, MoonIcon, StarIcon, SunIcon } from '@chakra-ui/icons'
 
 import { NETWORKS } from '../constants'
 import { NetworkProvider } from '../contexts/network'
@@ -38,6 +39,7 @@ export default function Layout(props: { children?: ReactNode }) {
   )
   const buttonBackground = useColorModeValue('white', undefined)
   const boxShadow = useColorModeValue('md', 'dark-lg')
+  const breakpoint = useBreakpoint()
 
   return (
     <NetworkProvider value={params.network}>
@@ -53,33 +55,39 @@ export default function Layout(props: { children?: ReactNode }) {
           top: 0;
         `}
       >
-        <Button
-          as={Link}
-          to={`/${params.network}`}
-          bg={history.location.pathname === `/${params.network}` ? buttonBackground : undefined}
-          variant={history.location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
-          mr={2}
-        >
-          StarAtlas
-        </Button>
-        <Button
-          as={Link}
-          to={`/${params.network}/blocks`}
-          bg={/\/blocks/.test(history.location.pathname) ? buttonBackground : undefined}
-          variant={/\/blocks/.test(history.location.pathname) ? 'solid' : 'ghost'}
-          mr={2}
-        >
-          Blocks
-        </Button>
-        <Button
-          as={Link}
-          to={`/${params.network}/txs`}
-          bg={/\/txs/.test(history.location.pathname) ? buttonBackground : undefined}
-          variant={/\/txs/.test(history.location.pathname) ? 'solid' : 'ghost'}
-          mr={4}
-        >
-          Transactions
-        </Button>
+        {breakpoint === 'md' ? (
+          <IconButton aria-label="index" icon={<StarIcon />} mr={4} />
+        ) : (
+          <>
+            <Button
+              as={Link}
+              to={`/${params.network}`}
+              bg={history.location.pathname === `/${params.network}` ? buttonBackground : undefined}
+              variant={history.location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
+              mr={2}
+            >
+              StarAtlas
+            </Button>
+            <Button
+              as={Link}
+              to={`/${params.network}/blocks`}
+              bg={/\/blocks/.test(history.location.pathname) ? buttonBackground : undefined}
+              variant={/\/blocks/.test(history.location.pathname) ? 'solid' : 'ghost'}
+              mr={2}
+            >
+              Blocks
+            </Button>
+            <Button
+              as={Link}
+              to={`/${params.network}/txs`}
+              bg={/\/txs/.test(history.location.pathname) ? buttonBackground : undefined}
+              variant={/\/txs/.test(history.location.pathname) ? 'solid' : 'ghost'}
+              mr={4}
+            >
+              Transactions
+            </Button>
+          </>
+        )}
         <SearchBar />
         <Menu isOpen={isOpen} onClose={onClose} autoSelect={false}>
           <MenuButton
@@ -105,13 +113,15 @@ export default function Layout(props: { children?: ReactNode }) {
             </MenuList>
           </Portal>
         </Menu>
-        <IconButton
-          aria-label="toggle color mode"
-          ml={4}
-          bg={buttonBackground}
-          onClick={toggleColorMode}
-          icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
-        />
+        {breakpoint === 'md' ? null : (
+          <IconButton
+            aria-label="toggle color mode"
+            ml={4}
+            bg={buttonBackground}
+            onClick={toggleColorMode}
+            icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
+          />
+        )}
       </Flex>
       {props.children}
     </NetworkProvider>
