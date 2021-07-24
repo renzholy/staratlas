@@ -22,10 +22,12 @@ export function useResource(address: string, resource: string, config?: SWRConfi
   )
 }
 
-export function useResources(address: string) {
+export function useResources(address?: string) {
   const provider = useProvider()
   const network = useNetwork()
-  return useSWR([network, 'getResources', address], () => provider.getResources(address))
+  return useSWR(address ? [network, 'getResources', address] : null, () =>
+    provider.getResources(address!),
+  )
 }
 
 export function useBalances(address: string) {

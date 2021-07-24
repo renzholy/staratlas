@@ -11,7 +11,6 @@ export default function ComboBox<T>(props: {
   renderInput(inputProps: { ref: Ref<HTMLInputElement> }): ReactNode
   renderItem(item: T, itemProps: {}, isHighlighted?: boolean): ReactNode
   onSelectItem(item: T): void
-  clearValueOnSelect?: boolean
 }) {
   const { onSelectItem, onChange } = props
   const options = useMemo<UseComboboxProps<T>>(
@@ -21,13 +20,11 @@ export default function ComboBox<T>(props: {
       onSelectedItemChange(item) {
         if (item.selectedItem) {
           onSelectItem(item.selectedItem)
-          if (props.clearValueOnSelect) {
-            onChange('')
-          }
+          onChange('')
         }
       },
     }),
-    [props.items, props.value, props.clearValueOnSelect, onSelectItem, onChange],
+    [props.items, props.value, onSelectItem, onChange],
   )
   const {
     isOpen,

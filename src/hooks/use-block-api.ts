@@ -27,9 +27,18 @@ export function useBlockList(page?: number, config?: SWRConfiguration) {
   }>(page ? `${ENDPOINT}/block/${network}/page/${page}` : null, jsonFetcher, config)
 }
 
-export function useUncleBlock(hash?: string) {
+export function useUncleBlock(hashOrHeight?: string) {
   const network = useNetwork()
-  return useSWR<Block>(hash ? `${ENDPOINT}/block/${network}/uncle/hash/${hash}` : null, jsonFetcher)
+  const isHash = hashOrHeight?.startsWith('0x')
+  const isHeight = hashOrHeight && /^\d+$/.test(hashOrHeight)
+  return useSWR<Block>(
+    isHash
+      ? `${ENDPOINT}/block/${network}/uncle/hash/${hashOrHeight}`
+      : isHeight
+      ? `${ENDPOINT}/block/${network}/uncle/height/${hashOrHeight}`
+      : null,
+    jsonFetcher,
+  )
 }
 
 export function useUncleBlockList(page?: number, config?: SWRConfiguration) {

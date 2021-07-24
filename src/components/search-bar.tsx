@@ -8,34 +8,57 @@ import {
   Text,
   Tag,
   useColorModeValue,
+  Spinner,
 } from '@chakra-ui/react'
 import { Search2Icon } from '@chakra-ui/icons'
 import { Ref, useCallback, useMemo, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
+import compact from 'lodash/compact'
 
 import ComboBox from './combo-box'
 import { useNetwork } from '../contexts/network'
+import { useBlock, useUncleBlock } from '../hooks/use-block-api'
+import { useResources } from '../hooks/use-provider'
+import { useTransaction } from '../hooks/use-transaction-api'
 
 type Item = {
-  type: 'Address' | 'Block' | 'Transaction'
-  prefix: 'address' | 'block' | 'tx'
+  type: 'Address' | 'Block' | 'Transaction' | 'Uncle'
+  prefix: 'address' | 'block' | 'tx' | 'uncle'
   value: string
 }
 
 export default function SearchBar() {
   const [keyword, setKeyword] = useState('')
+  const trimedKeyword = keyword.trim().toLowerCase()
+  const isHash = trimedKeyword.startsWith('0x')
+  const isHeight = /^\d+$/.test(trimedKeyword)
+  const { data: address, isValidating: addressValidating } = useResources(
+    isHash ? trimedKeyword : undefined,
+  )
+  const { data: block, isValidating: blockValidating } = useBlock(
+    isHash || isHeight ? trimedKeyword : undefined,
+  )
+  const { data: transaction, isValidating: transactionValidating } = useTransaction(
+    isHash ? trimedKeyword : undefined,
+  )
+  const { data: uncle, isValidating: uncleValidating } = useUncleBlock(
+    isHash || isHeight ? trimedKeyword : undefined,
+  )
   const data = useMemo<Item[]>(
     () =>
-      /^\d+$/.test(keyword)
-        ? [{ type: 'Block', prefix: 'block', value: keyword }]
-        : keyword.startsWith('0x')
-        ? [
-            { type: 'Address', prefix: 'address', value: keyword },
-            { type: 'Block', prefix: 'block', value: keyword },
-            { type: 'Transaction', prefix: 'tx', value: keyword },
-          ]
-        : [],
-    [keyword],
+      compact([
+        address ? { type: 'Address', prefix: 'address', value: trimedKeyword } : undefined,
+        block ? { type: 'Block', prefix: 'block', value: trimedKeyword } : undefined,
+        transaction ? { type: 'Transaction', prefix: 'tx', value: trimedKeyword } : undefined,
+        uncle ? { type: 'Uncle', prefix: 'uncle', value: trimedKeyword } : undefined,
+      ]),
+    [address, block, transaction, trimedKeyword, uncle],
+  )
+  const isLoading = useMemo(
+    () =>
+      trimedKeyword &&
+      (addressValidating || blockValidating || transactionValidating || uncleValidating),
+    [addressValidating, blockValidating, transactionValidating, trimedKeyword, uncleValidating],
   )
   const network = useNetwork()
   const history = useHistory()
@@ -55,7 +78,11 @@ export default function SearchBar() {
         bg={isHighlighted ? itemBackground : undefined}
         {...itemProps}
       >
-        <Tag colorScheme={{ Address: 'green', Block: 'blue', Transaction: 'orange' }[item.type]}>
+        <Tag
+          colorScheme={
+            { Address: 'green', Block: 'blue', Transaction: 'orange', Uncle: 'purple' }[item.type]
+          }
+        >
           {item.type}
         </Tag>
         <Text flex="1" overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis" ml="4">
@@ -69,7 +96,7 @@ export default function SearchBar() {
     (inputProps: { ref: Ref<HTMLInputElement> }) => (
       <InputGroup>
         <InputLeftElement pointerEvents="none">
-          <Search2Icon color="gray.300" />
+          {isLoading ? <Spinner size="sm" /> : <Search2Icon color="gray.300" />}
         </InputLeftElement>
         <Input
           placeholder="Search hash or height"
@@ -79,7 +106,7 @@ export default function SearchBar() {
         />
       </InputGroup>
     ),
-    [inputBackground],
+    [inputBackground, isLoading],
   )
   const handleSelectItem = useCallback(
     (item: Item) => {
@@ -96,7 +123,6 @@ export default function SearchBar() {
       renderItem={handleRenderItem}
       renderInput={handleRenderInput}
       onSelectItem={handleSelectItem}
-      clearValueOnSelect={true}
     />
   )
 }
