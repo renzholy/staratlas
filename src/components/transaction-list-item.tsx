@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/layout'
 import { Button, Text } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import TimeAgo from 'timeago-react'
 

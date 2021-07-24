@@ -1,5 +1,5 @@
 import { Flex, Divider, LayoutProps, useColorMode, Text } from '@chakra-ui/react'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 export function CardWithHeader(props: {
   height?: LayoutProps['height']

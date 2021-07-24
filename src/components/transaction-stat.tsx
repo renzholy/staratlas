@@ -1,6 +1,5 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
 import { encoding } from '@starcoin/starcoin'
-import React from 'react'
 
 import { numberFormat, formatTime } from '../utils/formatter'
 import { Transaction } from '../utils/types'

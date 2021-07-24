@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from 'react'
+import { ReactNode, useCallback } from 'react'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import {
   Flex,
@@ -58,7 +58,7 @@ export default function Layout(props: { children?: ReactNode }) {
           bg={history.location.pathname === `/${params.network}` ? buttonBackground : undefined}
           variant={history.location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
         >
-          Home
+          StarAtlas
         </Button>
         <Button
           as={Link}

@@ -1,5 +1,4 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
-import React from 'react'
 
 import { numberFormat, formatTime } from '../utils/formatter'
 import { Block } from '../utils/types'

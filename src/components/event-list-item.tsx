@@ -1,7 +1,7 @@
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { onchain_events } from '@starcoin/starcoin'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { numberFormat } from '../utils/formatter'
 import { Event } from '../utils/types'

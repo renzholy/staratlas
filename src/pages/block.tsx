@@ -15,7 +15,7 @@ import {
   useColorMode,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import React, { Fragment } from 'react'
+import { Fragment } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import ListItemPlaceholder from '../components/list-item-placeholder'

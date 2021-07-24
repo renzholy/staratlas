@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Grid, GridItem, Heading, Spacer, Spinner } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import React, { Fragment, useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import CopyLink from '../components/copy-link'

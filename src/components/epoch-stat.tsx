@@ -1,7 +1,7 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
 import last from 'lodash/last'
 import sumBy from 'lodash/sumBy'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import TimeAgo from 'timeago-react'
 
@@ -101,7 +101,9 @@ export default function EpochStat(props: { blocks?: Block[] }) {
             <Stat>
               <StatLabel>Block time</StatLabel>
               <Skeleton isLoaded={!!epoch}>
-                <StatNumber>{numberFormat.format(epoch?.block_time_target / 1000)}s</StatNumber>
+                <StatNumber>
+                  {numberFormat.format(Math.round(epoch?.block_time_target / 100) / 10)}s
+                </StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>

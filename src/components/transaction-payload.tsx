@@ -3,7 +3,7 @@
 import { Heading, Text } from '@chakra-ui/react'
 import { bcs, encoding, types } from '@starcoin/starcoin'
 import { arrayify } from 'ethers/lib/utils'
-import React, { useMemo, useCallback, Fragment } from 'react'
+import { useMemo, useCallback, Fragment } from 'react'
 
 import ArgDecodePopover from './arg-decode-popover'
 import CopyLink from './copy-link'

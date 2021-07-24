@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useMonaco } from '@monaco-editor/react'
 import useSWR from 'swr'
 import { Code, useColorMode } from '@chakra-ui/react'

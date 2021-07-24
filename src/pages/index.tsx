@@ -1,5 +1,4 @@
 import { Grid, GridItem, Button, Divider, Spinner } from '@chakra-ui/react'
-import React from 'react'
 import { Link } from 'react-router-dom'
 import { AnimateSharedLayout, motion } from 'framer-motion'
 

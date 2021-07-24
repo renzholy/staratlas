@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { bcs, serde } from '@starcoin/starcoin'
 import { arrayify } from 'ethers/lib/utils'
-import React, { Fragment, useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 
 export default function ArgDecodePopover(props: { children: string }) {
   const args = useMemo(() => {

@@ -12,7 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import React, { Fragment } from 'react'
+import { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 
 import JsonCode from '../components/json-code'

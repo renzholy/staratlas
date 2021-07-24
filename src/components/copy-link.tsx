@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, useToast } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { css } from '@emotion/react'

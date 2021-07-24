@@ -1,6 +1,5 @@
 import { Grid, GridItem, Box, Heading, Spinner, Button } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import React from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import ListItemPlaceholder from '../components/list-item-placeholder'
