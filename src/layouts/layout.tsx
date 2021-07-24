@@ -12,10 +12,9 @@ import {
   useColorMode,
   IconButton,
   useColorModeValue,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { ChevronDownIcon, ChevronUpIcon, MoonIcon, StarIcon, SunIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 
 import { NETWORKS } from '../constants'
 import { NetworkProvider } from '../contexts/network'
@@ -39,8 +38,6 @@ export default function Layout(props: { children?: ReactNode }) {
   )
   const buttonBackground = useColorModeValue('white', undefined)
   const boxShadow = useColorModeValue('md', 'dark-lg')
-  const displaySmall = useBreakpointValue({ base: undefined, md: 'none' })
-  const displayLarge = useBreakpointValue({ base: 'none', md: undefined })
 
   return (
     <NetworkProvider value={params.network}>
@@ -49,21 +46,19 @@ export default function Layout(props: { children?: ReactNode }) {
         paddingX={6}
         alignItems="center"
         bg={colorMode === 'light' ? 'gray.100' : 'gray.900'}
-        zIndex={1}
+        zIndex="sticky"
         boxShadow={boxShadow}
         css={css`
           position: sticky;
           top: 0;
         `}
       >
-        <IconButton aria-label="index" icon={<StarIcon />} mr={4} display={displaySmall} />
         <Button
           as={Link}
           to={`/${params.network}`}
           bg={history.location.pathname === `/${params.network}` ? buttonBackground : undefined}
           variant={history.location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
           mr={2}
-          display={displayLarge}
         >
           StarAtlas
         </Button>
@@ -73,7 +68,6 @@ export default function Layout(props: { children?: ReactNode }) {
           bg={/\/blocks/.test(history.location.pathname) ? buttonBackground : undefined}
           variant={/\/blocks/.test(history.location.pathname) ? 'solid' : 'ghost'}
           mr={2}
-          display={displayLarge}
         >
           Blocks
         </Button>
@@ -83,7 +77,6 @@ export default function Layout(props: { children?: ReactNode }) {
           bg={/\/txs/.test(history.location.pathname) ? buttonBackground : undefined}
           variant={/\/txs/.test(history.location.pathname) ? 'solid' : 'ghost'}
           mr={4}
-          display={displayLarge}
         >
           Transactions
         </Button>
@@ -118,7 +111,6 @@ export default function Layout(props: { children?: ReactNode }) {
           bg={buttonBackground}
           onClick={toggleColorMode}
           icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
-          display={displayLarge}
         />
       </Flex>
       {props.children}

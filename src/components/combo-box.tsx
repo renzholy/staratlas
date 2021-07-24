@@ -59,7 +59,7 @@ export default function ComboBox<T>(props: {
         maxHeight="md"
         width="100%"
         overflowY="auto"
-        zIndex={10}
+        zIndex="dropdown"
         borderRadius="md"
         bg={backgroud}
         boxShadow={boxShadow}
