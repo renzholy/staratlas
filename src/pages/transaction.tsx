@@ -7,6 +7,7 @@ import CopyLink from '../components/copy-link'
 import EventListItem from '../components/event-list-item'
 import JsonCode from '../components/json-code'
 import ListItemPlaceholder from '../components/list-item-placeholder'
+import NotFound from '../components/not-fount'
 import TransactionPayload from '../components/transaction-payload'
 import TransactionStat from '../components/transaction-stat'
 import { useNetwork } from '../contexts/network'
@@ -16,7 +17,7 @@ import { CardWithHeader } from '../layouts/card-with-header'
 export default function Transaction() {
   const params = useParams<{ hash: string }>()
   const network = useNetwork()
-  const { data: transaction } = useTransaction(params.hash)
+  const { data: transaction, error } = useTransaction(params.hash)
   const sender = useMemo(
     () =>
       transaction
@@ -27,6 +28,9 @@ export default function Transaction() {
     [transaction],
   )
 
+  if (error) {
+    return <NotFound />
+  }
   return (
     <Grid
       templateColumns={{ base: 'minmax(0, 1fr)', xl: 'minmax(0, 1fr) minmax(0, 1fr)' }}

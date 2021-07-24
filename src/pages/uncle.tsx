@@ -8,12 +8,16 @@ import { useUncleBlock } from '../hooks/use-block-api'
 import { CardWithHeader } from '../layouts/card-with-header'
 import CopyLink from '../components/copy-link'
 import BlockStat from '../components/block-stat'
+import NotFound from '../components/not-fount'
 
 export default function Uncle() {
   const network = useNetwork()
   const params = useParams<{ hash: string }>()
-  const { data: uncle } = useUncleBlock(params.hash)
+  const { data: uncle, error } = useUncleBlock(params.hash)
 
+  if (error) {
+    return <NotFound />
+  }
   return (
     <Grid
       templateColumns={{ base: 'minmax(0, 1fr)', xl: 'minmax(0, 1fr) minmax(0, 1fr)' }}

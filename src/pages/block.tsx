@@ -28,14 +28,18 @@ import { numberFormat } from '../utils/formatter'
 import CopyLink from '../components/copy-link'
 import UncleListItem from '../components/uncle-list-item'
 import BlockStat from '../components/block-stat'
+import NotFound from '../components/not-fount'
 
 export default function Block() {
   const network = useNetwork()
   const { colorMode } = useColorMode()
   const params = useParams<{ hashOrHeight: string }>()
-  const { data: block } = useBlock(params.hashOrHeight)
+  const { data: block, error } = useBlock(params.hashOrHeight)
   const { data: transactions } = useBlockTransactions(block?.header.block_hash)
 
+  if (error) {
+    return <NotFound />
+  }
   return (
     <Grid
       templateColumns={{ base: 'minmax(0, 1fr)', xl: 'minmax(0, 1fr) minmax(0, 1fr)' }}

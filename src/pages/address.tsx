@@ -17,6 +17,7 @@ import { useParams } from 'react-router-dom'
 
 import JsonCode from '../components/json-code'
 import ListItemPlaceholder from '../components/list-item-placeholder'
+import NotFound from '../components/not-fount'
 import TransactionListItem from '../components/transaction-list-item'
 import { useBalances, useResources } from '../hooks/use-provider'
 import { useAddressTransactions } from '../hooks/use-transaction-api'
@@ -25,10 +26,13 @@ import { numberFormat } from '../utils/formatter'
 
 export default function Address() {
   const params = useParams<{ hash: string }>()
-  const { data: resources } = useResources(params.hash)
+  const { data: resources, error } = useResources(params.hash)
   const { data: transactions } = useAddressTransactions(params.hash)
   const { data: balances } = useBalances(params.hash)
 
+  if (error) {
+    return <NotFound />
+  }
   return (
     <Grid
       templateColumns={{ base: 'minmax(0, 1fr)', xl: 'minmax(0, 1fr) minmax(0, 1fr)' }}
