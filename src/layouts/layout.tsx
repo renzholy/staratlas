@@ -1,5 +1,5 @@
-import { ReactNode, useCallback, useMemo } from 'react'
-import { Link, useHistory, useParams } from 'react-router-dom'
+import { ReactNode, useMemo } from 'react'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import {
   Flex,
   Button,
@@ -23,19 +23,10 @@ import SearchBar from '../components/search-bar'
 const networks = Object.values(NETWORKS)
 
 export default function Layout(props: { children?: ReactNode }) {
-  const history = useHistory()
+  const location = useLocation()
   const params = useParams<{ network: string }>()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode, toggleColorMode } = useColorMode()
-  const handleSelect = useCallback(
-    (item: string) => {
-      history.push({
-        ...history.location,
-        pathname: history.location.pathname.replace(/^\/\w+/, `/${item}`),
-      })
-    },
-    [history],
-  )
   const buttonBackground = useColorModeValue('white', undefined)
   const boxShadow = useColorModeValue('md', 'dark-lg')
   const color = useMemo(
@@ -45,8 +36,8 @@ export default function Layout(props: { children?: ReactNode }) {
         tx: 'orange',
         block: 'blue',
         uncle: 'purple',
-      }[history.location.pathname.split('/')[2]] || 'gray'),
-    [history.location.pathname],
+      }[location.pathname.split('/')[2]] || 'gray'),
+    [location.pathname],
   )
 
   return (
@@ -56,7 +47,7 @@ export default function Layout(props: { children?: ReactNode }) {
         paddingX={6}
         alignItems="center"
         bg={colorMode === 'light' ? `${color}.200` : `${color}.900`}
-        zIndex="sticky"
+        zIndex={1}
         boxShadow={boxShadow}
         css={css`
           position: sticky;
@@ -66,8 +57,8 @@ export default function Layout(props: { children?: ReactNode }) {
         <Button
           as={Link}
           to={`/${params.network}`}
-          bg={history.location.pathname === `/${params.network}` ? buttonBackground : undefined}
-          variant={history.location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
+          bg={location.pathname === `/${params.network}` ? buttonBackground : undefined}
+          variant={location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
           mr={2}
         >
           StarAtlas
@@ -75,8 +66,8 @@ export default function Layout(props: { children?: ReactNode }) {
         <Button
           as={Link}
           to={`/${params.network}/blocks`}
-          bg={/\/blocks/.test(history.location.pathname) ? buttonBackground : undefined}
-          variant={/\/blocks/.test(history.location.pathname) ? 'solid' : 'ghost'}
+          bg={/\/blocks/.test(location.pathname) ? buttonBackground : undefined}
+          variant={/\/blocks/.test(location.pathname) ? 'solid' : 'ghost'}
           mr={2}
         >
           Blocks
@@ -84,8 +75,8 @@ export default function Layout(props: { children?: ReactNode }) {
         <Button
           as={Link}
           to={`/${params.network}/txs`}
-          bg={/\/txs/.test(history.location.pathname) ? buttonBackground : undefined}
-          variant={/\/txs/.test(history.location.pathname) ? 'solid' : 'ghost'}
+          bg={/\/txs/.test(location.pathname) ? buttonBackground : undefined}
+          variant={/\/txs/.test(location.pathname) ? 'solid' : 'ghost'}
           mr={4}
         >
           Transactions
@@ -105,8 +96,9 @@ export default function Layout(props: { children?: ReactNode }) {
             <MenuList>
               {networks.map((network) => (
                 <MenuItemOption
+                  as={Link}
+                  to={`/${network}`}
                   key={network}
-                  onClick={() => handleSelect(network)}
                   isChecked={params.network === network}
                 >
                   {network}
