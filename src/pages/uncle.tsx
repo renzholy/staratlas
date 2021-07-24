@@ -28,7 +28,8 @@ export default function Uncle() {
               paddingX={6}
               paddingY={4}
               css={css`
-                button {
+                button,
+                a {
                   text-overflow: ellipsis;
                   overflow: hidden;
                   white-space: nowrap;

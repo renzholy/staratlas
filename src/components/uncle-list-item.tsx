@@ -46,15 +46,16 @@ export default function UncleListItem(props: {
           formatTimeSimple(parseInt(uncle.timestamp.toString(), 10))
         )}
       </Text>
-      <Button
-        as={Link}
-        to={`/${network}/uncle/${uncle.block_hash}`}
-        variant="link"
-        color="purple.500"
-        minWidth={32}
-      >
-        #{uncle.number}
-      </Button>
+      <Box width={32} display="inline-block">
+        <Button
+          as={Link}
+          to={`/${network}/uncle/${uncle.block_hash}`}
+          variant="link"
+          color="purple.500"
+        >
+          #{uncle.number}
+        </Button>
+      </Box>
       Author:&nbsp;
       <Button
         as={Link}
