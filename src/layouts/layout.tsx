@@ -1,4 +1,4 @@
-import { ReactNode, useCallback } from 'react'
+import { ReactNode, useCallback, useMemo } from 'react'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import {
   Flex,
@@ -38,6 +38,16 @@ export default function Layout(props: { children?: ReactNode }) {
   )
   const buttonBackground = useColorModeValue('white', undefined)
   const boxShadow = useColorModeValue('md', 'dark-lg')
+  const color = useMemo(
+    () =>
+      ({
+        address: 'green',
+        tx: 'orange',
+        block: 'blue',
+        uncle: 'purple',
+      }[history.location.pathname.split('/')[2]] || 'gray'),
+    [history.location.pathname],
+  )
 
   return (
     <NetworkProvider value={params.network}>
@@ -45,7 +55,7 @@ export default function Layout(props: { children?: ReactNode }) {
         height={16}
         paddingX={6}
         alignItems="center"
-        bg={colorMode === 'light' ? 'gray.100' : 'gray.900'}
+        bg={colorMode === 'light' ? `${color}.200` : `${color}.900`}
         zIndex="sticky"
         boxShadow={boxShadow}
         css={css`

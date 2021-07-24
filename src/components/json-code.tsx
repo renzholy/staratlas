@@ -32,7 +32,7 @@ export default function JsonCode(props: { children: object }) {
       overflowX="auto"
       mt={1}
       padding={2}
-      bg={colorMode === 'light' ? 'gray.100' : 'gray.900'}
+      bg={colorMode === 'light' ? 'gray.50' : 'whiteAlpha.50'}
     />
   )
 }
