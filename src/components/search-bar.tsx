@@ -11,7 +11,7 @@ import {
   Spinner,
 } from '@chakra-ui/react'
 import { Search2Icon } from '@chakra-ui/icons'
-import { Ref, useCallback, useMemo, useState } from 'react'
+import { Ref, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import compact from 'lodash/compact'
 
@@ -114,6 +114,9 @@ export default function SearchBar() {
     },
     [history, network],
   )
+  useEffect(() => {
+    setKeyword('')
+  }, [history.location])
 
   return (
     <ComboBox
