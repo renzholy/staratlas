@@ -12,7 +12,7 @@ import {
   useColorMode,
   IconButton,
   useColorModeValue,
-  useBreakpoint,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { ChevronDownIcon, ChevronUpIcon, MoonIcon, StarIcon, SunIcon } from '@chakra-ui/icons'
@@ -39,7 +39,8 @@ export default function Layout(props: { children?: ReactNode }) {
   )
   const buttonBackground = useColorModeValue('white', undefined)
   const boxShadow = useColorModeValue('md', 'dark-lg')
-  const breakpoint = useBreakpoint()
+  const displaySmall = useBreakpointValue({ base: undefined, md: 'none' })
+  const displayLarge = useBreakpointValue({ base: 'none', md: undefined })
 
   return (
     <NetworkProvider value={params.network}>
@@ -55,39 +56,37 @@ export default function Layout(props: { children?: ReactNode }) {
           top: 0;
         `}
       >
-        {breakpoint === 'md' ? (
-          <IconButton aria-label="index" icon={<StarIcon />} mr={4} />
-        ) : (
-          <>
-            <Button
-              as={Link}
-              to={`/${params.network}`}
-              bg={history.location.pathname === `/${params.network}` ? buttonBackground : undefined}
-              variant={history.location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
-              mr={2}
-            >
-              StarAtlas
-            </Button>
-            <Button
-              as={Link}
-              to={`/${params.network}/blocks`}
-              bg={/\/blocks/.test(history.location.pathname) ? buttonBackground : undefined}
-              variant={/\/blocks/.test(history.location.pathname) ? 'solid' : 'ghost'}
-              mr={2}
-            >
-              Blocks
-            </Button>
-            <Button
-              as={Link}
-              to={`/${params.network}/txs`}
-              bg={/\/txs/.test(history.location.pathname) ? buttonBackground : undefined}
-              variant={/\/txs/.test(history.location.pathname) ? 'solid' : 'ghost'}
-              mr={4}
-            >
-              Transactions
-            </Button>
-          </>
-        )}
+        <IconButton aria-label="index" icon={<StarIcon />} mr={4} display={displaySmall} />
+        <Button
+          as={Link}
+          to={`/${params.network}`}
+          bg={history.location.pathname === `/${params.network}` ? buttonBackground : undefined}
+          variant={history.location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
+          mr={2}
+          display={displayLarge}
+        >
+          StarAtlas
+        </Button>
+        <Button
+          as={Link}
+          to={`/${params.network}/blocks`}
+          bg={/\/blocks/.test(history.location.pathname) ? buttonBackground : undefined}
+          variant={/\/blocks/.test(history.location.pathname) ? 'solid' : 'ghost'}
+          mr={2}
+          display={displayLarge}
+        >
+          Blocks
+        </Button>
+        <Button
+          as={Link}
+          to={`/${params.network}/txs`}
+          bg={/\/txs/.test(history.location.pathname) ? buttonBackground : undefined}
+          variant={/\/txs/.test(history.location.pathname) ? 'solid' : 'ghost'}
+          mr={4}
+          display={displayLarge}
+        >
+          Transactions
+        </Button>
         <SearchBar />
         <Menu isOpen={isOpen} onClose={onClose} autoSelect={false}>
           <MenuButton
@@ -113,15 +112,14 @@ export default function Layout(props: { children?: ReactNode }) {
             </MenuList>
           </Portal>
         </Menu>
-        {breakpoint === 'md' ? null : (
-          <IconButton
-            aria-label="toggle color mode"
-            ml={4}
-            bg={buttonBackground}
-            onClick={toggleColorMode}
-            icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
-          />
-        )}
+        <IconButton
+          aria-label="toggle color mode"
+          ml={4}
+          bg={buttonBackground}
+          onClick={toggleColorMode}
+          icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
+          display={displayLarge}
+        />
       </Flex>
       {props.children}
     </NetworkProvider>
