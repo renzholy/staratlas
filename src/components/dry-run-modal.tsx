@@ -4,7 +4,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalCloseButton,
-  ModalBody,
   ModalFooter,
   Button,
   useDisclosure,
@@ -79,9 +78,7 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
           <ModalHeader>Dry run result</ModalHeader>
           <ModalCloseButton />
           <PerfectScrollbar>
-            <ModalBody>
-              <JsonCode>{handleDryRunRaw.value}</JsonCode>
-            </ModalBody>
+            <JsonCode>{handleDryRunRaw.value}</JsonCode>
           </PerfectScrollbar>
           <ModalFooter>
             <Button colorScheme="blue" onClick={onClose}>

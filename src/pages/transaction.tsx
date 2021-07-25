@@ -1,11 +1,10 @@
 import { Box, Button, Divider, Grid, GridItem, Heading, Spacer, Spinner } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
-import { Fragment, useMemo } from 'react'
+import { Fragment, lazy, Suspense, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import CopyLink from '../components/copy-link'
-import DryRunModal from '../components/dry-run-modal'
 import EventListItem from '../components/event-list-item'
 import JsonCode from '../components/json-code'
 import ListItemPlaceholder from '../components/list-item-placeholder'
@@ -16,6 +15,8 @@ import { useNetwork } from '../contexts/network'
 import { useTransaction } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
 import { formatNumber } from '../utils/formatter'
+
+const DryRunModal = lazy(() => import('../components/dry-run-modal'))
 
 export default function Transaction() {
   const params = useParams<{ hash: string }>()
@@ -122,7 +123,9 @@ export default function Transaction() {
           title="Payload"
           subtitle={
             transaction && 'user_transaction' in transaction ? (
-              <DryRunModal userTransaction={transaction.user_transaction} />
+              <Suspense fallback={null}>
+                <DryRunModal userTransaction={transaction.user_transaction} />
+              </Suspense>
             ) : null
           }
         >

@@ -44,19 +44,17 @@ export default function useDryRunRaw(
             transactionPayload.Script.ty_args,
             transactionPayload.Script.args,
           )
-    return provider.dryRunRaw(
-      serializeRawUserTransaction(
-        utils.tx.generateRawUserTransaction(
-          senderAddress,
-          payload,
-          maxGasAmount,
-          senderSequenceNumber,
-          Math.round(Date.now() / 1000) + 60,
-          chainId,
-        ),
+    const rawUserTransactionHex = serializeRawUserTransaction(
+      utils.tx.generateRawUserTransaction(
+        senderAddress,
+        payload,
+        maxGasAmount,
+        senderSequenceNumber,
+        Math.round(Date.now() / 1000) + 60,
+        chainId,
       ),
-      publicKeyHex,
     )
+    return provider.dryRunRaw(rawUserTransactionHex, publicKeyHex)
   }, [publicKeyHex, senderAddress, transactionPayload, maxGasAmount, chainId, provider])
   return useAsync(handleDryRunRaw)
 }
