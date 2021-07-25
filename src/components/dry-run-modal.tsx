@@ -10,12 +10,12 @@ import {
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react'
-import { encoding, types } from '@starcoin/starcoin'
+import { types } from '@starcoin/starcoin'
 import { useMemo, useEffect } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
-import useDryRunRaw from '../hooks/use-dry-run-raw'
+import useDryRun from '../hooks/use-dry-run'
 import JsonCode from './json-code'
 
 export default function DryRunModal(props: { userTransaction: types.SignedUserTransactionView }) {
@@ -29,35 +29,31 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
         : userTransaction.authenticator.MultiEd25519.public_key,
     [userTransaction],
   )
-  const payload = useMemo(
-    () => encoding.decodeTransactionPayload(userTransaction.raw_txn.payload),
-    [userTransaction],
-  )
-  const handleDryRunRaw = useDryRunRaw(
+  const handleDryRun = useDryRun(
     senderPublicKey,
     userTransaction.raw_txn.sender,
-    payload,
+    userTransaction.raw_txn.payload,
     userTransaction.raw_txn.max_gas_amount,
     userTransaction.raw_txn.chain_id,
   )
   const toast = useToast()
   const error = useMemo(() => {
     try {
-      const matched = handleDryRunRaw.error?.message.match(
+      const matched = handleDryRun.error?.message.match(
         /processing response error \(body=(.+), error=/,
       )?.[1]
       return matched ? JSON.parse(matched) : undefined
     } catch {
-      return handleDryRunRaw.error?.message
+      return handleDryRun.error?.message
     }
-  }, [handleDryRunRaw.error?.message])
+  }, [handleDryRun.error?.message])
   useEffect(() => {
-    if (handleDryRunRaw.status === 'success') {
+    if (handleDryRun.status === 'success') {
       onOpen()
-    } else if (handleDryRunRaw.status === 'error') {
+    } else if (handleDryRun.status === 'error') {
       toast({ status: 'error', title: 'Dry run error', description: error })
     }
-  }, [error, handleDryRunRaw.status, onOpen, toast])
+  }, [error, handleDryRun.status, onOpen, toast])
 
   return (
     <>
@@ -66,8 +62,8 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
           size="sm"
           mr={-4}
           bg={buttonBackground}
-          onClick={handleDryRunRaw.execute}
-          isLoading={handleDryRunRaw.status === 'pending'}
+          onClick={handleDryRun.execute}
+          isLoading={handleDryRun.status === 'pending'}
         >
           Dry run
         </Button>
@@ -78,7 +74,7 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
           <ModalHeader>Dry run result</ModalHeader>
           <ModalCloseButton />
           <PerfectScrollbar>
-            <JsonCode>{handleDryRunRaw.value}</JsonCode>
+            <JsonCode>{handleDryRun.value}</JsonCode>
           </PerfectScrollbar>
           <ModalFooter>
             <Button colorScheme="blue" onClick={onClose}>

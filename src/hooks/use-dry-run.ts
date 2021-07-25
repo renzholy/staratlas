@@ -1,4 +1,4 @@
-import { utils, types, starcoin_types, bcs } from '@starcoin/starcoin'
+import { utils, types, starcoin_types, bcs, encoding } from '@starcoin/starcoin'
 import { arrayify, hexlify } from 'ethers/lib/utils'
 import { useCallback } from 'react'
 
@@ -11,10 +11,10 @@ function serializeRawUserTransaction(scriptFunction: starcoin_types.RawUserTrans
   return hexlify(se.getBytes())
 }
 
-export default function useDryRunRaw(
+export default function useDryRun(
   publicKeyHex?: types.HexString,
   senderAddress?: types.HexString,
-  transactionPayload?: types.TransactionPayload,
+  transactionPayload?: types.HexString,
   maxGasAmount?: types.U64,
   chainId?: types.U8,
 ) {
@@ -27,22 +27,30 @@ export default function useDryRunRaw(
     if (!senderSequenceNumber) {
       return undefined
     }
+    const decodedPayload = encoding.decodeTransactionPayload(transactionPayload)
     const payload =
-      'ScriptFunction' in transactionPayload
+      'ScriptFunction' in decodedPayload
         ? utils.tx.encodeScriptFunction(
-            transactionPayload.ScriptFunction.func,
-            transactionPayload.ScriptFunction.ty_args,
-            transactionPayload.ScriptFunction.args.map((arg) => arrayify(arg)),
+            decodedPayload.ScriptFunction.func,
+            decodedPayload.ScriptFunction.ty_args,
+            decodedPayload.ScriptFunction.args.map((arg) => arrayify(arg)),
           )
-        : 'Package' in transactionPayload
+        : 'Package' in decodedPayload
         ? utils.tx.encodePackage(
-            transactionPayload.Package.package_address,
-            transactionPayload.Package.modules.map(({ code }) => code),
+            decodedPayload.Package.package_address,
+            decodedPayload.Package.modules.map(({ code }) => code),
+            decodedPayload.Package.init_script
+              ? {
+                  functionId: decodedPayload.Package.init_script?.func,
+                  tyArgs: decodedPayload.Package.init_script.ty_args,
+                  args: decodedPayload.Package.init_script.args.map((arg) => arrayify(arg)),
+                }
+              : undefined,
           )
         : utils.tx.encodeTransactionScript(
-            arrayify(transactionPayload.Script.code),
-            transactionPayload.Script.ty_args,
-            transactionPayload.Script.args,
+            arrayify(decodedPayload.Script.code),
+            decodedPayload.Script.ty_args,
+            decodedPayload.Script.args,
           )
     const rawUserTransactionHex = serializeRawUserTransaction(
       utils.tx.generateRawUserTransaction(
