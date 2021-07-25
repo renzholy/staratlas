@@ -1,6 +1,7 @@
 import { Box, Button, Divider, Grid, GridItem, Heading, Spacer, Spinner } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment, useMemo } from 'react'
+import { encoding } from '@starcoin/starcoin'
+import { Fragment, lazy, Suspense, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import CopyLink from '../components/copy-link'
@@ -15,6 +16,8 @@ import { useTransaction } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
 import { formatNumber } from '../utils/formatter'
 
+const DryRunModal = lazy(() => import('../components/dry-run-modal'))
+
 export default function Transaction() {
   const params = useParams<{ hash: string }>()
   const network = useNetwork()
@@ -25,6 +28,15 @@ export default function Transaction() {
         ? 'user_transaction' in transaction
           ? transaction.user_transaction.raw_txn.sender
           : transaction.block_metadata.author
+        : undefined,
+    [transaction],
+  )
+  const payload = useMemo(
+    () =>
+      transaction &&
+      'user_transaction' in transaction &&
+      transaction.user_transaction.raw_txn.payload
+        ? encoding.decodeTransactionPayload(transaction.user_transaction.raw_txn.payload)
         : undefined,
     [transaction],
   )
@@ -107,8 +119,17 @@ export default function Transaction() {
           )}
         </CardWithHeader>
         <Spacer height={6} />
-        <CardWithHeader title="Payload">
-          {transaction && 'user_transaction' in transaction ? (
+        <CardWithHeader
+          title="Payload"
+          subtitle={
+            transaction && 'user_transaction' in transaction ? (
+              <Suspense fallback={null}>
+                <DryRunModal userTransaction={transaction.user_transaction} />
+              </Suspense>
+            ) : null
+          }
+        >
+          {payload ? (
             <Box
               paddingX={6}
               paddingY={4}
@@ -125,7 +146,7 @@ export default function Transaction() {
                 }
               `}
             >
-              <TransactionPayload payload={transaction.user_transaction.raw_txn.payload} />
+              <TransactionPayload payload={payload} />
             </Box>
           ) : (
             <ListItemPlaceholder height={67}>
@@ -141,7 +162,7 @@ export default function Transaction() {
         >
           {transaction?.events.length ? (
             transaction.events.map((event, index) => (
-              <Fragment key={event.event_key}>
+              <Fragment key={event.event_key + event.event_seq_number}>
                 {index === 0 ? null : <Divider />}
                 <EventListItem event={event} />
               </Fragment>

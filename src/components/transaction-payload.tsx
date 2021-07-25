@@ -1,15 +1,15 @@
 /* eslint-disable react/no-array-index-key */
 
 import { Heading, Text } from '@chakra-ui/react'
-import { bcs, encoding, types } from '@starcoin/starcoin'
+import { bcs, types } from '@starcoin/starcoin'
 import { arrayify } from 'ethers/lib/utils'
-import { useMemo, useCallback, Fragment } from 'react'
+import { useCallback, Fragment } from 'react'
 
 import ArgDecodePopover from './arg-decode-popover'
 import CopyLink from './copy-link'
 
-export default function TransactionPayload(props: { payload: string }) {
-  const payload = useMemo(() => encoding.decodeTransactionPayload(props.payload), [props.payload])
+export default function TransactionPayload(props: { payload: types.TransactionPayload }) {
+  const { payload } = props
   const type = Object.keys(payload)[0]
   const renderScriptFunction = useCallback(
     (
