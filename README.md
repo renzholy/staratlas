@@ -7,4 +7,5 @@ An explorer for [starcoin](https://starcoin.org/)
 - format event data
 - format package code
 - format resources
+- format dry run result
 - use contract.call
