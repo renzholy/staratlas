@@ -19,7 +19,7 @@ import { useBlockList, useUncleBlockList } from '../hooks/use-block-api'
 import BlockListItem from '../components/block-list-item'
 import ListItemPlaceholder from '../components/list-item-placeholder'
 import { CardWithHeader } from '../layouts/card-with-header'
-import { numberFormat } from '../utils/formatter'
+import { formatNumber } from '../utils/formatter'
 import UncleListItem from '../components/uncle-list-item'
 
 const SIZE = 20
@@ -41,7 +41,7 @@ export default function Blocks() {
         <Stat>
           <StatLabel>Blocks</StatLabel>
           <Skeleton isLoaded={!!blocks}>
-            <StatNumber>{numberFormat.format(blocks?.total || 0)}</StatNumber>
+            <StatNumber>{formatNumber(blocks?.total || 0)}</StatNumber>
           </Skeleton>
         </Stat>
       </GridItem>
@@ -49,7 +49,7 @@ export default function Blocks() {
         <Stat>
           <StatLabel>Uncles</StatLabel>
           <Skeleton isLoaded={!!uncles}>
-            <StatNumber>{numberFormat.format(uncles?.total || 0)}</StatNumber>
+            <StatNumber>{formatNumber(uncles?.total || 0)}</StatNumber>
           </Skeleton>
         </Stat>
       </GridItem>

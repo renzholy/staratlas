@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import TimeAgo from 'timeago-react'
 
 import { useNetwork } from '../contexts/network'
-import { formatTimeSimple, numberFormat } from '../utils/formatter'
+import { formatTimeSimple, formatNumber } from '../utils/formatter'
 import { Block } from '../utils/types'
 
 export default function UncleListItem(props: {
@@ -67,8 +67,8 @@ export default function UncleListItem(props: {
         {uncle.author}
       </Button>
       <br />
-      <Text minWidth={32}>Gas:&nbsp;{numberFormat.format(uncle.gas_used as bigint)}</Text>
-      <Text>Difficulty:&nbsp;{numberFormat.format(BigInt(uncle.difficulty_number))}</Text>
+      <Text minWidth={32}>Gas:&nbsp;{formatNumber(uncle.gas_used as bigint)}</Text>
+      <Text>Difficulty:&nbsp;{formatNumber(BigInt(uncle.difficulty_number))}</Text>
     </Box>
   )
 }

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import TimeAgo from 'timeago-react'
 
 import { useNetwork } from '../contexts/network'
-import { formatTimeSimple, numberFormat } from '../utils/formatter'
+import { formatTimeSimple, formatNumber } from '../utils/formatter'
 import { Transaction } from '../utils/types'
 
 export default function TransactionListItem(props: {
@@ -89,8 +89,8 @@ export default function TransactionListItem(props: {
           ? transaction.status
           : Object.keys(transaction.status)[0]}
       </Text>
-      <Text minWidth={32}>Events:&nbsp;{numberFormat.format(transaction.events.length)}</Text>
-      <Text>Gas:&nbsp;{numberFormat.format(transaction.gas_used as bigint)}</Text>
+      <Text minWidth={32}>Events:&nbsp;{formatNumber(transaction.events.length)}</Text>
+      <Text>Gas:&nbsp;{formatNumber(transaction.gas_used as bigint)}</Text>
     </Box>
   )
 }

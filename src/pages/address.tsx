@@ -22,7 +22,7 @@ import TransactionListItem from '../components/transaction-list-item'
 import { useBalances, useResources } from '../hooks/use-provider'
 import { useAddressTransactions } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
-import { numberFormat } from '../utils/formatter'
+import { formatNumber } from '../utils/formatter'
 
 export default function Address() {
   const params = useParams<{ hash: string }>()
@@ -49,7 +49,7 @@ export default function Address() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Balances"
-          subtitle={`Total: ${balances ? numberFormat.format(Object.keys(balances).length) : '-'}`}
+          subtitle={`Total: ${balances ? formatNumber(Object.keys(balances).length) : '-'}`}
         >
           {balances ? (
             <Box paddingX={6} paddingY={4}>
@@ -58,7 +58,7 @@ export default function Address() {
                   <Heading size="sm" mt={index === 0 ? 0 : 4}>
                     {key}
                   </Heading>
-                  <Text color="gray.500">{numberFormat.format(value as bigint)}</Text>
+                  <Text color="gray.500">{formatNumber(value as bigint)}</Text>
                 </Fragment>
               ))}
             </Box>
@@ -71,9 +71,7 @@ export default function Address() {
         <Spacer height={6} />
         <CardWithHeader
           title="Resources"
-          subtitle={`Total: ${
-            resources ? numberFormat.format(Object.keys(resources).length) : '-'
-          }`}
+          subtitle={`Total: ${resources ? formatNumber(Object.keys(resources).length) : '-'}`}
         >
           {resources ? (
             <Box
@@ -113,7 +111,7 @@ export default function Address() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transactions"
-          subtitle={`Total: ${transactions ? numberFormat.format(transactions.total) : '-'}`}
+          subtitle={`Total: ${transactions ? formatNumber(transactions.total) : '-'}`}
         >
           {transactions?.contents ? (
             transactions.contents.map((transaction, index) => (

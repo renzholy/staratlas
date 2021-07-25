@@ -7,7 +7,7 @@ import TimeAgo from 'timeago-react'
 
 import { useNetwork } from '../contexts/network'
 import { useResource } from '../hooks/use-provider'
-import { numberFormat } from '../utils/formatter'
+import { formatNumber } from '../utils/formatter'
 import { Block } from '../utils/types'
 
 export default function EpochStat(props: { blocks?: Block[] }) {
@@ -57,7 +57,7 @@ export default function EpochStat(props: { blocks?: Block[] }) {
             <Stat>
               <StatLabel>Hash rate</StatLabel>
               <Skeleton isLoaded={!!epoch}>
-                <StatNumber>{numberFormat.format(Math.round(hashRate))}H/s</StatNumber>
+                <StatNumber>{formatNumber(Math.round(hashRate))}H/s</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -102,7 +102,7 @@ export default function EpochStat(props: { blocks?: Block[] }) {
               <StatLabel>Block time</StatLabel>
               <Skeleton isLoaded={!!epoch}>
                 <StatNumber>
-                  {numberFormat.format(Math.round(epoch?.block_time_target / 100) / 10)}s
+                  {formatNumber(Math.round(epoch?.block_time_target / 100) / 10)}s
                 </StatNumber>
               </Skeleton>
             </Stat>

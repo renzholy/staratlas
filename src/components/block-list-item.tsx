@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import TimeAgo from 'timeago-react'
 
 import { useNetwork } from '../contexts/network'
-import { formatTimeSimple, numberFormat } from '../utils/formatter'
+import { formatTimeSimple, formatNumber } from '../utils/formatter'
 import { Block } from '../utils/types'
 
 export default function BlockListItem(props: { block: Block; relativeTime?: boolean }) {
@@ -64,10 +64,10 @@ export default function BlockListItem(props: { block: Block; relativeTime?: bool
         {block.header.author}
       </Button>
       <br />
-      <Text minWidth={32}>Txns:&nbsp;{numberFormat.format(block.body.Full.length)}</Text>
-      <Text minWidth={32}>Uncles:&nbsp;{numberFormat.format(block.uncles.length)}</Text>
-      <Text minWidth={32}>Gas:&nbsp;{numberFormat.format(block.header.gas_used as bigint)}</Text>
-      <Text>Difficulty:&nbsp;{numberFormat.format(BigInt(block.header.difficulty_number))}</Text>
+      <Text minWidth={32}>Txns:&nbsp;{formatNumber(block.body.Full.length)}</Text>
+      <Text minWidth={32}>Uncles:&nbsp;{formatNumber(block.uncles.length)}</Text>
+      <Text minWidth={32}>Gas:&nbsp;{formatNumber(block.header.gas_used as bigint)}</Text>
+      <Text>Difficulty:&nbsp;{formatNumber(BigInt(block.header.difficulty_number))}</Text>
     </Box>
   )
 }

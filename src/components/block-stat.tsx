@@ -1,6 +1,6 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
 
-import { numberFormat, formatTime } from '../utils/formatter'
+import { formatNumber, formatTime } from '../utils/formatter'
 import { Block } from '../utils/types'
 
 export default function BlockStat(props: { block?: Block['header'] }) {
@@ -28,7 +28,7 @@ export default function BlockStat(props: { block?: Block['header'] }) {
               <StatLabel>Difficulty</StatLabel>
               <Skeleton isLoaded={!!block}>
                 <StatNumber>
-                  {block ? numberFormat.format(BigInt(block.difficulty_number)) : '-'}
+                  {block ? formatNumber(BigInt(block.difficulty_number)) : '-'}
                 </StatNumber>
               </Skeleton>
             </Stat>
@@ -37,9 +37,7 @@ export default function BlockStat(props: { block?: Block['header'] }) {
             <Stat>
               <StatLabel>Gas used</StatLabel>
               <Skeleton isLoaded={!!block}>
-                <StatNumber>
-                  {block ? numberFormat.format(block.gas_used as bigint) : '-'}
-                </StatNumber>
+                <StatNumber>{block ? formatNumber(block.gas_used as bigint) : '-'}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -55,7 +53,7 @@ export default function BlockStat(props: { block?: Block['header'] }) {
             <Stat>
               <StatLabel>Nonce</StatLabel>
               <Skeleton isLoaded={!!block}>
-                <StatNumber>{block ? numberFormat.format(block.nonce as bigint) : '-'}</StatNumber>
+                <StatNumber>{block ? formatNumber(block.nonce as bigint) : '-'}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>

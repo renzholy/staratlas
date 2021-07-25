@@ -5,7 +5,7 @@ import { AnimateSharedLayout, motion } from 'framer-motion'
 import { useNetwork } from '../contexts/network'
 import { useBlockList } from '../hooks/use-block-api'
 import { useTransactionList } from '../hooks/use-transaction-api'
-import { numberFormat } from '../utils/formatter'
+import { formatNumber } from '../utils/formatter'
 import TransactionListItem from '../components/transaction-list-item'
 import BlockListItem from '../components/block-list-item'
 import EpochStat from '../components/epoch-stat'
@@ -32,7 +32,7 @@ export default function Index() {
           title="Latest blocks"
           subtitle={
             <Button as={Link} to={`/${network}/blocks`} size="sm" bg={buttonBackground} mr={-4}>
-              View all {numberFormat.format(blocks?.total || 0)}
+              View all {formatNumber(blocks?.total || 0)}
             </Button>
           }
         >
@@ -57,7 +57,7 @@ export default function Index() {
           title="Latest transactions"
           subtitle={
             <Button as={Link} to={`/${network}/txs`} size="sm" bg={buttonBackground} mr={-4}>
-              View all {numberFormat.format(transactions?.total || 0)}
+              View all {formatNumber(transactions?.total || 0)}
             </Button>
           }
         >

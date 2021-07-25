@@ -17,7 +17,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 
 import ListItemPlaceholder from '../components/list-item-placeholder'
 import { CardWithHeader } from '../layouts/card-with-header'
-import { numberFormat } from '../utils/formatter'
+import { formatNumber } from '../utils/formatter'
 import { usePendingTransactionList, useTransactionList } from '../hooks/use-transaction-api'
 import TransactionListItem from '../components/transaction-list-item'
 
@@ -40,7 +40,7 @@ export default function Transactions() {
         <Stat>
           <StatLabel>Transactions</StatLabel>
           <Skeleton isLoaded={!!transactions}>
-            <StatNumber>{numberFormat.format(transactions?.total || 0)}</StatNumber>
+            <StatNumber>{formatNumber(transactions?.total || 0)}</StatNumber>
           </Skeleton>
         </Stat>
       </GridItem>
@@ -48,7 +48,7 @@ export default function Transactions() {
         <Stat>
           <StatLabel>Pendings</StatLabel>
           <Skeleton isLoaded={!!pendings}>
-            <StatNumber>{numberFormat.format(pendings?.total || 0)}</StatNumber>
+            <StatNumber>{formatNumber(pendings?.total || 0)}</StatNumber>
           </Skeleton>
         </Stat>
       </GridItem>

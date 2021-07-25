@@ -3,7 +3,7 @@ import { css } from '@emotion/react'
 import { onchain_events } from '@starcoin/starcoin'
 import { useMemo } from 'react'
 
-import { numberFormat } from '../utils/formatter'
+import { formatNumber } from '../utils/formatter'
 import { Event } from '../utils/types'
 import CopyLink from './copy-link'
 import JsonCode from './json-code'
@@ -58,7 +58,7 @@ export default function EventListItem(props: { event: Event }) {
       <Heading size="sm" mt={4}>
         Seq
       </Heading>
-      <Text color="gray.500">{numberFormat.format(props.event.event_seq_number as number)}</Text>
+      <Text color="gray.500">{formatNumber(props.event.event_seq_number as number)}</Text>
       <Heading size="sm" mt={4}>
         Data
       </Heading>

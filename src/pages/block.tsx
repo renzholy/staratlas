@@ -23,7 +23,7 @@ import { useNetwork } from '../contexts/network'
 import { useBlock } from '../hooks/use-block-api'
 import { useBlockTransactions } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
-import { numberFormat } from '../utils/formatter'
+import { formatNumber } from '../utils/formatter'
 import CopyLink from '../components/copy-link'
 import UncleListItem from '../components/uncle-list-item'
 import BlockStat from '../components/block-stat'
@@ -152,7 +152,7 @@ export default function Block() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transactions"
-          subtitle={`Total: ${transactions ? numberFormat.format(transactions.total) : '-'}`}
+          subtitle={`Total: ${transactions ? formatNumber(transactions.total) : '-'}`}
         >
           {transactions?.contents.length ? (
             transactions.contents.map((transaction, index) => (
@@ -170,7 +170,7 @@ export default function Block() {
         <Spacer h={6} />
         <CardWithHeader
           title="Uncles"
-          subtitle={`Total: ${block ? numberFormat.format(block.uncles.length) : '-'}`}
+          subtitle={`Total: ${block ? formatNumber(block.uncles.length) : '-'}`}
         >
           {block?.uncles.length ? (
             block.uncles.map((uncle, index) => (

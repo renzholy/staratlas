@@ -1,7 +1,7 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
 import { encoding } from '@starcoin/starcoin'
 
-import { numberFormat, formatTime } from '../utils/formatter'
+import { formatNumber, formatTime } from '../utils/formatter'
 import { Transaction } from '../utils/types'
 
 export default function TransactionStat(props: { transaction?: Transaction }) {
@@ -44,7 +44,7 @@ export default function TransactionStat(props: { transaction?: Transaction }) {
               <StatLabel>Gas used</StatLabel>
               <Skeleton isLoaded={!!transaction}>
                 <StatNumber>
-                  {transaction ? numberFormat.format(transaction.gas_used as bigint) : '-'}
+                  {transaction ? formatNumber(transaction.gas_used as bigint) : '-'}
                 </StatNumber>
               </Skeleton>
             </Stat>
