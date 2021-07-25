@@ -15,7 +15,7 @@ import { css } from '@emotion/react'
 import { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 
-import JsonCode from '../components/json-code'
+import ResourceListItem from '../components/resource-list-item'
 import ListItemPlaceholder from '../components/list-item-placeholder'
 import NotFound from '../components/not-fount'
 import TransactionListItem from '../components/transaction-list-item'
@@ -87,10 +87,11 @@ export default function Address() {
             >
               {Object.entries(resources).map(([key, value], index) => (
                 <Fragment key={key}>
+                  {index === 0 ? null : <Divider mt={3} />}
                   <Heading size="sm" mt={index === 0 ? 0 : 4}>
                     {key}
                   </Heading>
-                  <JsonCode>{value}</JsonCode>
+                  <ResourceListItem resource={value} />
                 </Fragment>
               ))}
             </Box>

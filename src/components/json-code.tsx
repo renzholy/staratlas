@@ -3,7 +3,7 @@ import { useMonaco } from '@monaco-editor/react'
 import useSWR from 'swr'
 import { Code, useColorMode } from '@chakra-ui/react'
 
-export default function JsonCode(props: { children: object }) {
+export default function JsonCode(props: { children: object | string | number | bigint | boolean }) {
   const { colorMode } = useColorMode()
   const monaco = useMonaco()
   useEffect(() => {
