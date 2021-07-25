@@ -1,5 +1,16 @@
-import { Box, Button, Divider, Grid, GridItem, Heading, Spacer, Spinner } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  GridItem,
+  Heading,
+  Spacer,
+  Spinner,
+  useColorModeValue,
+} from '@chakra-ui/react'
 import { css } from '@emotion/react'
+import { encoding } from '@starcoin/starcoin'
 import { Fragment, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -25,6 +36,16 @@ export default function Transaction() {
         ? 'user_transaction' in transaction
           ? transaction.user_transaction.raw_txn.sender
           : transaction.block_metadata.author
+        : undefined,
+    [transaction],
+  )
+  const buttonBackground = useColorModeValue('white', undefined)
+  const payload = useMemo(
+    () =>
+      transaction &&
+      'user_transaction' in transaction &&
+      transaction.user_transaction.raw_txn.payload
+        ? encoding.decodeTransactionPayload(transaction.user_transaction.raw_txn.payload)
         : undefined,
     [transaction],
   )
@@ -107,8 +128,19 @@ export default function Transaction() {
           )}
         </CardWithHeader>
         <Spacer height={6} />
-        <CardWithHeader title="Payload">
-          {transaction && 'user_transaction' in transaction ? (
+        <CardWithHeader
+          title="Payload"
+          subtitle={
+            transaction &&
+            'user_transaction' in transaction &&
+            transaction.user_transaction.raw_txn.payload ? (
+              <Button size="sm" mr={-4} bg={buttonBackground}>
+                Dry run
+              </Button>
+            ) : null
+          }
+        >
+          {payload ? (
             <Box
               paddingX={6}
               paddingY={4}
@@ -125,7 +157,7 @@ export default function Transaction() {
                 }
               `}
             >
-              <TransactionPayload payload={transaction.user_transaction.raw_txn.payload} />
+              <TransactionPayload payload={payload} />
             </Box>
           ) : (
             <ListItemPlaceholder height={67}>
