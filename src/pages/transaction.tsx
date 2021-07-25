@@ -1,20 +1,11 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Grid,
-  GridItem,
-  Heading,
-  Spacer,
-  Spinner,
-  useColorModeValue,
-} from '@chakra-ui/react'
+import { Box, Button, Divider, Grid, GridItem, Heading, Spacer, Spinner } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
-import { Fragment, useEffect, useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import CopyLink from '../components/copy-link'
+import DryRunModal from '../components/dry-run-modal'
 import EventListItem from '../components/event-list-item'
 import JsonCode from '../components/json-code'
 import ListItemPlaceholder from '../components/list-item-placeholder'
@@ -22,7 +13,6 @@ import NotFound from '../components/not-fount'
 import TransactionPayload from '../components/transaction-payload'
 import TransactionStat from '../components/transaction-stat'
 import { useNetwork } from '../contexts/network'
-import useDryRunRaw from '../hooks/use-dry-run-raw'
 import { useTransaction } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
 import { formatNumber } from '../utils/formatter'
@@ -40,18 +30,6 @@ export default function Transaction() {
         : undefined,
     [transaction],
   )
-  const senderPublicKey = useMemo(
-    () =>
-      transaction
-        ? 'user_transaction' in transaction
-          ? 'Ed25519' in transaction.user_transaction.authenticator
-            ? transaction.user_transaction.authenticator.Ed25519.public_key
-            : transaction.user_transaction.authenticator.MultiEd25519.public_key
-          : transaction.block_metadata.author_auth_key
-        : undefined,
-    [transaction],
-  )
-  const buttonBackground = useColorModeValue('white', undefined)
   const payload = useMemo(
     () =>
       transaction &&
@@ -61,22 +39,6 @@ export default function Transaction() {
         : undefined,
     [transaction],
   )
-  const handleDryRunRaw = useDryRunRaw(
-    senderPublicKey,
-    transaction && 'user_transaction' in transaction
-      ? transaction.user_transaction.raw_txn.payload
-      : undefined,
-  )
-  useEffect(() => {
-    if (handleDryRunRaw.status === 'success') {
-      console.log(handleDryRunRaw.value)
-    }
-  }, [handleDryRunRaw.status, handleDryRunRaw.value])
-  useEffect(() => {
-    if (handleDryRunRaw.status === 'error') {
-      console.error(handleDryRunRaw.error)
-    }
-  }, [handleDryRunRaw.error, handleDryRunRaw.status])
 
   if (error) {
     return <NotFound />
@@ -158,21 +120,7 @@ export default function Transaction() {
         <Spacer height={6} />
         <CardWithHeader
           title="Payload"
-          subtitle={
-            transaction &&
-            'user_transaction' in transaction &&
-            transaction.user_transaction.raw_txn.payload ? (
-              <Button
-                size="sm"
-                mr={-4}
-                bg={buttonBackground}
-                onClick={handleDryRunRaw.execute}
-                isLoading={handleDryRunRaw.status === 'pending'}
-              >
-                Dry run
-              </Button>
-            ) : null
-          }
+          subtitle={transaction ? <DryRunModal transaction={transaction} /> : null}
         >
           {payload ? (
             <Box
@@ -207,7 +155,7 @@ export default function Transaction() {
         >
           {transaction?.events.length ? (
             transaction.events.map((event, index) => (
-              <Fragment key={event.event_key}>
+              <Fragment key={event.event_key + event.event_seq_number}>
                 {index === 0 ? null : <Divider />}
                 <EventListItem event={event} />
               </Fragment>
