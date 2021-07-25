@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
-import { Fragment, useMemo } from 'react'
+import { Fragment, useEffect, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import CopyLink from '../components/copy-link'
@@ -67,6 +67,16 @@ export default function Transaction() {
       ? transaction.user_transaction.raw_txn.payload
       : undefined,
   )
+  useEffect(() => {
+    if (handleDryRunRaw.status === 'success') {
+      console.log(handleDryRunRaw.value)
+    }
+  }, [handleDryRunRaw.status, handleDryRunRaw.value])
+  useEffect(() => {
+    if (handleDryRunRaw.status === 'error') {
+      console.error(handleDryRunRaw.error)
+    }
+  }, [handleDryRunRaw.error, handleDryRunRaw.status])
 
   if (error) {
     return <NotFound />
@@ -152,7 +162,13 @@ export default function Transaction() {
             transaction &&
             'user_transaction' in transaction &&
             transaction.user_transaction.raw_txn.payload ? (
-              <Button size="sm" mr={-4} bg={buttonBackground} onClick={handleDryRunRaw}>
+              <Button
+                size="sm"
+                mr={-4}
+                bg={buttonBackground}
+                onClick={handleDryRunRaw.execute}
+                isLoading={handleDryRunRaw.status === 'pending'}
+              >
                 Dry run
               </Button>
             ) : null
