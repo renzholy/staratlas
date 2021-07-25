@@ -10,32 +10,35 @@ import {
   useDisclosure,
   useColorModeValue,
 } from '@chakra-ui/react'
+import { encoding, types } from '@starcoin/starcoin'
 import { useMemo, useEffect } from 'react'
 
 import useDryRunRaw from '../hooks/use-dry-run-raw'
-import { Transaction } from '../utils/types'
 import JsonCode from './json-code'
 
-export default function DryRunModal(props: { transaction: Transaction }) {
-  const { transaction } = props
+export default function DryRunModal(props: { userTransaction: types.SignedUserTransactionView }) {
+  const { userTransaction } = props
   const { isOpen, onOpen, onClose } = useDisclosure()
   const buttonBackground = useColorModeValue('white', undefined)
   const senderPublicKey = useMemo(
     () =>
-      transaction
-        ? 'user_transaction' in transaction
-          ? 'Ed25519' in transaction.user_transaction.authenticator
-            ? transaction.user_transaction.authenticator.Ed25519.public_key
-            : transaction.user_transaction.authenticator.MultiEd25519.public_key
-          : transaction.block_metadata.author_auth_key
-        : undefined,
-    [transaction],
+      'Ed25519' in userTransaction.authenticator
+        ? userTransaction.authenticator.Ed25519.public_key
+        : userTransaction.authenticator.MultiEd25519.public_key,
+    [userTransaction],
+  )
+  const payload = useMemo(
+    () => encoding.decodeTransactionPayload(userTransaction.raw_txn.payload),
+    [userTransaction],
   )
   const handleDryRunRaw = useDryRunRaw(
     senderPublicKey,
-    transaction && 'user_transaction' in transaction
-      ? transaction.user_transaction.raw_txn.payload
-      : undefined,
+    userTransaction.raw_txn.sender,
+    payload,
+    userTransaction.raw_txn.max_gas_amount,
+    userTransaction.raw_txn.sequence_number,
+    userTransaction.raw_txn.expiration_timestamp_secs,
+    userTransaction.raw_txn.chain_id,
   )
   useEffect(() => {
     if (handleDryRunRaw.status === 'success') {
@@ -56,9 +59,7 @@ export default function DryRunModal(props: { transaction: Transaction }) {
 
   return (
     <>
-      {transaction &&
-      'user_transaction' in transaction &&
-      transaction.user_transaction.raw_txn.payload ? (
+      {userTransaction.raw_txn.payload ? (
         <Button
           size="sm"
           mr={-4}

@@ -120,7 +120,11 @@ export default function Transaction() {
         <Spacer height={6} />
         <CardWithHeader
           title="Payload"
-          subtitle={transaction ? <DryRunModal transaction={transaction} /> : null}
+          subtitle={
+            transaction && 'user_transaction' in transaction ? (
+              <DryRunModal userTransaction={transaction.user_transaction} />
+            ) : null
+          }
         >
           {payload ? (
             <Box
