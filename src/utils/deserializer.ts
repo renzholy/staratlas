@@ -1,37 +1,45 @@
-import { bcs, types } from '@starcoin/starcoin'
+import { types, serde } from '@starcoin/starcoin'
+import { hexlify } from 'ethers/lib/utils'
 
 export function deserializeTypeTag(
   typeTag: types.TypeTag,
-  data: Uint8Array,
+  deserializer: serde.Deserializer,
 ): boolean | string | BigInt | number | undefined {
   if (typeof typeTag === 'string') {
     switch (typeTag) {
       case 'Signer':
       case 'Address': {
-        return undefined
+        return hexlify(deserializer.deserializeBytes())
       }
       case 'Bool': {
-        return new bcs.BcsDeserializer(data).deserializeBool()
+        return deserializer.deserializeBool()
       }
       case 'U128': {
-        return new bcs.BcsDeserializer(data).deserializeU128()
+        return deserializer.deserializeU128()
       }
       case 'U64': {
-        return new bcs.BcsDeserializer(data).deserializeU64()
+        return deserializer.deserializeU64()
       }
       case 'U8': {
-        return new bcs.BcsDeserializer(data).deserializeU8()
+        return deserializer.deserializeU8()
       }
       default: {
-        return undefined
+        throw new Error()
       }
     }
   }
   if ('Vector' in typeTag) {
-    return deserializeTypeTag(typeTag.Vector, data)
+    const length = deserializer.deserializeLen()
+    return `[${Array.from({ length })
+      .map(() => deserializeTypeTag(typeTag.Vector, deserializer))
+      .join(', ')}]`
   }
   if ('Struct' in typeTag) {
-    return typeTag.Struct.type_params?.map((param) => deserializeTypeTag(param, data)).join(', ')
+    return `${typeTag.Struct.address}::${typeTag.Struct.module}::${typeTag.Struct.name}<${
+      typeTag.Struct.type_params
+        ?.map((param) => deserializeTypeTag(param, deserializer))
+        .join(', ') || ''
+    }>`
   }
   return undefined
 }
