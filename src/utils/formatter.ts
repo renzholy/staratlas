@@ -1,4 +1,6 @@
 import dayjs from 'dayjs'
+import { types, serde } from '@starcoin/starcoin'
+import { hexlify } from 'ethers/lib/utils'
 
 export const numberFormat = Intl.NumberFormat()
 
@@ -12,4 +14,51 @@ export function formatTime(date?: dayjs.ConfigType) {
 
 export function formatTimeSimple(date?: dayjs.ConfigType) {
   return dayjs(date).format('MM-DD HH:mm:ss')
+}
+
+export function formatArgsWithTypeTag(
+  deserializer: serde.Deserializer,
+  typeTag: types.TypeTag,
+): string | undefined {
+  try {
+    if (typeof typeTag === 'string') {
+      switch (typeTag) {
+        case 'Signer':
+        case 'Address': {
+          return hexlify(deserializer.deserializeBytes())
+        }
+        case 'Bool': {
+          return deserializer.deserializeBool() ? 'true' : 'false'
+        }
+        case 'U128': {
+          return formatNumber(deserializer.deserializeU128() as bigint)
+        }
+        case 'U64': {
+          return formatNumber(deserializer.deserializeU64() as bigint)
+        }
+        case 'U8': {
+          return formatNumber(deserializer.deserializeU8())
+        }
+        default: {
+          return undefined
+        }
+      }
+    }
+    if ('Vector' in typeTag) {
+      const length = deserializer.deserializeLen()
+      return `[${Array.from({ length })
+        .map(() => formatArgsWithTypeTag(deserializer, typeTag.Vector))
+        .join(', ')}]`
+    }
+    if ('Struct' in typeTag) {
+      return `${typeTag.Struct.address}::${typeTag.Struct.module}::${typeTag.Struct.name}<${
+        typeTag.Struct.type_params
+          ?.map((param) => formatArgsWithTypeTag(deserializer, param))
+          .join(', ') || ''
+      }>`
+    }
+    return undefined
+  } catch {
+    return undefined
+  }
 }

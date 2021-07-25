@@ -6,7 +6,7 @@ import { arrayify } from 'ethers/lib/utils'
 import { useCallback, useMemo } from 'react'
 
 import { useResolveFunction } from '../hooks/use-provider'
-import { deserializeTypeTag } from '../utils/deserializer'
+import { formatArgsWithTypeTag } from '../utils/formatter'
 import CopyLink from './copy-link'
 
 export default function TransactionPayload(props: { payload: types.TransactionPayload }) {
@@ -52,9 +52,9 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
               <Text key={`${arg}${index}`} color="gray.500">
                 {resolvedFunction?.args[index + 1]
                   ? `${types.formatTypeTag(resolvedFunction.args[index + 1].type_tag)}: ${
-                      deserializeTypeTag(
-                        resolvedFunction.args[index + 1].type_tag,
+                      formatArgsWithTypeTag(
                         new bcs.BcsDeserializer(arrayify(arg)),
+                        resolvedFunction.args[index + 1].type_tag,
                       ) || arg
                     }`
                   : null}
