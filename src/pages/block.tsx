@@ -3,7 +3,6 @@ import {
   Grid,
   GridItem,
   Box,
-  Text,
   Heading,
   Divider,
   Spacer,
@@ -153,7 +152,7 @@ export default function Block() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transactions"
-          subtitle={<Text>Total {numberFormat.format(transactions?.total || 0)} transactions</Text>}
+          subtitle={`Total: ${numberFormat.format(transactions?.total || 0)}`}
         >
           {transactions?.contents.length ? (
             transactions.contents.map((transaction, index) => (
@@ -171,7 +170,7 @@ export default function Block() {
         <Spacer h={6} />
         <CardWithHeader
           title="Uncles"
-          subtitle={<Text>Total {numberFormat.format(block?.uncles.length || 0)} uncles</Text>}
+          subtitle={`Total: ${numberFormat.format(block?.uncles.length || 0)}`}
         >
           {block?.uncles.length ? (
             block.uncles.map((uncle, index) => (

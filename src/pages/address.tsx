@@ -111,7 +111,7 @@ export default function Address() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transactions"
-          subtitle={<Text>Total:&nbsp;{numberFormat.format(transactions?.total || 0)}</Text>}
+          subtitle={`Total: ${numberFormat.format(transactions?.total || 0)}`}
         >
           {transactions?.contents ? (
             transactions.contents.map((transaction, index) => (
