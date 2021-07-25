@@ -66,7 +66,7 @@ export default function Address() {
           )}
         </CardWithHeader>
         <Spacer height={6} />
-        <CardWithHeader title="Resource">
+        <CardWithHeader title="Resources">
           {resources ? (
             <Box
               paddingX={6}
