@@ -13,6 +13,7 @@ import TransactionStat from '../components/transaction-stat'
 import { useNetwork } from '../contexts/network'
 import { useTransaction } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
+import { numberFormat } from '../utils/formatter'
 
 export default function Transaction() {
   const params = useParams<{ hash: string }>()
@@ -134,7 +135,10 @@ export default function Transaction() {
         </CardWithHeader>
       </GridItem>
       <GridItem colSpan={1}>
-        <CardWithHeader title="Events" subtitle={`Total: ${transaction?.events.length || 0}`}>
+        <CardWithHeader
+          title="Events"
+          subtitle={`Total: ${transaction ? numberFormat.format(transaction.events.length) : '-'}`}
+        >
           {transaction?.events.length ? (
             transaction.events.map((event, index) => (
               <Fragment key={event.event_key}>

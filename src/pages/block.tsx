@@ -152,7 +152,7 @@ export default function Block() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transactions"
-          subtitle={`Total: ${numberFormat.format(transactions?.total || 0)}`}
+          subtitle={`Total: ${transactions ? numberFormat.format(transactions.total) : '-'}`}
         >
           {transactions?.contents.length ? (
             transactions.contents.map((transaction, index) => (
@@ -170,7 +170,7 @@ export default function Block() {
         <Spacer h={6} />
         <CardWithHeader
           title="Uncles"
-          subtitle={`Total: ${numberFormat.format(block?.uncles.length || 0)}`}
+          subtitle={`Total: ${block ? numberFormat.format(block.uncles.length) : '-'}`}
         >
           {block?.uncles.length ? (
             block.uncles.map((uncle, index) => (

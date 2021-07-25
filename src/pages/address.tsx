@@ -49,7 +49,7 @@ export default function Address() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Balances"
-          subtitle={`Total: ${numberFormat.format(Object.keys(balances || {}).length)}`}
+          subtitle={`Total: ${balances ? numberFormat.format(Object.keys(balances).length) : '-'}`}
         >
           {balances ? (
             <Box paddingX={6} paddingY={4}>
@@ -63,7 +63,7 @@ export default function Address() {
               ))}
             </Box>
           ) : (
-            <ListItemPlaceholder height={67}>
+            <ListItemPlaceholder height={75}>
               {balances && Object.entries(balances).length === 0 ? 'No balances' : <Spinner />}
             </ListItemPlaceholder>
           )}
@@ -71,7 +71,9 @@ export default function Address() {
         <Spacer height={6} />
         <CardWithHeader
           title="Resources"
-          subtitle={`Total: ${numberFormat.format(Object.keys(resources || {}).length)}`}
+          subtitle={`Total: ${
+            resources ? numberFormat.format(Object.keys(resources).length) : '-'
+          }`}
         >
           {resources ? (
             <Box
@@ -102,7 +104,7 @@ export default function Address() {
               ))}
             </Box>
           ) : (
-            <ListItemPlaceholder height={67}>
+            <ListItemPlaceholder height={75}>
               {resources && Object.entries(resources).length === 0 ? 'No resource' : <Spinner />}
             </ListItemPlaceholder>
           )}
@@ -111,7 +113,7 @@ export default function Address() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transactions"
-          subtitle={`Total: ${numberFormat.format(transactions?.total || 0)}`}
+          subtitle={`Total: ${transactions ? numberFormat.format(transactions.total) : '-'}`}
         >
           {transactions?.contents ? (
             transactions.contents.map((transaction, index) => (
@@ -121,7 +123,7 @@ export default function Address() {
               </Fragment>
             ))
           ) : (
-            <ListItemPlaceholder height={67}>
+            <ListItemPlaceholder height={75}>
               {transactions?.contents?.length === 0 ? 'No transactions' : <Spinner />}
             </ListItemPlaceholder>
           )}
