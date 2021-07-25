@@ -1,4 +1,4 @@
-import { Grid, GridItem, Button, Divider, Spinner } from '@chakra-ui/react'
+import { Grid, GridItem, Button, Divider, Spinner, useColorModeValue } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
 import { AnimateSharedLayout, motion } from 'framer-motion'
 
@@ -18,6 +18,7 @@ export default function Index() {
   const network = useNetwork()
   const { data: blocks } = useBlockList(1, { refreshInterval: 2000 })
   const { data: transactions } = useTransactionList(1, { refreshInterval: 2000 })
+  const buttonBackground = useColorModeValue('white', undefined)
 
   return (
     <Grid
@@ -30,7 +31,7 @@ export default function Index() {
         <CardWithHeader
           title="Latest blocks"
           subtitle={
-            <Button as={Link} to={`/${network}/blocks`} size="sm" mr={-4}>
+            <Button as={Link} to={`/${network}/blocks`} size="sm" bg={buttonBackground} mr={-4}>
               View all {numberFormat.format(blocks?.total || 0)}
             </Button>
           }
@@ -55,7 +56,7 @@ export default function Index() {
         <CardWithHeader
           title="Latest transactions"
           subtitle={
-            <Button as={Link} to={`/${network}/txs`} size="sm" mr={-4}>
+            <Button as={Link} to={`/${network}/txs`} size="sm" bg={buttonBackground} mr={-4}>
               View all {numberFormat.format(transactions?.total || 0)}
             </Button>
           }
