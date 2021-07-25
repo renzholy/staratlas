@@ -30,6 +30,13 @@ export default function TransactionListItem(props: {
         : transaction.block_metadata.author,
     [transaction],
   )
+  const status = useMemo(
+    () =>
+      typeof transaction.status === 'string'
+        ? transaction.status
+        : Object.keys(transaction.status)[0],
+    [transaction.status],
+  )
 
   return (
     <Box
@@ -84,10 +91,8 @@ export default function TransactionListItem(props: {
       </Button>
       <br />
       <Text minWidth={44}>{payload ? Object.keys(payload)[0] : 'No payload'}</Text>
-      <Text minWidth={32}>
-        {typeof transaction.status === 'string'
-          ? transaction.status
-          : Object.keys(transaction.status)[0]}
+      <Text minWidth={32} color={status === 'Executed' ? undefined : 'red.500'}>
+        {status}
       </Text>
       <Text minWidth={32}>Events:&nbsp;{formatNumber(transaction.events.length)}</Text>
       <Text>Gas:&nbsp;{formatNumber(transaction.gas_used as bigint)}</Text>

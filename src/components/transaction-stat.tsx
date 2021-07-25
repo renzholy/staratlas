@@ -1,11 +1,21 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
 import { encoding } from '@starcoin/starcoin'
+import { useMemo } from 'react'
 
 import { formatNumber, formatTime } from '../utils/formatter'
 import { Transaction } from '../utils/types'
 
 export default function TransactionStat(props: { transaction?: Transaction }) {
   const { transaction } = props
+  const status = useMemo(
+    () =>
+      transaction
+        ? typeof transaction.status === 'string'
+          ? transaction.status
+          : Object.keys(transaction.status)[0]
+        : '-',
+    [transaction],
+  )
 
   return (
     <>
@@ -28,17 +38,12 @@ export default function TransactionStat(props: { transaction?: Transaction }) {
             <Stat>
               <StatLabel>Status</StatLabel>
               <Skeleton isLoaded={!!transaction}>
-                <StatNumber>
-                  {transaction
-                    ? typeof transaction.status === 'string'
-                      ? transaction.status
-                      : Object.keys(transaction.status)[0]
-                    : '-'}
+                <StatNumber color={status === 'Executed' ? 'green.500' : 'red.500'}>
+                  {status}
                 </StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
-
           <GridItem colSpan={1}>
             <Stat>
               <StatLabel>Gas used</StatLabel>
