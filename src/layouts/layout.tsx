@@ -60,8 +60,8 @@ export default function Layout(props: { children?: ReactNode }) {
           to={`/${params.network}`}
           aria-label="index"
           icon={<StarIcon />}
-          bg={location.pathname === `/${params.network}` ? buttonBackground : undefined}
-          variant={location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
+          bg={buttonBackground}
+          variant="solid"
           mr={4}
           display={{ base: 'inline-flex', md: 'none' }}
         />
