@@ -3,10 +3,10 @@
 import { Heading, Text } from '@chakra-ui/react'
 import { bcs, types } from '@starcoin/starcoin'
 import { arrayify } from 'ethers/lib/utils'
-import { useCallback, Fragment, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useResolveFunction } from '../hooks/use-provider'
-import ArgDecodePopover from './arg-decode-popover'
+import { deserializeTypeTag } from '../utils/deserializer'
 import CopyLink from './copy-link'
 
 export default function TransactionPayload(props: { payload: types.TransactionPayload }) {
@@ -21,6 +21,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
         : undefined,
     [payload],
   )
+  const { data: resolvedFunction } = useResolveFunction(functionId)
   const renderScriptFunction = useCallback(
     (
       scriptFunction: Extract<
@@ -48,19 +49,20 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
               Args
             </Heading>
             {scriptFunction.args.map((arg, index) => (
-              <Fragment key={`${arg}${index}`}>
-                {index === 0 ? null : <br />}
-                <ArgDecodePopover>{arg}</ArgDecodePopover>
-              </Fragment>
+              <Text key={`${arg}${index}`} color="gray.500">
+                {resolvedFunction
+                  ? `${types.formatTypeTag(
+                      resolvedFunction.args[index].type_tag,
+                    )}: ${deserializeTypeTag(resolvedFunction.args[index].type_tag, arg)}`
+                  : null}
+              </Text>
             ))}
           </>
         ) : null}
       </>
     ),
-    [functionId],
+    [functionId, resolvedFunction],
   )
-  const { data } = useResolveFunction(functionId)
-  console.log(data)
 
   return (
     <>

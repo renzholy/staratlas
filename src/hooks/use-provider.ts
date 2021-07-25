@@ -1,4 +1,4 @@
-import { providers } from '@starcoin/starcoin'
+import { providers, types } from '@starcoin/starcoin'
 import { useMemo } from 'react'
 import useSWR, { SWRConfiguration } from 'swr'
 
@@ -39,7 +39,8 @@ export function useBalances(address: string) {
 export function useResolveFunction(functionId?: string) {
   const provider = useProvider()
   const network = useNetwork()
-  return useSWR(functionId ? [network, 'resolve_function', functionId] : null, () =>
-    provider.send('contract.resolve_function', [functionId]),
+  return useSWR<{ args: { name: string; type_tag: types.TypeTag; doc: string }[] }>(
+    functionId ? [network, 'resolve_function', functionId] : null,
+    () => provider.send('contract.resolve_function', [functionId]),
   )
 }
