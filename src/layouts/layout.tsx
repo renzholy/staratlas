@@ -14,7 +14,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, ChevronUpIcon, MoonIcon, StarIcon, SunIcon } from '@chakra-ui/icons'
 import startCase from 'lodash/startCase'
 
 import { NETWORKS } from '../constants'
@@ -55,12 +55,23 @@ export default function Layout(props: { children?: ReactNode }) {
           top: 0;
         `}
       >
+        <IconButton
+          as={Link}
+          to={`/${params.network}`}
+          aria-label="index"
+          icon={<StarIcon />}
+          bg={location.pathname === `/${params.network}` ? buttonBackground : undefined}
+          variant={location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
+          mr={4}
+          display={{ base: 'inline-flex', md: 'none' }}
+        />
         <Button
           as={Link}
           to={`/${params.network}`}
           bg={location.pathname === `/${params.network}` ? buttonBackground : undefined}
           variant={location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
           mr={2}
+          display={{ base: 'none', md: 'inline-flex' }}
         >
           StarAtlas
         </Button>
@@ -70,6 +81,7 @@ export default function Layout(props: { children?: ReactNode }) {
           bg={/\/blocks/.test(location.pathname) ? buttonBackground : undefined}
           variant={/\/blocks/.test(location.pathname) ? 'solid' : 'ghost'}
           mr={2}
+          display={{ base: 'none', md: 'inline-flex' }}
         >
           Blocks
         </Button>
@@ -79,6 +91,7 @@ export default function Layout(props: { children?: ReactNode }) {
           bg={/\/txs/.test(location.pathname) ? buttonBackground : undefined}
           variant={/\/txs/.test(location.pathname) ? 'solid' : 'ghost'}
           mr={4}
+          display={{ base: 'none', md: 'inline-flex' }}
         >
           Transactions
         </Button>
@@ -102,7 +115,7 @@ export default function Layout(props: { children?: ReactNode }) {
                   key={network}
                   isChecked={params.network === network}
                 >
-                  {network}
+                  {startCase(network)}
                 </MenuItemOption>
               ))}
             </MenuList>
@@ -114,6 +127,7 @@ export default function Layout(props: { children?: ReactNode }) {
           bg={buttonBackground}
           onClick={toggleColorMode}
           icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
+          display={{ base: 'none', md: 'inline-flex' }}
         />
       </Flex>
       {props.children}
