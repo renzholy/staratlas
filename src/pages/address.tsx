@@ -45,9 +45,12 @@ export default function Address() {
           <StatNumber>{params.hash.toLowerCase()}</StatNumber>
         </Stat>
       </GridItem>
-      <GridItem colSpan={1} />
+      <GridItem colSpan={1} display={{ base: 'none', xl: 'block' }} />
       <GridItem colSpan={1}>
-        <CardWithHeader title="Balances">
+        <CardWithHeader
+          title="Balances"
+          subtitle={`Total: ${numberFormat.format(Object.keys(balances || {}).length)}`}
+        >
           {balances ? (
             <Box paddingX={6} paddingY={4}>
               {Object.entries(balances).map(([key, value], index) => (
@@ -66,7 +69,10 @@ export default function Address() {
           )}
         </CardWithHeader>
         <Spacer height={6} />
-        <CardWithHeader title="Resources">
+        <CardWithHeader
+          title="Resources"
+          subtitle={`Total: ${numberFormat.format(Object.keys(resources || {}).length)}`}
+        >
           {resources ? (
             <Box
               paddingX={6}
