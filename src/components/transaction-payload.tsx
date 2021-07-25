@@ -51,9 +51,10 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
             {scriptFunction.args.map((arg, index) => (
               <Text key={`${arg}${index}`} color="gray.500">
                 {resolvedFunction
-                  ? `${types.formatTypeTag(
-                      resolvedFunction.args[index].type_tag,
-                    )}: ${deserializeTypeTag(resolvedFunction.args[index].type_tag, arg)}`
+                  ? `${types.formatTypeTag(resolvedFunction.args[index].type_tag)}: ${
+                      deserializeTypeTag(resolvedFunction.args[index].type_tag, arrayify(arg)) ||
+                      arg
+                    }`
                   : null}
               </Text>
             ))}
