@@ -31,10 +31,11 @@ export default function JsonCode(props: {
     <Code
       dangerouslySetInnerHTML={{ __html: data || str }}
       width="100%"
-      overflowX="auto"
       mt={1}
       padding={2}
       color="gray.500"
+      whiteSpace="pre-wrap"
+      wordBreak="break-all"
       bg={colorMode === 'light' ? 'gray.50' : 'whiteAlpha.50'}
     />
   )

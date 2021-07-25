@@ -73,7 +73,7 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
         <ModalContent>
           <ModalHeader>Dry run result</ModalHeader>
           <ModalCloseButton />
-          <PerfectScrollbar>
+          <PerfectScrollbar options={{ suppressScrollX: true }}>
             <JsonCode>{handleDryRun.value}</JsonCode>
           </PerfectScrollbar>
           <ModalFooter>
