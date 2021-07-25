@@ -3,14 +3,24 @@
 import { Heading, Text } from '@chakra-ui/react'
 import { bcs, types } from '@starcoin/starcoin'
 import { arrayify } from 'ethers/lib/utils'
-import { useCallback, Fragment } from 'react'
+import { useCallback, Fragment, useMemo } from 'react'
 
+import { useResolveFunction } from '../hooks/use-provider'
 import ArgDecodePopover from './arg-decode-popover'
 import CopyLink from './copy-link'
 
 export default function TransactionPayload(props: { payload: types.TransactionPayload }) {
   const { payload } = props
   const type = Object.keys(payload)[0]
+  const functionId = useMemo(
+    () =>
+      'ScriptFunction' in payload
+        ? typeof payload.ScriptFunction.func === 'string'
+          ? payload.ScriptFunction.func
+          : `${payload.ScriptFunction.func.address}::${payload.ScriptFunction.func.module}::${payload.ScriptFunction.func.functionName}`
+        : undefined,
+    [payload],
+  )
   const renderScriptFunction = useCallback(
     (
       scriptFunction: Extract<
@@ -19,11 +29,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
       >['ScriptFunction'],
     ) => (
       <>
-        <CopyLink>
-          {typeof scriptFunction.func === 'string'
-            ? scriptFunction.func
-            : `${scriptFunction.func.address}::${scriptFunction.func.module}::${scriptFunction.func.functionName}`}
-        </CopyLink>
+        <CopyLink>{functionId || ''}</CopyLink>
         {scriptFunction.ty_args.length ? (
           <>
             <Heading size="sm" mt={4}>
@@ -51,8 +57,10 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
         ) : null}
       </>
     ),
-    [],
+    [functionId],
   )
+  const { data } = useResolveFunction(functionId)
+  console.log(data)
 
   return (
     <>

@@ -17,7 +17,7 @@ async function jsonResponse(response: Response) {
   throw new HTTPError(response.status, response.statusText)
 }
 
-export async function jsonFetcher<T>(input: RequestInfo): Promise<T> {
-  const response = await fetch(input)
+export async function jsonFetcher<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
+  const response = await fetch(input, init)
   return jsonResponse(response)
 }
