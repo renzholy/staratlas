@@ -32,6 +32,16 @@ export default function BlockListItem(props: { block: Block; relativeTime?: bool
         }
       `}
     >
+      <Box width={32} display="inline-block">
+        <Button
+          as={Link}
+          to={`/${network}/block/${block.header.number}`}
+          variant="link"
+          color="blue.500"
+        >
+          #{block.header.number}
+        </Button>
+      </Box>
       <Text
         css={css`
           float: right;
@@ -43,16 +53,6 @@ export default function BlockListItem(props: { block: Block; relativeTime?: bool
           formatTimeSimple(parseInt(block.header.timestamp.toString(), 10))
         )}
       </Text>
-      <Box width={32} display="inline-block">
-        <Button
-          as={Link}
-          to={`/${network}/block/${block.header.number}`}
-          variant="link"
-          color="blue.500"
-        >
-          #{block.header.number}
-        </Button>
-      </Box>
       Author:&nbsp;
       <Button
         as={Link}

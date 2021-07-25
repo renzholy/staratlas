@@ -51,6 +51,16 @@ export default function TransactionListItem(props: {
         }
       `}
     >
+      <Button
+        as={Link}
+        to={`/${network}/tx/${transaction.transaction_hash}`}
+        variant="link"
+        color="orange.500"
+        width={{ base: undefined, md: 32 }}
+        marginRight={{ base: undefined, md: 12 }}
+      >
+        {transaction.transaction_hash}
+      </Button>
       <Text
         css={css`
           float: right;
@@ -62,16 +72,6 @@ export default function TransactionListItem(props: {
           formatTimeSimple(parseInt(transaction.timestamp.toString(), 10))
         )}
       </Text>
-      <Button
-        as={Link}
-        to={`/${network}/tx/${transaction.transaction_hash}`}
-        variant="link"
-        color="orange.500"
-        width={{ base: undefined, md: 32 }}
-        marginRight={{ base: undefined, md: 12 }}
-      >
-        {transaction.transaction_hash}
-      </Button>
       Sender:&nbsp;
       <Button
         as={Link}
