@@ -16,19 +16,11 @@ export default function useDryRunRaw(
   senderAddress?: types.HexString,
   transactionPayload?: types.TransactionPayload,
   maxGasAmount?: types.U64,
-  expirationTimestampSecs?: types.U64,
   chainId?: types.U8,
 ) {
   const provider = useProvider()
   const handleDryRunRaw = useCallback(async () => {
-    if (
-      !publicKeyHex ||
-      !senderAddress ||
-      !transactionPayload ||
-      !maxGasAmount ||
-      !expirationTimestampSecs ||
-      !chainId
-    ) {
+    if (!publicKeyHex || !senderAddress || !transactionPayload || !maxGasAmount || !chainId) {
       return undefined
     }
     const senderSequenceNumber = await provider.getSequenceNumber(senderAddress)
@@ -59,20 +51,12 @@ export default function useDryRunRaw(
           payload,
           maxGasAmount,
           senderSequenceNumber,
-          expirationTimestampSecs,
+          Math.round(Date.now() / 1000) + 60,
           chainId,
         ),
       ),
       publicKeyHex,
     )
-  }, [
-    publicKeyHex,
-    senderAddress,
-    transactionPayload,
-    maxGasAmount,
-    expirationTimestampSecs,
-    chainId,
-    provider,
-  ])
+  }, [publicKeyHex, senderAddress, transactionPayload, maxGasAmount, chainId, provider])
   return useAsync(handleDryRunRaw)
 }

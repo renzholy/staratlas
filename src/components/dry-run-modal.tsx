@@ -13,6 +13,8 @@ import {
 } from '@chakra-ui/react'
 import { encoding, types } from '@starcoin/starcoin'
 import { useMemo, useEffect } from 'react'
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import 'react-perfect-scrollbar/dist/css/styles.css'
 
 import useDryRunRaw from '../hooks/use-dry-run-raw'
 import JsonCode from './json-code'
@@ -37,7 +39,6 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
     userTransaction.raw_txn.sender,
     payload,
     userTransaction.raw_txn.max_gas_amount,
-    userTransaction.raw_txn.expiration_timestamp_secs,
     userTransaction.raw_txn.chain_id,
   )
   const toast = useToast()
@@ -77,9 +78,11 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
         <ModalContent>
           <ModalHeader>Dry run result</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <JsonCode>{handleDryRunRaw.value}</JsonCode>
-          </ModalBody>
+          <PerfectScrollbar>
+            <ModalBody>
+              <JsonCode>{handleDryRunRaw.value}</JsonCode>
+            </ModalBody>
+          </PerfectScrollbar>
           <ModalFooter>
             <Button colorScheme="blue" onClick={onClose}>
               Close
