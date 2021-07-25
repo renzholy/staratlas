@@ -22,6 +22,7 @@ import NotFound from '../components/not-fount'
 import TransactionPayload from '../components/transaction-payload'
 import TransactionStat from '../components/transaction-stat'
 import { useNetwork } from '../contexts/network'
+import useDryRunRaw from '../hooks/use-dry-run-raw'
 import { useTransaction } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
 import { formatNumber } from '../utils/formatter'
@@ -39,6 +40,17 @@ export default function Transaction() {
         : undefined,
     [transaction],
   )
+  const senderPublicKey = useMemo(
+    () =>
+      transaction
+        ? 'user_transaction' in transaction
+          ? 'Ed25519' in transaction.user_transaction.authenticator
+            ? transaction.user_transaction.authenticator.Ed25519.public_key
+            : transaction.user_transaction.authenticator.MultiEd25519.public_key
+          : transaction.block_metadata.author_auth_key
+        : undefined,
+    [transaction],
+  )
   const buttonBackground = useColorModeValue('white', undefined)
   const payload = useMemo(
     () =>
@@ -48,6 +60,12 @@ export default function Transaction() {
         ? encoding.decodeTransactionPayload(transaction.user_transaction.raw_txn.payload)
         : undefined,
     [transaction],
+  )
+  const handleDryRunRaw = useDryRunRaw(
+    senderPublicKey,
+    transaction && 'user_transaction' in transaction
+      ? transaction.user_transaction.raw_txn.payload
+      : undefined,
   )
 
   if (error) {
@@ -134,7 +152,7 @@ export default function Transaction() {
             transaction &&
             'user_transaction' in transaction &&
             transaction.user_transaction.raw_txn.payload ? (
-              <Button size="sm" mr={-4} bg={buttonBackground}>
+              <Button size="sm" mr={-4} bg={buttonBackground} onClick={handleDryRunRaw}>
                 Dry run
               </Button>
             ) : null
