@@ -9,6 +9,7 @@ import {
   Button,
   useDisclosure,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react'
 import { encoding, types } from '@starcoin/starcoin'
 import { useMemo, useEffect } from 'react'
@@ -39,22 +40,24 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
     userTransaction.raw_txn.expiration_timestamp_secs,
     userTransaction.raw_txn.chain_id,
   )
+  const toast = useToast()
+  const error = useMemo(() => {
+    try {
+      const matched = handleDryRunRaw.error?.message.match(
+        /processing response error \(body=(.+), error=/,
+      )?.[1]
+      return matched ? JSON.parse(matched) : undefined
+    } catch {
+      return handleDryRunRaw.error?.message
+    }
+  }, [handleDryRunRaw.error?.message])
   useEffect(() => {
     if (handleDryRunRaw.status === 'success') {
       onOpen()
+    } else if (handleDryRunRaw.status === 'error') {
+      toast({ status: 'error', title: 'Dry run error', description: error })
     }
-  }, [handleDryRunRaw.status, onOpen])
-  useEffect(() => {
-    if (handleDryRunRaw.status === 'error') {
-      onOpen()
-    }
-  }, [handleDryRunRaw.status, onOpen])
-  const error = useMemo(() => {
-    const matched = handleDryRunRaw.error?.message.match(
-      /processing response error \(body=(.+), error=/,
-    )?.[1]
-    return matched ? JSON.parse(JSON.parse(matched)) : undefined
-  }, [handleDryRunRaw.error?.message])
+  }, [error, handleDryRunRaw.status, onOpen, toast])
 
   return (
     <>
@@ -69,13 +72,13 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
           Dry run
         </Button>
       ) : null}
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl" scrollBehavior="inside">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Dry run result</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <JsonCode>{error || handleDryRunRaw.value}</JsonCode>
+            <JsonCode>{handleDryRunRaw.value}</JsonCode>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" onClick={onClose}>
