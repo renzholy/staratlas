@@ -51,12 +51,12 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
             {scriptFunction.args.map((arg, index) => (
               <Text key={`${arg}${index}`} color="gray.500">
                 {resolvedFunction?.args[index + 1]
-                  ? `${types.formatTypeTag(
-                      resolvedFunction.args[index + 1].type_tag,
-                    )}: ${deserializeTypeTag(
-                      resolvedFunction.args[index + 1].type_tag,
-                      new bcs.BcsDeserializer(arrayify(arg)),
-                    )}`
+                  ? `${types.formatTypeTag(resolvedFunction.args[index + 1].type_tag)}: ${
+                      deserializeTypeTag(
+                        resolvedFunction.args[index + 1].type_tag,
+                        new bcs.BcsDeserializer(arrayify(arg)),
+                      ) || arg
+                    }`
                   : null}
               </Text>
             ))}
