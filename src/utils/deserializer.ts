@@ -1,6 +1,9 @@
-import { bcs, starcoin_types, types, encoding } from '@starcoin/starcoin'
+import { bcs, types } from '@starcoin/starcoin'
 
-export function deserializeTypeTag(typeTag: types.TypeTag, data: Uint8Array) {
+export function deserializeTypeTag(
+  typeTag: types.TypeTag,
+  data: Uint8Array,
+): boolean | string | BigInt | number | undefined {
   if (typeof typeTag === 'string') {
     switch (typeTag) {
       case 'Signer':
@@ -24,14 +27,11 @@ export function deserializeTypeTag(typeTag: types.TypeTag, data: Uint8Array) {
       }
     }
   }
-  // if ('Vector' in typeTag) {
-  //   return deserializeTypeTag(
-  //     new starcoin_types.TypeTagVariantVector(encoding.typeTagToSCS(typeTag.Vector)),
-  //     tag,
-  //   )
-  // }
-  // if ('Struct' in typeTag) {
-  //   return new starcoin_types.TypeTagVariantStruct(encoding.structTagToSCS(typeTag.Struct))
-  // }
+  if ('Vector' in typeTag) {
+    return deserializeTypeTag(typeTag.Vector, data)
+  }
+  if ('Struct' in typeTag) {
+    return typeTag.Struct.type_params?.map((param) => deserializeTypeTag(param, data)).join(', ')
+  }
   return undefined
 }
