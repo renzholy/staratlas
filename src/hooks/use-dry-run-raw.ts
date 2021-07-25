@@ -16,7 +16,6 @@ export default function useDryRunRaw(
   senderAddress?: types.HexString,
   transactionPayload?: types.TransactionPayload,
   maxGasAmount?: types.U64,
-  senderSequenceNumber?: types.U64,
   expirationTimestampSecs?: types.U64,
   chainId?: types.U8,
 ) {
@@ -27,10 +26,13 @@ export default function useDryRunRaw(
       !senderAddress ||
       !transactionPayload ||
       !maxGasAmount ||
-      !senderSequenceNumber ||
       !expirationTimestampSecs ||
       !chainId
     ) {
+      return undefined
+    }
+    const senderSequenceNumber = await provider.getSequenceNumber(senderAddress)
+    if (!senderSequenceNumber) {
       return undefined
     }
     const payload =
@@ -50,7 +52,7 @@ export default function useDryRunRaw(
             transactionPayload.Script.ty_args,
             transactionPayload.Script.args,
           )
-    const transactionHash = await provider.dryRunRaw(
+    return provider.dryRunRaw(
       serializeRawUserTransaction(
         utils.tx.generateRawUserTransaction(
           senderAddress,
@@ -63,13 +65,11 @@ export default function useDryRunRaw(
       ),
       publicKeyHex,
     )
-    return transactionHash
   }, [
     publicKeyHex,
     senderAddress,
     transactionPayload,
     maxGasAmount,
-    senderSequenceNumber,
     expirationTimestampSecs,
     chainId,
     provider,

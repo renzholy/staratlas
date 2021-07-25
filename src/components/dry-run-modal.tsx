@@ -36,7 +36,6 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
     userTransaction.raw_txn.sender,
     payload,
     userTransaction.raw_txn.max_gas_amount,
-    userTransaction.raw_txn.sequence_number,
     userTransaction.raw_txn.expiration_timestamp_secs,
     userTransaction.raw_txn.chain_id,
   )
