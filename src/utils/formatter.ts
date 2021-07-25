@@ -51,11 +51,13 @@ export function formatArgsWithTypeTag(
         .join(', ')}]`
     }
     if ('Struct' in typeTag) {
-      return `${typeTag.Struct.address}::${typeTag.Struct.module}::${typeTag.Struct.name}<${
+      return `${typeTag.Struct.address}::${typeTag.Struct.module}::${typeTag.Struct.name}${
         typeTag.Struct.type_params
-          ?.map((param) => formatArgsWithTypeTag(deserializer, param))
-          .join(', ') || ''
-      }>`
+          ? `<${typeTag.Struct.type_params
+              .map((param) => formatArgsWithTypeTag(deserializer, param))
+              .join(', ')}>`
+          : ''
+      }`
     }
     return undefined
   } catch {
