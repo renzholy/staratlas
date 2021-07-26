@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, Textarea } from '@chakra-ui/react'
+import { Alert, Box, Grid, GridItem, Textarea } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
 import { useMemo, useState } from 'react'
@@ -8,10 +8,14 @@ import { CardWithHeader } from '../layouts/card-with-header'
 
 export default function Utils() {
   const [text, setText] = useState('')
+  const [error, setError] = useState<Error>()
   const payload = useMemo(() => {
     try {
-      return encoding.decodeTransactionPayload(text)
-    } catch {
+      const p = encoding.decodeTransactionPayload(text)
+      setError(undefined)
+      return p
+    } catch (err) {
+      setError(err)
       return undefined
     }
   }, [text])
@@ -41,13 +45,14 @@ export default function Utils() {
             `}
           >
             <Textarea
-              mb={payload ? 4 : 0}
+              mb={payload || error ? 4 : 0}
               value={text}
               onChange={(e) => {
                 setText(e.target.value)
               }}
             />
             {payload ? <TransactionPayload payload={payload} /> : null}
+            {error ? <Alert status="error">{error.message}</Alert> : null}
           </Box>
         </CardWithHeader>
       </GridItem>
