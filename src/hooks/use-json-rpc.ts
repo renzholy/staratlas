@@ -59,4 +59,11 @@ type API = {
     params: [string]
     result: RPC.TransactionEventView[]
   }
+  'chain.get_epoch_uncles_by_number': {
+    params: [number]
+    result: {
+      header: RPC.BlockHeaderView
+      uncles: RPC.BlockHeaderView[]
+    }[]
+  }
 }

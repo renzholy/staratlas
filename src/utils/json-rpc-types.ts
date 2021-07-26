@@ -251,25 +251,19 @@ export namespace RPC {
     type_args?: string[]
     args?: string[]
   }
-  export declare function formatFunctionId(functionId: FunctionId): string
-  export declare function parseFunctionId(functionId: FunctionId): {
-    address: AccountAddress
-    module: Identifier
-    functionName: Identifier
-  }
   export interface BlockHeaderView {
     block_hash: HashValue
     parent_hash: HashValue
     timestamp: U64
     number: BlockNumber
     author: AccountAddress
-    author_auth_key?: AuthenticationKey
+    author_auth_key: AuthenticationKey | null
     txn_accumulator_root: HashValue
     block_accumulator_root: HashValue
     state_root: HashValue
     gas_used: U64
     difficulty: U256
-    nonce: U64
+    nonce: number
     body_hash: HashValue
     chain_id: U8
   }
