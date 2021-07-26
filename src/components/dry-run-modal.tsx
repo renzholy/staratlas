@@ -15,7 +15,7 @@ import { useMemo, useEffect } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
-import useDryRun from '../hooks/use-dry-run'
+import { useDryRunRaw } from '../hooks/use-provider'
 import JsonCode from './json-code'
 
 export default function DryRunModal(props: { userTransaction: types.SignedUserTransactionView }) {
@@ -29,7 +29,7 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
         : userTransaction.authenticator.MultiEd25519.public_key,
     [userTransaction],
   )
-  const handleDryRun = useDryRun(
+  const handleDryRun = useDryRunRaw(
     senderPublicKey,
     userTransaction.raw_txn.sender,
     userTransaction.raw_txn.payload,

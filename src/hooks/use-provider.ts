@@ -1,8 +1,10 @@
-import { providers, types } from '@starcoin/starcoin'
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import useSWR, { SWRConfiguration } from 'swr'
+import { providers, utils, types, bcs, encoding } from '@starcoin/starcoin'
+import { arrayify, hexlify } from 'ethers/lib/utils'
 
 import { useNetwork } from '../contexts/network'
+import useAsync from './use-async'
 
 export function useProvider() {
   const network = useNetwork()
@@ -35,10 +37,59 @@ export function useBalances(address: string) {
   )
 }
 
-export function useResolveFunction(functionId?: string) {
+export function useDryRunRaw(
+  publicKeyHex?: types.HexString,
+  senderAddress?: types.HexString,
+  transactionPayload?: types.HexString,
+  maxGasAmount?: types.U64,
+  chainId?: types.U8,
+) {
   const provider = useProvider()
-  return useSWR<{ args: { name: string; type_tag: types.TypeTag; doc: string }[] }>(
-    functionId ? [provider.connection.url, 'resolve_function', functionId] : null,
-    () => provider.send('contract.resolve_function', [functionId]),
-  )
+  const handleDryRunRaw = useCallback(async () => {
+    if (!publicKeyHex || !senderAddress || !transactionPayload || !maxGasAmount || !chainId) {
+      return undefined
+    }
+    const senderSequenceNumber = await provider.getSequenceNumber(senderAddress)
+    if (!senderSequenceNumber) {
+      return undefined
+    }
+    const decodedPayload = encoding.decodeTransactionPayload(transactionPayload)
+    const payload =
+      'ScriptFunction' in decodedPayload
+        ? utils.tx.encodeScriptFunction(
+            decodedPayload.ScriptFunction.func,
+            decodedPayload.ScriptFunction.ty_args,
+            decodedPayload.ScriptFunction.args.map((arg) => arrayify(arg)),
+          )
+        : 'Package' in decodedPayload
+        ? utils.tx.encodePackage(
+            decodedPayload.Package.package_address,
+            decodedPayload.Package.modules.map(({ code }) => code),
+            decodedPayload.Package.init_script
+              ? {
+                  functionId: decodedPayload.Package.init_script?.func,
+                  tyArgs: decodedPayload.Package.init_script.ty_args,
+                  args: decodedPayload.Package.init_script.args.map((arg) => arrayify(arg)),
+                }
+              : undefined,
+          )
+        : utils.tx.encodeTransactionScript(
+            arrayify(decodedPayload.Script.code),
+            decodedPayload.Script.ty_args,
+            decodedPayload.Script.args,
+          )
+    const scriptFunction = utils.tx.generateRawUserTransaction(
+      senderAddress,
+      payload,
+      maxGasAmount,
+      senderSequenceNumber,
+      Math.round(Date.now() / 1000) + 60,
+      chainId,
+    )
+    const se = new bcs.BcsSerializer()
+    scriptFunction.serialize(se)
+    const rawUserTransactionHex = hexlify(se.getBytes())
+    return provider.dryRunRaw(rawUserTransactionHex, publicKeyHex)
+  }, [publicKeyHex, senderAddress, transactionPayload, maxGasAmount, chainId, provider])
+  return useAsync(handleDryRunRaw)
 }

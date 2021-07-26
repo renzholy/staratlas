@@ -5,7 +5,7 @@ import { bcs, types } from '@starcoin/starcoin'
 import { arrayify } from 'ethers/lib/utils'
 import { useCallback, useMemo } from 'react'
 
-import { useResolveFunction } from '../hooks/use-provider'
+import { useResolveFunction } from '../hooks/use-contract'
 import { formatArgsWithTypeTag } from '../utils/formatter'
 import CopyLink from './copy-link'
 
