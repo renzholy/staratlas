@@ -35,10 +35,28 @@ type API = {
       uncles: RPC.BlockHeaderView[]
     }
   }
+  'chain.get_block_by_number': {
+    params: [number]
+    result: {
+      header: RPC.BlockHeaderView
+      body: {
+        Full: RPC.SignedUserTransactionView[]
+      }
+      uncles: RPC.BlockHeaderView[]
+    }
+  }
   'chain.get_transaction': {
     params: [string]
     result: RPC.TxnBlockInfo & {
       user_transaction: RPC.SignedUserTransactionView
     }
+  }
+  'chain.get_block_txn_infos': {
+    params: [string]
+    result: RPC.TransactionInfoView[]
+  }
+  'chain.get_events_by_txn_hash': {
+    params: [string]
+    result: RPC.TransactionEventView[]
   }
 }

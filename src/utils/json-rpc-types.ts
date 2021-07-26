@@ -294,7 +294,7 @@ export namespace RPC {
   }
   export interface TransactionEventView extends TxnBlockInfo {
     data: HexString
-    type_tags: TypeTag
+    type_tag: TypeTag
     event_key: EventKey
     event_seq_number: U64
   }
@@ -322,8 +322,6 @@ export namespace RPC {
     event_root_hash: HashValue
     gas_used: U64
     status: TransactionVMStatus
-    txn_events?: Array<TransactionEventView>
-    confirmations: number
   }
   export interface TransactionResponse extends SignedUserTransactionView {
     block_number?: BlockNumber
