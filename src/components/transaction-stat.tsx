@@ -67,7 +67,7 @@ export default function TransactionStat(props: { transaction?: Transaction }) {
               <StatLabel>Payload</StatLabel>
               <Skeleton isLoaded={!!transaction}>
                 <StatNumber>
-                  {transaction && 'user_transaction' in transaction
+                  {transaction
                     ? Object.keys(
                         encoding.decodeTransactionPayload(
                           transaction.user_transaction.raw_txn.payload,

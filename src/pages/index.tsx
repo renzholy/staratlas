@@ -66,7 +66,10 @@ export default function Index() {
               transactions.contents.map((transaction, index) => (
                 <motion.div layout={true} key={transaction.transaction_hash}>
                   {index === 0 ? null : <Divider />}
-                  <TransactionListItem transaction={transaction} relativeTime={true} />
+                  <TransactionListItem
+                    transaction={transaction.user_transaction}
+                    relativeTime={true}
+                  />
                 </motion.div>
               ))
             ) : (

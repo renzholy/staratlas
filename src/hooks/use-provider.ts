@@ -37,6 +37,34 @@ export function useBalances(address: string) {
   )
 }
 
+export function useBlock(hash?: string) {
+  const provider = useProvider()
+  return useSWR(hash ? [provider.connection.url, 'getBlock', hash] : null, () =>
+    provider.getBlock(hash!),
+  )
+}
+
+export function useTransaction(hash?: string) {
+  const provider = useProvider()
+  return useSWR(hash ? [provider.connection.url, 'getTransaction', hash] : null, () =>
+    provider.getTransaction(hash!),
+  )
+}
+
+export function useTransactionInfo(hash?: string) {
+  const provider = useProvider()
+  return useSWR(hash ? [provider.connection.url, 'getTransactionInfo', hash] : null, () =>
+    provider.getTransactionInfo(hash!),
+  )
+}
+
+export function useEventsOfTransaction(hash?: string) {
+  const provider = useProvider()
+  return useSWR(hash ? [provider.connection.url, 'getEventsOfTransaction', hash] : null, () =>
+    provider.getEventsOfTransaction(hash!),
+  )
+}
+
 export function useDryRunRaw(
   publicKeyHex?: types.HexString,
   senderAddress?: types.HexString,

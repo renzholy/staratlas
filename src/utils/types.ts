@@ -1,6 +1,5 @@
 import {
   BlockHeaderView,
-  BlockMetadataView,
   BlockNumber,
   EventKey,
   HashValue,
@@ -46,4 +45,5 @@ export type Transaction = {
   timestamp: U64
   transaction_hash: HashValue
   transaction_index: U64
-} & ({ block_metadata: BlockMetadataView } | { user_transaction: SignedUserTransactionView })
+  user_transaction: SignedUserTransactionView
+}

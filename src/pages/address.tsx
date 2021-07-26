@@ -117,7 +117,7 @@ export default function Address() {
             transactions.contents.map((transaction, index) => (
               <Fragment key={transaction.transaction_hash}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={transaction} />
+                <TransactionListItem transaction={transaction.user_transaction} />
               </Fragment>
             ))
           ) : (

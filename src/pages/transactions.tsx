@@ -94,7 +94,7 @@ export default function Transactions() {
             transactions.contents.map((transaction, index) => (
               <Fragment key={transaction.transaction_hash}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={transaction} />
+                <TransactionListItem transaction={transaction.user_transaction} />
               </Fragment>
             ))
           ) : (
@@ -147,7 +147,7 @@ export default function Transactions() {
             pendings.contents.map((pending, index) => (
               <Fragment key={pending.transaction_hash}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={pending} />
+                <TransactionListItem transaction={pending.user_transaction} />
               </Fragment>
             ))
           ) : (
