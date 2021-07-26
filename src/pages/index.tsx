@@ -32,7 +32,7 @@ export default function Index() {
           title="Latest blocks"
           subtitle={
             <Button as={Link} to={`/${network}/blocks`} size="sm" bg={buttonBackground} mr={-4}>
-              View all {formatNumber(blocks?.total || 0)}
+              View all {blocks ? formatNumber(blocks.total) : '-'}
             </Button>
           }
         >
@@ -57,7 +57,7 @@ export default function Index() {
           title="Latest transactions"
           subtitle={
             <Button as={Link} to={`/${network}/txs`} size="sm" bg={buttonBackground} mr={-4}>
-              View all {formatNumber(transactions?.total || 0)}
+              View all {transactions ? formatNumber(transactions.total) : '-'}
             </Button>
           }
         >
