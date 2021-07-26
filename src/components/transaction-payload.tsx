@@ -6,7 +6,7 @@ import { arrayify } from 'ethers/lib/utils'
 import { useCallback, useMemo } from 'react'
 
 import { useResolveFunction } from '../hooks/use-contract'
-import { formatArgsWithTypeTag } from '../utils/formatter'
+import { formatArgsWithTypeTag, formatCode } from '../utils/formatter'
 import CopyLink from './copy-link'
 
 export default function TransactionPayload(props: { payload: types.TransactionPayload }) {
@@ -79,7 +79,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
           </Heading>
           {payload.Package.modules.map((module) => (
             <Text key={module.code} color="gray.500">
-              {new bcs.BcsDeserializer(arrayify(module.code)).deserializeStr()}
+              {formatCode(new bcs.BcsDeserializer(arrayify(module.code)))}
             </Text>
           ))}
           {payload.Package.init_script ? (
