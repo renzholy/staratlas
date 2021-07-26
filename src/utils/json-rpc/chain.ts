@@ -85,7 +85,7 @@ const TransactionStatus = Type.Union([
   Type.Object({
     MoveAbort: Type.Object({
       location: AbortLocation,
-      abort_code: Type.String(),
+      abort_code: Type.Integer(),
     }),
   }),
   Type.Object({
@@ -97,7 +97,7 @@ const TransactionStatus = Type.Union([
   }),
   Type.Object({
     Discard: Type.Object({
-      status_code: Type.String(),
+      status_code: Type.Integer(),
     }),
   }),
 ])
