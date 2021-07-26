@@ -70,11 +70,3 @@ export function formatArgsWithTypeTag(
     return undefined
   }
 }
-
-export function formatCode(deserializer: serde.Deserializer): string | undefined {
-  try {
-    return deserializer.deserializeStr()
-  } catch {
-    return undefined
-  }
-}
