@@ -1,13 +1,13 @@
 import { Type } from '@sinclair/typebox'
 
-export const TransactionBlockInfo = Type.Object({
+const TransactionBlockInfo = Type.Object({
   block_hash: Type.String(),
   block_number: Type.String(),
   transaction_hash: Type.String(),
   transaction_index: Type.Integer(),
 })
 
-export const RawUserTransaction = Type.Object({
+const RawUserTransaction = Type.Object({
   sender: Type.String(),
   sequence_number: Type.String(),
   payload: Type.String(),
@@ -18,7 +18,7 @@ export const RawUserTransaction = Type.Object({
   chain_id: Type.Integer(),
 })
 
-export const TransactionAuthenticator = Type.Union([
+const TransactionAuthenticator = Type.Union([
   Type.Object({
     Ed25519: Type.Object({
       public_key: Type.String(),
@@ -33,13 +33,13 @@ export const TransactionAuthenticator = Type.Union([
   }),
 ])
 
-export const SignedUserTransaction = Type.Object({
+const SignedUserTransaction = Type.Object({
   transaction_hash: Type.String(),
   raw_txn: RawUserTransaction,
   authenticator: TransactionAuthenticator,
 })
 
-export const BlockHeader = Type.Object({
+const BlockHeader = Type.Object({
   block_hash: Type.String(),
   parent_hash: Type.String(),
   timestamp: Type.String(),
@@ -55,7 +55,7 @@ export const BlockHeader = Type.Object({
   chain_id: Type.Integer(),
 })
 
-export const Block = Type.Object({
+const Block = Type.Object({
   header: BlockHeader,
   body: Type.Object({
     Full: Type.Array(SignedUserTransaction),
@@ -63,7 +63,7 @@ export const Block = Type.Object({
   uncles: Type.Array(BlockHeader),
 })
 
-export const AbortLocation = Type.Union([
+const AbortLocation = Type.Union([
   Type.Literal('Script'),
   Type.Object({
     Module: Type.Object({
@@ -73,7 +73,7 @@ export const AbortLocation = Type.Union([
   }),
 ])
 
-export const TransactionStatus = Type.Union([
+const TransactionStatus = Type.Union([
   Type.Literal('Executed'),
   Type.Literal('OutOfGas'),
   Type.Literal('MiscellaneousError'),
@@ -97,7 +97,7 @@ export const TransactionStatus = Type.Union([
   }),
 ])
 
-export const TransactionInfo = Type.Intersect([
+const TransactionInfo = Type.Intersect([
   TransactionBlockInfo,
   Type.Object({
     state_root_hash: Type.String(),
@@ -107,7 +107,7 @@ export const TransactionInfo = Type.Intersect([
   }),
 ])
 
-export const TransactionEvent = Type.Intersect([
+const TransactionEvent = Type.Intersect([
   TransactionBlockInfo,
   Type.Object({
     data: Type.String(),
@@ -117,7 +117,7 @@ export const TransactionEvent = Type.Intersect([
   }),
 ])
 
-export const EventFilter = Type.Partial(
+const EventFilter = Type.Partial(
   Type.Object({
     event_keys: Type.Array(Type.String()),
     limit: Type.Integer(),
@@ -126,12 +126,12 @@ export const EventFilter = Type.Partial(
   }),
 )
 
-export const EventHandle = Type.Object({
+const EventHandle = Type.Object({
   count: Type.Integer(),
   key: Type.String(),
 })
 
-export const Epoch = Type.Object({
+const Epoch = Type.Object({
   number: Type.Integer(),
   start_time: Type.Integer(),
   start_block_number: Type.Integer(),
@@ -146,22 +146,22 @@ export const Epoch = Type.Object({
   new_epoch_events: EventHandle,
 })
 
-export const EpochData = Type.Object({
+const EpochData = Type.Object({
   uncles: Type.Integer(),
   total_reward: Type.Integer(),
   total_gas: Type.Integer(),
 })
 
-export const EpochInfo = Type.Object({
+const EpochInfo = Type.Object({
   epoch: Epoch,
   epoch_data: EpochData,
 })
 
-export const GlobalTimeOnChain = Type.Object({
+const GlobalTimeOnChain = Type.Object({
   milliseconds: Type.Integer(),
 })
 
-export const EpochSummary = Type.Object({
+const EpochSummary = Type.Object({
   uncles: Type.String(),
   sum: Type.String(),
   avg: Type.String(),
@@ -169,8 +169,78 @@ export const EpochSummary = Type.Object({
   time_avg: Type.String(),
 })
 
-export const EpochUncleSummary = Type.Object({
+const EpochUncleSummary = Type.Object({
   epoch: Type.Integer(),
   number_summary: EpochSummary,
   epoch_summary: EpochSummary,
 })
+
+export const API = {
+  'chain.id': {
+    params: Type.Tuple([]),
+    result: Type.Object({
+      name: Type.String(),
+      id: Type.Integer(),
+    }),
+  },
+  'chain.get_block_by_hash': {
+    params: Type.Tuple([Type.String()]),
+    result: Block,
+  },
+  'chain.get_block_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: Block,
+  },
+  'chain.get_blocks_by_number': {
+    params: Type.Tuple([Type.Integer(), Type.Integer()]),
+    result: Type.Array(Block),
+  },
+  'chain.get_transaction': {
+    params: Type.Tuple([Type.String()]),
+    result: Type.Intersect([
+      TransactionBlockInfo,
+      Type.Object({ user_transaction: SignedUserTransaction }),
+    ]),
+  },
+  'chain.get_block_txn_infos': {
+    params: Type.Tuple([Type.String()]),
+    result: Type.Array(TransactionInfo),
+  },
+  'chain.get_events_by_txn_hash': {
+    params: Type.Tuple([Type.String()]),
+    result: Type.Array(TransactionEvent),
+  },
+  'chain.get_events': {
+    params: Type.Tuple([EventFilter]),
+    result: Type.Array(TransactionEvent),
+  },
+  'chain.get_headers': {
+    params: Type.Tuple([Type.Array(Type.String())]),
+    result: Type.Array(BlockHeader),
+  },
+  'chain.get_epoch_uncles_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: Type.Array(
+      Type.Object({
+        header: BlockHeader,
+        uncles: Type.Array(BlockHeader),
+      }),
+    ),
+  },
+  'chain.epoch': {
+    params: Type.Tuple([]),
+    result: Type.Array(EpochInfo),
+  },
+  'chain.get_epoch_info_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: EpochInfo,
+  },
+  'chain.get_global_time_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: GlobalTimeOnChain,
+  },
+  'chain.epoch_uncle_summary_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: EpochUncleSummary,
+  },
+}
