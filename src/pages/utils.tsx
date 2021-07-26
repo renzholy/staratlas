@@ -2,6 +2,7 @@ import { Alert, Box, Grid, GridItem, Textarea } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
 import { useMemo, useState } from 'react'
+import JsonRpcUtil from '../components/json-rpc-util'
 
 import TransactionPayload from '../components/transaction-payload'
 import { CardWithHeader } from '../layouts/card-with-header'
@@ -52,6 +53,13 @@ export default function Utils() {
             />
             {payload ? <TransactionPayload payload={payload} /> : null}
             {error ? <Alert status="error">{error.message}</Alert> : null}
+          </Box>
+        </CardWithHeader>
+      </GridItem>
+      <GridItem colSpan={1}>
+        <CardWithHeader title="JSON RPC">
+          <Box paddingX={6} paddingY={4}>
+            <JsonRpcUtil />
           </Box>
         </CardWithHeader>
       </GridItem>
