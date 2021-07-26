@@ -1,36 +1,41 @@
 import { Box } from '@chakra-ui/layout'
 import { Button, Text } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { encoding, types } from '@starcoin/starcoin'
+import { encoding } from '@starcoin/starcoin'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import TimeAgo from 'timeago-react'
 
 import { useNetwork } from '../contexts/network'
-import { useBlock, useEventsOfTransaction, useTransactionInfo } from '../hooks/use-provider'
 import { formatTimeSimple, formatNumber } from '../utils/formatter'
+import { Transaction } from '../utils/types'
 
 export default function TransactionListItem(props: {
-  transaction: types.SignedUserTransactionView
+  transaction: Transaction
   relativeTime?: boolean
 }) {
   const network = useNetwork()
   const { transaction } = props
   const payload = useMemo(
-    () => encoding.decodeTransactionPayload(transaction.raw_txn.payload),
+    () =>
+      'user_transaction' in transaction
+        ? encoding.decodeTransactionPayload(transaction.user_transaction.raw_txn.payload)
+        : undefined,
     [transaction],
   )
-  const { data: info } = useTransactionInfo(transaction.transaction_hash)
-  const { data: block } = useBlock(info?.block_hash)
-  const { data: events } = useEventsOfTransaction(transaction.transaction_hash)
+  const sender = useMemo(
+    () =>
+      'user_transaction' in transaction
+        ? transaction.user_transaction.raw_txn.sender
+        : transaction.block_metadata.author,
+    [transaction],
+  )
   const status = useMemo(
     () =>
-      info
-        ? typeof info.status === 'string'
-          ? info.status
-          : Object.keys(info.status)[0]
-        : undefined,
-    [info],
+      typeof transaction.status === 'string'
+        ? transaction.status
+        : Object.keys(transaction.status)[0],
+    [transaction.status],
   )
 
   return (
@@ -63,36 +68,34 @@ export default function TransactionListItem(props: {
       >
         {transaction.transaction_hash}
       </Button>
-      {block ? (
-        <Text
-          css={css`
-            float: right;
-          `}
-        >
-          {props.relativeTime ? (
-            <TimeAgo datetime={block.header.timestamp.toString()} />
-          ) : (
-            formatTimeSimple(parseInt(block.header.timestamp.toString(), 10))
-          )}
-        </Text>
-      ) : null}
+      <Text
+        css={css`
+          float: right;
+        `}
+      >
+        {props.relativeTime ? (
+          <TimeAgo datetime={transaction.timestamp.toString()} />
+        ) : (
+          formatTimeSimple(parseInt(transaction.timestamp.toString(), 10))
+        )}
+      </Text>
       Sender:&nbsp;
       <Button
         as={Link}
-        to={`/${network}/address/${transaction.raw_txn.sender}`}
+        to={`/${network}/address/${sender}`}
         variant="link"
         color="green.500"
         width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 130px)' }}
       >
-        {transaction.raw_txn.sender}
+        {sender}
       </Button>
       <br />
       <Text minWidth={44}>{payload ? Object.keys(payload)[0] : 'No payload'}</Text>
       <Text minWidth={32} color={status === 'Executed' ? undefined : 'red.500'}>
         {status}
       </Text>
-      <Text minWidth={32}>Events:&nbsp;{events ? formatNumber(events.length) : '-'}</Text>
-      <Text>Gas:&nbsp;{info ? formatNumber(info.gas_used as bigint) : '-'}</Text>
+      <Text minWidth={32}>Events:&nbsp;{formatNumber(transaction.events.length)}</Text>
+      <Text>Gas:&nbsp;{formatNumber(transaction.gas_used as bigint)}</Text>
     </Box>
   )
 }

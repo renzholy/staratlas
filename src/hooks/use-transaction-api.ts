@@ -51,3 +51,20 @@ export function useAddressTransactions(hash?: string) {
     jsonFetcher,
   )
 }
+
+export function useBlockTransactions(hashOrHeight?: string) {
+  const network = useNetwork()
+  const isHash = hashOrHeight?.startsWith('0x')
+  const isHeight = hashOrHeight && /^\d+$/.test(hashOrHeight)
+  return useSWR<{
+    contents: Transaction[]
+    total: number
+  }>(
+    isHash
+      ? `${ENDPOINT}/transaction/${network}/byBlock/${hashOrHeight}`
+      : isHeight
+      ? `${ENDPOINT}/transaction/${network}/byBlockHeight/${hashOrHeight}`
+      : null,
+    jsonFetcher,
+  )
+}

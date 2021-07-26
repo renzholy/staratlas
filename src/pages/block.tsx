@@ -21,7 +21,7 @@ import ListItemPlaceholder from '../components/list-item-placeholder'
 import TransactionListItem from '../components/transaction-list-item'
 import { useNetwork } from '../contexts/network'
 import { useBlock } from '../hooks/use-block-api'
-import { useBlock as useBlockTransactions } from '../hooks/use-provider'
+import { useBlockTransactions } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
 import { formatNumber } from '../utils/formatter'
 import CopyLink from '../components/copy-link'
@@ -34,7 +34,7 @@ export default function Block() {
   const { colorMode } = useColorMode()
   const params = useParams<{ hashOrHeight: string }>()
   const { data: block, error } = useBlock(params.hashOrHeight)
-  const { data: blockWithTransactions } = useBlockTransactions(block?.header.block_hash)
+  const { data: transactions } = useBlockTransactions(block?.header.block_hash)
 
   if (error) {
     return <NotFound />
@@ -152,12 +152,10 @@ export default function Block() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transactions"
-          subtitle={`Total: ${
-            blockWithTransactions ? formatNumber(blockWithTransactions.transactions.length) : '-'
-          }`}
+          subtitle={`Total: ${transactions ? formatNumber(transactions.total) : '-'}`}
         >
-          {blockWithTransactions?.transactions.length ? (
-            blockWithTransactions.transactions.map((transaction, index) => (
+          {transactions?.contents.length ? (
+            transactions.contents.map((transaction, index) => (
               <Fragment key={transaction.transaction_hash}>
                 {index === 0 ? null : <Divider />}
                 <TransactionListItem transaction={transaction} />
@@ -165,7 +163,7 @@ export default function Block() {
             ))
           ) : (
             <ListItemPlaceholder height={67}>
-              {blockWithTransactions?.transactions.length === 0 ? 'No transaction' : <Spinner />}
+              {transactions?.contents.length === 0 ? 'No transaction' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>

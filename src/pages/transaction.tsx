@@ -22,9 +22,20 @@ export default function Transaction() {
   const params = useParams<{ hash: string }>()
   const network = useNetwork()
   const { data: transaction, error } = useTransaction(params.hash)
-  const payload = useMemo(
+  const sender = useMemo(
     () =>
       transaction
+        ? 'user_transaction' in transaction
+          ? transaction.user_transaction.raw_txn.sender
+          : transaction.block_metadata.author
+        : undefined,
+    [transaction],
+  )
+  const payload = useMemo(
+    () =>
+      transaction &&
+      'user_transaction' in transaction &&
+      transaction.user_transaction.raw_txn.payload
         ? encoding.decodeTransactionPayload(transaction.user_transaction.raw_txn.payload)
         : undefined,
     [transaction],
@@ -44,14 +55,14 @@ export default function Transaction() {
         <CardWithHeader
           title="Transaction"
           subtitle={
-            transaction ? (
+            transaction && 'user_transaction' in transaction ? (
               <Suspense fallback={null}>
                 <DryRunModal userTransaction={transaction.user_transaction} />
               </Suspense>
             ) : null
           }
         >
-          {transaction ? (
+          {transaction && sender ? (
             <Box
               paddingX={6}
               paddingY={4}
@@ -84,11 +95,11 @@ export default function Transaction() {
               </Heading>
               <Button
                 as={Link}
-                to={`/${network}/address/${transaction.user_transaction.raw_txn.sender}`}
+                to={`/${network}/address/${sender}`}
                 variant="link"
                 color="green.500"
               >
-                {transaction.user_transaction.raw_txn.sender}
+                {sender}
               </Button>
               <Heading size="sm" mt={4}>
                 Block
