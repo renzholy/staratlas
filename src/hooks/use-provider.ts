@@ -14,9 +14,8 @@ export function useProvider() {
 
 export function useResource(address: string, resource: string, config?: SWRConfiguration) {
   const provider = useProvider()
-  const network = useNetwork()
   return useSWR(
-    [network, 'getResource', address, resource],
+    [provider.connection.url, 'getResource', address, resource],
     async () => provider.getResource(address, resource),
     config,
   )
@@ -24,23 +23,22 @@ export function useResource(address: string, resource: string, config?: SWRConfi
 
 export function useResources(address?: string) {
   const provider = useProvider()
-  const network = useNetwork()
-  return useSWR(address ? [network, 'getResources', address] : null, () =>
+  return useSWR(address ? [provider.connection.url, 'getResources', address] : null, () =>
     provider.getResources(address!),
   )
 }
 
 export function useBalances(address: string) {
   const provider = useProvider()
-  const network = useNetwork()
-  return useSWR([network, 'getBalances', address], () => provider.getBalances(address))
+  return useSWR([provider.connection.url, 'getBalances', address], () =>
+    provider.getBalances(address),
+  )
 }
 
 export function useResolveFunction(functionId?: string) {
   const provider = useProvider()
-  const network = useNetwork()
   return useSWR<{ args: { name: string; type_tag: types.TypeTag; doc: string }[] }>(
-    functionId ? [network, 'resolve_function', functionId] : null,
+    functionId ? [provider.connection.url, 'resolve_function', functionId] : null,
     () => provider.send('contract.resolve_function', [functionId]),
   )
 }
