@@ -14,8 +14,9 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { ChevronDownIcon, ChevronUpIcon, MoonIcon, StarIcon, SunIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 import startCase from 'lodash/startCase'
+import { AiOutlineHome, AiOutlineTool } from 'react-icons/ai'
 
 import { NETWORKS } from '../constants'
 import { NetworkProvider } from '../contexts/network'
@@ -59,9 +60,9 @@ export default function Layout(props: { children?: ReactNode }) {
           as={Link}
           to={`/${params.network}`}
           aria-label="index"
-          icon={<StarIcon />}
-          bg={buttonBackground}
-          variant="solid"
+          icon={<AiOutlineHome />}
+          bg={location.pathname === `/${params.network}` ? buttonBackground : undefined}
+          variant={location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
           mr={4}
           display={{ base: 'inline-flex', md: 'none' }}
         />
@@ -95,6 +96,16 @@ export default function Layout(props: { children?: ReactNode }) {
         >
           Transactions
         </Button>
+        <IconButton
+          as={Link}
+          to={`/${params.network}/utils`}
+          aria-label="index"
+          icon={<AiOutlineTool />}
+          bg={/\/utils/.test(location.pathname) ? buttonBackground : undefined}
+          variant={/\/utils/.test(location.pathname) ? 'solid' : 'ghost'}
+          mr={4}
+          display={{ base: 'inline-flex', md: 'none' }}
+        />
         <Button
           as={Link}
           to={`/${params.network}/utils`}
@@ -121,7 +132,13 @@ export default function Layout(props: { children?: ReactNode }) {
               {networks.map((network) => (
                 <MenuItemOption
                   as={Link}
-                  to={`/${network}`}
+                  to={
+                    location.pathname.split('/').length === 3
+                      ? `/${network}/${location.pathname.split('/')[1]}/${
+                          location.pathname.split('/')[2]
+                        }`
+                      : `/${network}`
+                  }
                   key={network}
                   isChecked={params.network === network}
                 >
