@@ -175,7 +175,7 @@ const EpochUncleSummary = Type.Object({
   epoch_summary: EpochSummary,
 })
 
-export const API = {
+export default {
   'chain.id': {
     params: Type.Tuple([]),
     result: Type.Object({

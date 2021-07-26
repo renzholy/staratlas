@@ -5,7 +5,7 @@ import Ajv from 'ajv/dist/2019'
 import { useMemo } from 'react'
 
 import { useNetwork } from '../contexts/network'
-import { API } from '../utils/json-rpc/chain'
+import API from '../utils/json-rpc'
 
 const ajv = addFormats(new Ajv()).addKeyword('kind').addKeyword('modifier')
 
