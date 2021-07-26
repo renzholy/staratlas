@@ -11,7 +11,7 @@ export default function Utils() {
   const [error, setError] = useState<Error>()
   const payload = useMemo(() => {
     try {
-      const p = encoding.decodeTransactionPayload(text)
+      const p = text.trim() ? encoding.decodeTransactionPayload(text.trim()) : undefined
       setError(undefined)
       return p
     } catch (err) {

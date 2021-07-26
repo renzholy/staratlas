@@ -57,7 +57,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
                         resolvedFunction.args[index + 1].type_tag,
                       ) || arg
                     }`
-                  : null}
+                  : arg}
               </Text>
             ))}
           </>
