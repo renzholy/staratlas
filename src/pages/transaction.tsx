@@ -52,7 +52,16 @@ export default function Transaction() {
     >
       <TransactionStat transaction={transaction} />
       <GridItem colSpan={1}>
-        <CardWithHeader title="Transaction">
+        <CardWithHeader
+          title="Transaction"
+          subtitle={
+            transaction && 'user_transaction' in transaction ? (
+              <Suspense fallback={null}>
+                <DryRunModal userTransaction={transaction.user_transaction} />
+              </Suspense>
+            ) : null
+          }
+        >
           {transaction && sender ? (
             <Box
               paddingX={6}
@@ -119,16 +128,7 @@ export default function Transaction() {
           )}
         </CardWithHeader>
         <Spacer height={6} />
-        <CardWithHeader
-          title="Payload"
-          subtitle={
-            transaction && 'user_transaction' in transaction ? (
-              <Suspense fallback={null}>
-                <DryRunModal userTransaction={transaction.user_transaction} />
-              </Suspense>
-            ) : null
-          }
-        >
+        <CardWithHeader title="Payload">
           {payload ? (
             <Box
               paddingX={6}

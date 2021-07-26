@@ -134,9 +134,7 @@ export default function Layout(props: { children?: ReactNode }) {
                   as={Link}
                   to={
                     location.pathname.split('/').length === 3
-                      ? `/${network}/${location.pathname.split('/')[1]}/${
-                          location.pathname.split('/')[2]
-                        }`
+                      ? `/${network}/${location.pathname.split('/')[2]}`
                       : `/${network}`
                   }
                   key={network}
