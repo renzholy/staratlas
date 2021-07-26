@@ -1,5 +1,7 @@
 import useSWR from 'swr'
 import { Type, Static } from '@sinclair/typebox'
+import addFormats from 'ajv-formats'
+import Ajv from 'ajv/dist/2019'
 
 import { useNetwork } from '../contexts/network'
 import {
@@ -9,6 +11,25 @@ import {
   TransactionEvent,
   TransactionInfo,
 } from '../utils/json-rpc-types'
+
+const ajv = addFormats(new Ajv({}), [
+  'date-time',
+  'time',
+  'date',
+  'email',
+  'hostname',
+  'ipv4',
+  'ipv6',
+  'uri',
+  'uri-reference',
+  'uuid',
+  'uri-template',
+  'json-pointer',
+  'relative-json-pointer',
+  'regex',
+])
+  .addKeyword('kind')
+  .addKeyword('modifier')
 
 const API = {
   'chain.id': {
@@ -77,6 +98,13 @@ export function useJsonRpc<T extends keyof typeof API>(
     fetch(`https://${network}-seed.starcoin.org`, {
       method: 'POST',
       body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 0 }),
-    }).then((response) => response.json()),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        if (ajv.validate(API[method].result, json)) {
+          return json
+        }
+        throw new Error(ajv.errorsText(ajv.errors))
+      }),
   )
 }
