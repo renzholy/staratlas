@@ -175,6 +175,25 @@ const EpochUncleSummary = Type.Object({
   epoch_summary: EpochSummary,
 })
 
+const AccumulatorInfo = Type.Object({
+  accumulator_root: Type.String(),
+  frozen_subtree_roots: Type.Array(Type.String()),
+  num_leaves: Type.Integer(),
+  num_nodes: Type.Integer(),
+})
+
+const ChainInfo = Type.Object({
+  chain_id: Type.Integer(),
+  genesis_hash: Type.String(),
+  head: BlockHeader,
+  block_info: Type.Object({
+    block_id: Type.String(),
+    total_difficulty: Type.String(),
+    txn_accumulator_info: AccumulatorInfo,
+    block_accumulator_info: AccumulatorInfo,
+  }),
+})
+
 export default {
   'chain.id': {
     params: Type.Tuple([]),
@@ -182,6 +201,10 @@ export default {
       name: Type.String(),
       id: Type.Integer(),
     }),
+  },
+  'chain.info': {
+    params: Type.Tuple([]),
+    result: ChainInfo,
   },
   'chain.get_block_by_hash': {
     params: Type.Tuple([Type.String()]),
@@ -229,7 +252,7 @@ export default {
   },
   'chain.epoch': {
     params: Type.Tuple([]),
-    result: Type.Array(EpochInfo),
+    result: EpochInfo,
   },
   'chain.get_epoch_info_by_number': {
     params: Type.Tuple([Type.Integer()]),
