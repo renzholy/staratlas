@@ -11,6 +11,7 @@ import {
   TransactionEvent,
   TransactionInfo,
 } from '../utils/json-rpc-types'
+import { useMemo } from 'react'
 
 const ajv = addFormats(new Ajv({}), [
   'date-time',
@@ -90,7 +91,8 @@ export function useJsonRpc<T extends keyof typeof API>(
   ...params: Static<typeof API[T]['params']>
 ) {
   const network = useNetwork()
-  return useSWR<Static<typeof API[T]['result']>>([network, method, JSON.stringify(params)], () =>
+  const key = useMemo(() => [network, method, JSON.stringify(params)], [method, network, params])
+  return useSWR<Static<typeof API[T]['result']>>(key, () =>
     fetch(`https://${network}-seed.starcoin.org`, {
       method: 'POST',
       body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 0 }),
@@ -106,7 +108,10 @@ export function useJsonRpc<T extends keyof typeof API>(
           }
           throw new Error(ajv.errorsText(ajv.errors))
         }
-        throw new Error(json.error.message)
+        if ('error' in json && 'message' in json.error) {
+          throw new Error(json.error.message)
+        }
+        throw new Error('unknown json rpc error')
       }),
   )
 }
