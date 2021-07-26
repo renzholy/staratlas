@@ -95,6 +95,16 @@ export default function Layout(props: { children?: ReactNode }) {
         >
           Transactions
         </Button>
+        <Button
+          as={Link}
+          to={`/${params.network}/utils`}
+          bg={/\/utils/.test(location.pathname) ? buttonBackground : undefined}
+          variant={/\/utils/.test(location.pathname) ? 'solid' : 'ghost'}
+          mr={4}
+          display={{ base: 'none', md: 'inline-flex' }}
+        >
+          Utils
+        </Button>
         <SearchBar />
         <Menu isOpen={isOpen} onClose={onClose} autoSelect={false}>
           <MenuButton

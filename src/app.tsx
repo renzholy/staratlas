@@ -11,6 +11,7 @@ import Redirect from './pages/redirect'
 import Address from './pages/address'
 import theme from './utils/theme'
 import Uncle from './pages/uncle'
+import Utils from './pages/utils'
 
 export default function App() {
   return (
@@ -36,6 +37,9 @@ export default function App() {
               </Route>
               <Route path="/:network/address/:hash">
                 <Address />
+              </Route>
+              <Route path="/:network/utils">
+                <Utils />
               </Route>
               <Route path="/:network">
                 <Index />
