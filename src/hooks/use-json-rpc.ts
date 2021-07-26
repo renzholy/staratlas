@@ -2,16 +2,17 @@ import useSWR from 'swr'
 import { Type, Static } from '@sinclair/typebox'
 import addFormats from 'ajv-formats'
 import Ajv from 'ajv/dist/2019'
+import { useMemo } from 'react'
 
 import { useNetwork } from '../contexts/network'
 import {
+  Block,
   BlockHeader,
   SignedUserTransaction,
   TransactionBlockInfo,
   TransactionEvent,
   TransactionInfo,
 } from '../utils/json-rpc-types'
-import { useMemo } from 'react'
 
 const ajv = addFormats(new Ajv({}), [
   'date-time',
@@ -42,23 +43,15 @@ const API = {
   },
   'chain.get_block_by_hash': {
     params: Type.Tuple([Type.String()]),
-    result: Type.Object({
-      header: BlockHeader,
-      body: Type.Object({
-        Full: Type.Array(SignedUserTransaction),
-      }),
-      uncles: Type.Array(BlockHeader),
-    }),
+    result: Block,
   },
   'chain.get_block_by_number': {
     params: Type.Tuple([Type.Integer()]),
-    result: Type.Object({
-      header: BlockHeader,
-      body: Type.Object({
-        Full: Type.Array(SignedUserTransaction),
-      }),
-      uncles: Type.Array(BlockHeader),
-    }),
+    result: Block,
+  },
+  'chain.get_blocks_by_number': {
+    params: Type.Tuple([Type.Integer(), Type.Integer()]),
+    result: Type.Array(Block),
   },
   'chain.get_transaction': {
     params: Type.Tuple([Type.String()]),
