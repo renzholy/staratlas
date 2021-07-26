@@ -4,14 +4,16 @@ import {
   MenuButton,
   Button,
   MenuList,
-  MenuItem,
   Textarea,
   Flex,
   Box,
   Alert,
+  IconButton,
+  MenuItemOption,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { VscPlay } from 'react-icons/vsc'
 
 import useAsync from '../hooks/use-async'
 import { useJsonRpcCall } from '../hooks/use-json-rpc'
@@ -33,6 +35,9 @@ export default function JsonRpcUtil() {
     }
   }, [input])
   const handleJsonRpcCall = useAsync(useJsonRpcCall(method, params))
+  useEffect(() => {
+    setInput(method && API[method].params.items.length === 0 ? '[]' : '')
+  }, [method])
 
   return (
     <>
@@ -41,21 +46,25 @@ export default function JsonRpcUtil() {
           <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
             {method || 'choose a method'}
           </MenuButton>
-          <MenuList>
+          <MenuList maxHeight="md" overflowY="auto">
             {Object.keys(API).map((key) => (
-              <MenuItem key={key} onClick={() => setMethod(key as keyof typeof API)}>
+              <MenuItemOption
+                key={key}
+                isChecked={method === key}
+                onClick={() => setMethod(key as keyof typeof API)}
+              >
                 {key}
-              </MenuItem>
+              </MenuItemOption>
             ))}
           </MenuList>
         </Menu>
-        <Button
+        <IconButton
+          aria-label="run"
+          icon={<VscPlay />}
           disabled={!method || !params}
           isLoading={handleJsonRpcCall.status === 'pending'}
           onClick={handleJsonRpcCall.execute}
-        >
-          Run
-        </Button>
+        />
       </Flex>
       {method ? (
         <Textarea

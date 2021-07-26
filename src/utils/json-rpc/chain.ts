@@ -63,6 +63,11 @@ const Block = Type.Object({
   uncles: Type.Array(BlockHeader),
 })
 
+const BlockSummary = Type.Object({
+  header: BlockHeader,
+  uncles: Type.Array(BlockHeader),
+})
+
 const AbortLocation = Type.Union([
   Type.Literal('Script'),
   Type.Object({
@@ -170,7 +175,7 @@ const EpochSummary = Type.Object({
 })
 
 const EpochUncleSummary = Type.Object({
-  epoch: Type.Integer(),
+  epoch: Type.String(),
   number_summary: EpochSummary,
   epoch_summary: EpochSummary,
 })
@@ -216,14 +221,22 @@ export default {
   },
   'chain.get_blocks_by_number': {
     params: Type.Tuple([Type.Integer(), Type.Integer()]),
-    result: Type.Array(Block),
+    result: Type.Array(BlockSummary),
+  },
+  'chain.get_headers': {
+    params: Type.Tuple([Type.Array(Type.String())]),
+    result: Type.Array(BlockHeader),
   },
   'chain.get_transaction': {
     params: Type.Tuple([Type.String()]),
     result: Type.Intersect([
       TransactionBlockInfo,
-      Type.Object({ user_transaction: SignedUserTransaction }),
+      Type.Object({ user_transaction: Type.Union([SignedUserTransaction, Type.Null()]) }),
     ]),
+  },
+  'chain.get_transaction_info': {
+    params: Type.Tuple([Type.String()]),
+    result: TransactionInfo,
   },
   'chain.get_block_txn_infos': {
     params: Type.Tuple([Type.String()]),
@@ -237,19 +250,6 @@ export default {
     params: Type.Tuple([EventFilter]),
     result: Type.Array(TransactionEvent),
   },
-  'chain.get_headers': {
-    params: Type.Tuple([Type.Array(Type.String())]),
-    result: Type.Array(BlockHeader),
-  },
-  'chain.get_epoch_uncles_by_number': {
-    params: Type.Tuple([Type.Integer()]),
-    result: Type.Array(
-      Type.Object({
-        header: BlockHeader,
-        uncles: Type.Array(BlockHeader),
-      }),
-    ),
-  },
   'chain.epoch': {
     params: Type.Tuple([]),
     result: EpochInfo,
@@ -261,6 +261,10 @@ export default {
   'chain.get_global_time_by_number': {
     params: Type.Tuple([Type.Integer()]),
     result: GlobalTimeOnChain,
+  },
+  'chain.get_epoch_uncles_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: Type.Array(BlockSummary),
   },
   'chain.epoch_uncle_summary_by_number': {
     params: Type.Tuple([Type.Integer()]),
