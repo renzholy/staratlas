@@ -4,8 +4,14 @@ import { hexlify } from 'ethers/lib/utils'
 
 export const numberFormat = Intl.NumberFormat()
 
+export const numberFormatPrecision = Intl.NumberFormat([], { maximumFractionDigits: 17 })
+
 export function formatNumber(value: number | bigint) {
   return numberFormat.format(value)
+}
+
+export function formatNumberPrecision(value: number | bigint) {
+  return numberFormatPrecision.format(value)
 }
 
 export function formatTime(date?: dayjs.ConfigType) {

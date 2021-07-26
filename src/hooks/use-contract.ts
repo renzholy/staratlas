@@ -10,3 +10,16 @@ export function useResolveFunction(functionId?: string) {
     () => provider.send('contract.resolve_function', [functionId]),
   )
 }
+
+export function useScalingFactor(token?: string) {
+  const provider = useProvider()
+  return useSWR<[bigint]>(token ? [provider.connection.url, 'scaling_factor', token] : null, () =>
+    provider.send('contract.call_v2', [
+      {
+        function_id: '0x1::Token::scaling_factor',
+        type_args: [token],
+        args: [],
+      },
+    ]),
+  )
+}
