@@ -1,6 +1,17 @@
-import { Box, Button, Divider, Grid, GridItem, Heading, Spacer, Spinner } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  GridItem,
+  Heading,
+  Spacer,
+  Spinner,
+  useToast,
+} from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
+import copy from 'copy-to-clipboard'
 import { Fragment, lazy, Suspense, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -40,6 +51,7 @@ export default function Transaction() {
         : undefined,
     [transaction],
   )
+  const toast = useToast()
 
   if (error) {
     return <NotFound />
@@ -128,7 +140,27 @@ export default function Transaction() {
           )}
         </CardWithHeader>
         <Spacer height={6} />
-        <CardWithHeader title="Payload">
+        <CardWithHeader
+          title="Payload"
+          subtitle={
+            transaction && 'user_transaction' in transaction ? (
+              <Button
+                size="sm"
+                mr={-4}
+                onClick={() => {
+                  copy(transaction.user_transaction.raw_txn.payload)
+                  toast({
+                    title: 'Copied to clipboard',
+                    status: 'success',
+                    duration: 1000,
+                  })
+                }}
+              >
+                Copy hex
+              </Button>
+            ) : null
+          }
+        >
           {payload ? (
             <Box
               paddingX={6}
