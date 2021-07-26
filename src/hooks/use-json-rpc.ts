@@ -1,13 +1,77 @@
 import useSWR from 'swr'
+import { Type, Static } from '@sinclair/typebox'
 
 import { useNetwork } from '../contexts/network'
-import { RPC } from '../utils/json-rpc-types'
+import {
+  BlockHeader,
+  SignedUserTransaction,
+  TransactionBlockInfo,
+  TransactionEvent,
+  TransactionInfo,
+} from '../utils/json-rpc-types'
 
-export function useJsonRpc<T extends keyof API>(method: T, ...params: API[T]['params']) {
+const API = {
+  'chain.id': {
+    params: Type.Tuple([]),
+    result: Type.Object({
+      name: Type.String(),
+      id: Type.Integer(),
+    }),
+  },
+  'chain.get_block_by_hash': {
+    params: Type.Tuple([Type.String()]),
+    result: Type.Object({
+      header: BlockHeader,
+      body: Type.Object({
+        Full: Type.Array(SignedUserTransaction),
+      }),
+      uncles: Type.Array(BlockHeader),
+    }),
+  },
+  'chain.get_block_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: Type.Object({
+      header: BlockHeader,
+      body: Type.Object({
+        Full: Type.Array(SignedUserTransaction),
+      }),
+      uncles: Type.Array(BlockHeader),
+    }),
+  },
+  'chain.get_transaction': {
+    params: Type.Tuple([Type.String()]),
+    result: Type.Intersect([
+      TransactionBlockInfo,
+      Type.Object({ user_transaction: SignedUserTransaction }),
+    ]),
+  },
+  'chain.get_block_txn_infos': {
+    params: Type.Tuple([Type.String()]),
+    result: Type.Array(TransactionInfo),
+  },
+  'chain.get_events_by_txn_hash': {
+    params: Type.Tuple([Type.String()]),
+    result: Type.Array(TransactionEvent),
+  },
+  'chain.get_epoch_uncles_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: Type.Array(
+      Type.Object({
+        header: BlockHeader,
+        uncles: Type.Array(BlockHeader),
+      }),
+    ),
+  },
+}
+
+export function useJsonRpc<T extends keyof typeof API>(
+  method: T,
+  ...params: Static<typeof API[T]['params']>
+) {
   const network = useNetwork()
   return useSWR<{
     jsonrpc: '2.0'
-    result: API[T]['result']
+    result: Static<typeof API[T]['result']>
     id: 0
   }>([network, method, JSON.stringify(params)], () =>
     fetch(`https://${network}-seed.starcoin.org`, {
@@ -15,55 +79,4 @@ export function useJsonRpc<T extends keyof API>(method: T, ...params: API[T]['pa
       body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 0 }),
     }).then((response) => response.json()),
   )
-}
-
-type API = {
-  'chain.id': {
-    params: []
-    result: {
-      name: string
-      id: number
-    }
-  }
-  'chain.get_block_by_hash': {
-    params: [string]
-    result: {
-      header: RPC.BlockHeaderView
-      body: {
-        Full: RPC.SignedUserTransactionView[]
-      }
-      uncles: RPC.BlockHeaderView[]
-    }
-  }
-  'chain.get_block_by_number': {
-    params: [number]
-    result: {
-      header: RPC.BlockHeaderView
-      body: {
-        Full: RPC.SignedUserTransactionView[]
-      }
-      uncles: RPC.BlockHeaderView[]
-    }
-  }
-  'chain.get_transaction': {
-    params: [string]
-    result: RPC.TxnBlockInfo & {
-      user_transaction: RPC.SignedUserTransactionView
-    }
-  }
-  'chain.get_block_txn_infos': {
-    params: [string]
-    result: RPC.TransactionInfoView[]
-  }
-  'chain.get_events_by_txn_hash': {
-    params: [string]
-    result: RPC.TransactionEventView[]
-  }
-  'chain.get_epoch_uncles_by_number': {
-    params: [number]
-    result: {
-      header: RPC.BlockHeaderView
-      uncles: RPC.BlockHeaderView[]
-    }[]
-  }
 }
