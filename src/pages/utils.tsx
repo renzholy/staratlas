@@ -57,11 +57,7 @@ export default function Utils() {
         </CardWithHeader>
       </GridItem>
       <GridItem colSpan={1}>
-        <CardWithHeader title="JSON RPC">
-          <Box paddingX={6} paddingY={4}>
-            <JsonRpcUtil />
-          </Box>
-        </CardWithHeader>
+        <JsonRpcUtil />
       </GridItem>
     </Grid>
   )

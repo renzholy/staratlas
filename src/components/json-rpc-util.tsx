@@ -5,18 +5,16 @@ import {
   Button,
   MenuList,
   Textarea,
-  Flex,
   Box,
   Alert,
-  IconButton,
   MenuItemOption,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { useMemo, useState, useEffect } from 'react'
-import { VscPlay } from 'react-icons/vsc'
 
 import useAsync from '../hooks/use-async'
 import { useJsonRpcCall } from '../hooks/use-json-rpc'
+import { CardWithHeader } from '../layouts/card-with-header'
 import API from '../utils/json-rpc'
 import JsonCode from './json-code'
 
@@ -40,8 +38,21 @@ export default function JsonRpcUtil() {
   }, [method])
 
   return (
-    <>
-      <Flex justifyContent="space-between">
+    <CardWithHeader
+      title="JSON RPC"
+      subtitle={
+        <Button
+          size="sm"
+          mr={-4}
+          disabled={!method || !params}
+          isLoading={handleJsonRpcCall.status === 'pending'}
+          onClick={handleJsonRpcCall.execute}
+        >
+          Call
+        </Button>
+      }
+    >
+      <Box paddingX={6} paddingY={4}>
         <Menu>
           <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
             {method || 'choose a method'}
@@ -58,39 +69,32 @@ export default function JsonRpcUtil() {
             ))}
           </MenuList>
         </Menu>
-        <IconButton
-          aria-label="run"
-          icon={<VscPlay />}
-          disabled={!method || !params}
-          isLoading={handleJsonRpcCall.status === 'pending'}
-          onClick={handleJsonRpcCall.execute}
-        />
-      </Flex>
-      {method ? (
-        <Textarea
-          mt={4}
-          placeholder={placeholder}
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value)
-          }}
-          css={css`
-            ::placeholder {
-              word-break: break-all;
-            }
-          `}
-        />
-      ) : null}
-      {handleJsonRpcCall.value ? (
-        <Box mt={4}>
-          <JsonCode>{handleJsonRpcCall.value}</JsonCode>
-        </Box>
-      ) : null}
-      {handleJsonRpcCall.error ? (
-        <Alert status="error" mt={4}>
-          {handleJsonRpcCall.error.message}
-        </Alert>
-      ) : null}
-    </>
+        {method ? (
+          <Textarea
+            mt={4}
+            placeholder={placeholder}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value)
+            }}
+            css={css`
+              ::placeholder {
+                word-break: break-all;
+              }
+            `}
+          />
+        ) : null}
+        {handleJsonRpcCall.value ? (
+          <Box mt={4}>
+            <JsonCode>{handleJsonRpcCall.value}</JsonCode>
+          </Box>
+        ) : null}
+        {handleJsonRpcCall.error ? (
+          <Alert status="error" mt={4}>
+            {handleJsonRpcCall.error.message}
+          </Alert>
+        ) : null}
+      </Box>
+    </CardWithHeader>
   )
 }
