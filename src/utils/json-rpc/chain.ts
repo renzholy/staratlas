@@ -91,8 +91,8 @@ const TransactionStatus = Type.Union([
   Type.Object({
     ExecutionFailure: Type.Object({
       location: AbortLocation,
-      function: Type.String(),
-      code_offset: Type.String(),
+      function: Type.Integer(),
+      code_offset: Type.Integer(),
     }),
   }),
   Type.Object({
