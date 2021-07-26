@@ -14,24 +14,7 @@ import {
   TransactionInfo,
 } from '../utils/json-rpc-types'
 
-const ajv = addFormats(new Ajv({}), [
-  'date-time',
-  'time',
-  'date',
-  'email',
-  'hostname',
-  'ipv4',
-  'ipv6',
-  'uri',
-  'uri-reference',
-  'uuid',
-  'uri-template',
-  'json-pointer',
-  'relative-json-pointer',
-  'regex',
-])
-  .addKeyword('kind')
-  .addKeyword('modifier')
+const ajv = addFormats(new Ajv()).addKeyword('kind').addKeyword('modifier')
 
 const API = {
   'chain.id': {
@@ -67,6 +50,10 @@ const API = {
   'chain.get_events_by_txn_hash': {
     params: Type.Tuple([Type.String()]),
     result: Type.Array(TransactionEvent),
+  },
+  'chain.get_headers': {
+    params: Type.Tuple([Type.Array(Type.String())]),
+    result: Type.Array(BlockHeader),
   },
   'chain.get_epoch_uncles_by_number': {
     params: Type.Tuple([Type.Integer()]),
