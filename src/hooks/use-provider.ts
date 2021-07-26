@@ -78,7 +78,7 @@ export function useDryRunRaw(
             decodedPayload.Script.ty_args,
             decodedPayload.Script.args,
           )
-    const scriptFunction = utils.tx.generateRawUserTransaction(
+    const rawUserTransaction = utils.tx.generateRawUserTransaction(
       senderAddress,
       payload,
       maxGasAmount,
@@ -87,7 +87,7 @@ export function useDryRunRaw(
       chainId,
     )
     const se = new bcs.BcsSerializer()
-    scriptFunction.serialize(se)
+    rawUserTransaction.serialize(se)
     const rawUserTransactionHex = hexlify(se.getBytes())
     return provider.dryRunRaw(rawUserTransactionHex, publicKeyHex)
   }, [publicKeyHex, senderAddress, transactionPayload, maxGasAmount, chainId, provider])

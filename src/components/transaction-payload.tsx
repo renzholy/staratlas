@@ -79,7 +79,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
           </Heading>
           {payload.Package.modules.map((module) => (
             <Text key={module.code} color="gray.500">
-              {new bcs.BcsDeserializer(arrayify(module.code)).deserializeStr()}
+              {module.code}
             </Text>
           ))}
           {payload.Package.init_script ? (

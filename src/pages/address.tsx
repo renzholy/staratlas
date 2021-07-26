@@ -9,7 +9,6 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  Text,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { Fragment } from 'react'
@@ -23,6 +22,7 @@ import { useBalances, useResources } from '../hooks/use-provider'
 import { useAddressTransactions } from '../hooks/use-transaction-api'
 import { CardWithHeader } from '../layouts/card-with-header'
 import { formatNumber } from '../utils/formatter'
+import BalanceAmount from '../components/balance-amount'
 
 export default function Address() {
   const params = useParams<{ hash: string }>()
@@ -58,7 +58,7 @@ export default function Address() {
                   <Heading size="sm" mt={index === 0 ? 0 : 4}>
                     {key}
                   </Heading>
-                  <Text color="gray.500">{formatNumber(value as bigint)}</Text>
+                  <BalanceAmount token={key} value={value} />
                 </Fragment>
               ))}
             </Box>
