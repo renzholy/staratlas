@@ -90,21 +90,23 @@ export function useJsonRpc<T extends keyof typeof API>(
   ...params: Static<typeof API[T]['params']>
 ) {
   const network = useNetwork()
-  return useSWR<{
-    jsonrpc: '2.0'
-    result: Static<typeof API[T]['result']>
-    id: 0
-  }>([network, method, JSON.stringify(params)], () =>
+  return useSWR<Static<typeof API[T]['result']>>([network, method, JSON.stringify(params)], () =>
     fetch(`https://${network}-seed.starcoin.org`, {
       method: 'POST',
       body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 0 }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
       .then((response) => response.json())
       .then((json) => {
-        if (ajv.validate(API[method].result, json)) {
-          return json
+        if ('result' in json) {
+          if (ajv.validate(API[method].result, json.result)) {
+            return json.result
+          }
+          throw new Error(ajv.errorsText(ajv.errors))
         }
-        throw new Error(ajv.errorsText(ajv.errors))
+        throw new Error(json.error.message)
       }),
   )
 }
