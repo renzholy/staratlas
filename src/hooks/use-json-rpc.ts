@@ -8,6 +8,10 @@ import { useNetwork } from '../contexts/network'
 import {
   Block,
   BlockHeader,
+  EpochInfo,
+  EpochUncleSummary,
+  EventFilter,
+  GlobalTimeOnChain,
   SignedUserTransaction,
   TransactionBlockInfo,
   TransactionEvent,
@@ -51,6 +55,10 @@ const API = {
     params: Type.Tuple([Type.String()]),
     result: Type.Array(TransactionEvent),
   },
+  'chain.get_events': {
+    params: Type.Tuple([EventFilter]),
+    result: Type.Array(TransactionEvent),
+  },
   'chain.get_headers': {
     params: Type.Tuple([Type.Array(Type.String())]),
     result: Type.Array(BlockHeader),
@@ -63,6 +71,22 @@ const API = {
         uncles: Type.Array(BlockHeader),
       }),
     ),
+  },
+  'chain.epoch': {
+    params: Type.Tuple([]),
+    result: Type.Array(EpochInfo),
+  },
+  'chain.get_epoch_info_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: EpochInfo,
+  },
+  'chain.get_global_time_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: GlobalTimeOnChain,
+  },
+  'chain.epoch_uncle_summary_by_number': {
+    params: Type.Tuple([Type.Integer()]),
+    result: EpochUncleSummary,
   },
 }
 

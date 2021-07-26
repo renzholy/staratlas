@@ -116,3 +116,61 @@ export const TransactionEvent = Type.Intersect([
     event_seq_number: Type.String(),
   }),
 ])
+
+export const EventFilter = Type.Partial(
+  Type.Object({
+    event_keys: Type.Array(Type.String()),
+    limit: Type.Integer(),
+    from_block: Type.Integer(),
+    to_block: Type.Integer(),
+  }),
+)
+
+export const EventHandle = Type.Object({
+  count: Type.Integer(),
+  key: Type.String(),
+})
+
+export const Epoch = Type.Object({
+  number: Type.Integer(),
+  start_time: Type.Integer(),
+  start_block_number: Type.Integer(),
+  end_block_number: Type.Integer(),
+  block_time_target: Type.Integer(),
+  reward_per_block: Type.Integer(),
+  reward_per_uncle_percent: Type.Integer(),
+  block_difficulty_window: Type.Integer(),
+  max_uncles_per_block: Type.Integer(),
+  block_gas_limit: Type.Integer(),
+  strategy: Type.Integer(),
+  new_epoch_events: EventHandle,
+})
+
+export const EpochData = Type.Object({
+  uncles: Type.Integer(),
+  total_reward: Type.Integer(),
+  total_gas: Type.Integer(),
+})
+
+export const EpochInfo = Type.Object({
+  epoch: Epoch,
+  epoch_data: EpochData,
+})
+
+export const GlobalTimeOnChain = Type.Object({
+  milliseconds: Type.Integer(),
+})
+
+export const EpochSummary = Type.Object({
+  uncles: Type.String(),
+  sum: Type.String(),
+  avg: Type.String(),
+  time_sum: Type.String(),
+  time_avg: Type.String(),
+})
+
+export const EpochUncleSummary = Type.Object({
+  epoch: Type.Integer(),
+  number_summary: EpochSummary,
+  epoch_summary: EpochSummary,
+})
