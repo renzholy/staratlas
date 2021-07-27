@@ -21,6 +21,7 @@ import { AiOutlineHome, AiOutlineTool } from 'react-icons/ai'
 import Link from 'next/link'
 import { NETWORKS } from 'utils/constants'
 import dynamic from 'next/dynamic'
+import useNetwork from 'hooks/use-network'
 
 const SearchBar = dynamic(() => import('components/search-bar'), {
   ssr: false,
@@ -31,7 +32,7 @@ const networks = Object.values(NETWORKS)
 
 export default function Layout(props: { children?: ReactNode }) {
   const router = useRouter()
-  const query = router.query as { network: 'main' | 'barnard' | 'halley' | 'proxima' }
+  const network = useNetwork()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode, toggleColorMode } = useColorMode()
   const buttonBackground = useColorModeValue('white', undefined)
@@ -61,29 +62,29 @@ export default function Layout(props: { children?: ReactNode }) {
           top: 0;
         `}
       >
-        <Link href={`/${query.network}`} passHref={true}>
+        <Link href={`/${network}`} passHref={true}>
           <IconButton
             as="a"
             aria-label="index"
             icon={<AiOutlineHome />}
-            bg={router.asPath === `/${query.network}` ? buttonBackground : undefined}
-            variant={router.asPath === `/${query.network}` ? 'solid' : 'ghost'}
+            bg={router.asPath === `/${network}` ? buttonBackground : undefined}
+            variant={router.asPath === `/${network}` ? 'solid' : 'ghost'}
             mr={4}
             display={{ base: 'inline-flex', md: 'none' }}
           />
         </Link>
-        <Link href={`/${query.network}`} passHref={true}>
+        <Link href={`/${network}`} passHref={true}>
           <Button
             as="a"
-            bg={router.asPath === `/${query.network}` ? buttonBackground : undefined}
-            variant={router.asPath === `/${query.network}` ? 'solid' : 'ghost'}
+            bg={router.asPath === `/${network}` ? buttonBackground : undefined}
+            variant={router.asPath === `/${network}` ? 'solid' : 'ghost'}
             mr={2}
             display={{ base: 'none', md: 'inline-flex' }}
           >
             StarAtlas
           </Button>
         </Link>
-        <Link href={`/${query.network}/blocks`} passHref={true}>
+        <Link href={`/${network}/blocks`} passHref={true}>
           <Button
             as="a"
             bg={/\/blocks/.test(router.asPath) ? buttonBackground : undefined}
@@ -94,7 +95,7 @@ export default function Layout(props: { children?: ReactNode }) {
             Blocks
           </Button>
         </Link>
-        <Link href={`/${query.network}/txs`} passHref={true}>
+        <Link href={`/${network}/txs`} passHref={true}>
           <Button
             as="a"
             bg={/\/txs/.test(router.asPath) ? buttonBackground : undefined}
@@ -105,7 +106,7 @@ export default function Layout(props: { children?: ReactNode }) {
             Transactions
           </Button>
         </Link>
-        <Link href={`/${query.network}/utils`} passHref={true}>
+        <Link href={`/${network}/utils`} passHref={true}>
           <IconButton
             as="a"
             aria-label="index"
@@ -116,7 +117,7 @@ export default function Layout(props: { children?: ReactNode }) {
             display={{ base: 'inline-flex', md: 'none' }}
           />
         </Link>
-        <Link href={`/${query.network}/utils`} passHref={true}>
+        <Link href={`/${network}/utils`} passHref={true}>
           <Button
             as="a"
             bg={/\/utils/.test(router.asPath) ? buttonBackground : undefined}
@@ -136,22 +137,22 @@ export default function Layout(props: { children?: ReactNode }) {
             rightIcon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
             onClick={onOpen}
           >
-            {startCase(query.network)}
+            {startCase(network)}
           </MenuButton>
           <Portal>
             <MenuList>
-              {networks.map((network) => (
+              {networks.map((n) => (
                 <MenuItemOption
                   as="a"
                   href={
                     router.asPath.split('/').length === 3
-                      ? `/${network}/${router.asPath.split('/')[2]}`
-                      : `/${network}`
+                      ? `/${n}/${router.asPath.split('/')[2]}`
+                      : `/${n}`
                   }
-                  key={network}
-                  isChecked={query.network === network}
+                  key={n}
+                  isChecked={n === network}
                 >
-                  {startCase(network)}
+                  {startCase(n)}
                 </MenuItemOption>
               ))}
             </MenuList>

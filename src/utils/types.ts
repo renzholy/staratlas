@@ -47,3 +47,5 @@ export type Transaction = {
   transaction_hash: HashValue
   transaction_index: U64
 } & ({ block_metadata: BlockMetadataView } | { user_transaction: SignedUserTransactionView })
+
+export type Network = 'main' | 'barnard' | 'halley' | 'proxima'

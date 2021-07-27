@@ -8,6 +8,7 @@ import flatten from 'lodash/flatten'
 import { AtlasDatabase } from 'utils/database'
 import { call } from 'utils/json-rpc'
 import { BlockSimple } from 'utils/json-rpc/chain'
+import { Network } from 'utils/types'
 
 const atlasDatabase = new AtlasDatabase()
 
@@ -26,7 +27,7 @@ function mapper(block: Static<typeof BlockSimple>) {
   }
 }
 
-async function init(network: 'main' | 'barnard' | 'halley' | 'proxima') {
+async function init(network: Network) {
   const info = await call(network, 'chain.info', [])
   let height = parseInt(info.head.number, 10)
   let uncles = 0

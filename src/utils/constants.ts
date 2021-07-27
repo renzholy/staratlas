@@ -1,3 +1,5 @@
+import { Network } from './types'
+
 enum SupportedChainId {
   MAINNET = 1,
   PROXIMA = 2,
@@ -6,7 +8,7 @@ enum SupportedChainId {
 }
 
 export const NETWORKS: {
-  [chain in SupportedChainId]: string
+  [chain in SupportedChainId]: Network
 } = {
   [SupportedChainId.MAINNET]: 'main',
   [SupportedChainId.BARNARD]: 'barnard',
