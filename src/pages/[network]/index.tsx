@@ -1,4 +1,13 @@
-import { Grid, GridItem, Button, Divider, Spinner, useColorModeValue } from '@chakra-ui/react'
+import { useState, useEffect, useCallback } from 'react'
+import {
+  Grid,
+  GridItem,
+  Button,
+  Divider,
+  Spinner,
+  useColorModeValue,
+  useInterval,
+} from '@chakra-ui/react'
 import Link from 'next/link'
 import { AnimateSharedLayout, motion } from 'framer-motion'
 import useNetwork from 'hooks/use-network'
@@ -41,6 +50,15 @@ export default function Index() {
     { refreshInterval: 2000 },
   )
   const buttonBackground = useColorModeValue('white', undefined)
+  const [worker, setWorker] = useState<Worker>()
+  useEffect(() => {
+    setWorker(new Worker(new URL('workers/maintain-index.worker', import.meta.url)))
+  }, [network])
+  const handlePostMessage = useCallback(() => {
+    worker?.postMessage(network)
+  }, [network, worker])
+  useEffect(handlePostMessage, [handlePostMessage])
+  useInterval(handlePostMessage, 2000)
 
   return (
     <Grid

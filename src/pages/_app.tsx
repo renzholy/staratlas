@@ -1,24 +1,11 @@
 import Head from 'next/head'
 import type { AppProps } from 'next/app'
-import { ChakraProvider, useInterval } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
 import theme from 'utils/theme'
 import Layout from 'layouts/layout'
-import { useEffect, useState, useCallback } from 'react'
-import useNetwork from 'hooks/use-network'
 import './global.css'
 
 function App({ Component, pageProps }: AppProps) {
-  const network = useNetwork()
-  const [worker, setWorker] = useState<Worker>()
-  useEffect(() => {
-    setWorker(new Worker(new URL('workers/maintain-index.worker', import.meta.url)))
-  }, [network])
-  const handlePostMessage = useCallback(() => {
-    worker?.postMessage(network)
-  }, [network, worker])
-  useEffect(handlePostMessage, [handlePostMessage])
-  useInterval(handlePostMessage, 2000)
-
   return (
     <>
       <Head>

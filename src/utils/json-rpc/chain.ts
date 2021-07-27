@@ -39,7 +39,7 @@ const SignedUserTransaction = Type.Object({
   authenticator: TransactionAuthenticator,
 })
 
-const BlockHeader = Type.Object({
+export const BlockHeader = Type.Object({
   block_hash: Type.String(),
   parent_hash: Type.String(),
   timestamp: Type.String(),

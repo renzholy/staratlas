@@ -1,9 +1,9 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
-
+import { BlockHeader } from 'utils/json-rpc/chain'
 import { formatNumber, formatTime } from 'utils/formatter'
-import { Block } from 'utils/types'
+import { Static } from '@sinclair/typebox'
 
-export default function BlockStat(props: { block?: Block['header'] }) {
+export default function BlockStat(props: { block?: Static<typeof BlockHeader> }) {
   const { block } = props
 
   return (
@@ -27,9 +27,7 @@ export default function BlockStat(props: { block?: Block['header'] }) {
             <Stat>
               <StatLabel>Difficulty</StatLabel>
               <Skeleton isLoaded={!!block}>
-                <StatNumber>
-                  {block ? formatNumber(BigInt(block.difficulty_number)) : '-'}
-                </StatNumber>
+                <StatNumber>{block ? formatNumber(BigInt(block.difficulty)) : '-'}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -37,7 +35,7 @@ export default function BlockStat(props: { block?: Block['header'] }) {
             <Stat>
               <StatLabel>Gas used</StatLabel>
               <Skeleton isLoaded={!!block}>
-                <StatNumber>{block ? formatNumber(block.gas_used as bigint) : '-'}</StatNumber>
+                <StatNumber>{block ? formatNumber(BigInt(block.gas_used)) : '-'}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -53,7 +51,7 @@ export default function BlockStat(props: { block?: Block['header'] }) {
             <Stat>
               <StatLabel>Nonce</StatLabel>
               <Skeleton isLoaded={!!block}>
-                <StatNumber>{block ? formatNumber(block.nonce as bigint) : '-'}</StatNumber>
+                <StatNumber>{block ? formatNumber(BigInt(block.nonce)) : '-'}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
