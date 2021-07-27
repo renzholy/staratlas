@@ -7,16 +7,23 @@ import { useBlockList } from 'hooks/use-block-api'
 import { useTransactionList } from 'hooks/use-transaction-api'
 import { formatNumber } from 'utils/formatter'
 import TransactionListItem from 'components/transaction-list-item'
-import BlockListItem from 'components/block-list-item'
+import BlockListItem2 from 'components/block-list-item2'
 import EpochStat from 'components/epoch-stat'
 import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
+import useSWR from 'swr'
+import { atlasDatabase } from 'utils/database'
 
 const SIZE = 20
 
 export default function Index() {
   const network = useNetwork()
   const { data: blocks } = useBlockList(1, { refreshInterval: 2000 })
+  const { data } = useSWR(
+    [network, 'database', 'blocks'],
+    () => atlasDatabase[network].orderBy('height').reverse().limit(10).toArray(),
+    { refreshInterval: 2000 },
+  )
   const { data: transactions } = useTransactionList(1, { refreshInterval: 2000 })
   const buttonBackground = useColorModeValue('white', undefined)
 
@@ -33,17 +40,17 @@ export default function Index() {
           subtitle={
             <Link href={`/${network}/blocks`} passHref={true}>
               <Button as="a" size="sm" bg={buttonBackground} mr={-4}>
-                View all {blocks ? formatNumber(blocks.total) : '-'}
+                View all
               </Button>
             </Link>
           }
         >
           <AnimateSharedLayout>
-            {blocks?.contents.length ? (
-              blocks.contents.map((block, index) => (
-                <motion.div layout={true} key={block.header.block_hash}>
+            {data?.length ? (
+              data.map(({ block }, index) => (
+                <motion.div layout={true} key={block}>
                   {index === 0 ? null : <Divider />}
-                  <BlockListItem block={block} relativeTime={true} />
+                  <BlockListItem2 block={block} relativeTime={true} />
                 </motion.div>
               ))
             ) : (

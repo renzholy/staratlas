@@ -7,7 +7,7 @@ export type Index = {
   uncles: string[]
 }
 
-export class AtlasDatabase extends Dexie {
+class AtlasDatabase extends Dexie {
   main: Dexie.Table<Index, number>
 
   barnard: Dexie.Table<Index, number>
@@ -30,3 +30,5 @@ export class AtlasDatabase extends Dexie {
     this.proxima = this.table('proxima')
   }
 }
+
+export const atlasDatabase = new AtlasDatabase()

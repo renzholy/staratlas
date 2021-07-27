@@ -2,12 +2,10 @@ import { Static } from '@sinclair/typebox'
 import sumBy from 'lodash/sumBy'
 import last from 'lodash/last'
 import flatten from 'lodash/flatten'
-import { AtlasDatabase } from 'utils/database'
+import { atlasDatabase } from 'utils/database'
 import { call } from 'utils/json-rpc'
 import { BlockSimple } from 'utils/json-rpc/chain'
 import { Network } from 'utils/types'
-
-const atlasDatabase = new AtlasDatabase()
 
 const MAX_BATCH_SIZE = 16
 
