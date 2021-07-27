@@ -55,18 +55,19 @@ const BlockHeader = Type.Object({
   chain_id: Type.Integer(),
 })
 
-const Block = Type.Object({
-  header: BlockHeader,
-  body: Type.Object({
-    Full: Type.Array(SignedUserTransaction),
-  }),
-  uncles: Type.Array(BlockHeader),
-})
-
 const BlockSummary = Type.Object({
   header: BlockHeader,
   uncles: Type.Array(BlockHeader),
 })
+
+const Block = Type.Intersect([
+  BlockSummary,
+  Type.Object({
+    body: Type.Object({
+      Full: Type.Array(SignedUserTransaction),
+    }),
+  }),
+])
 
 const AbortLocation = Type.Union([
   Type.Literal('Script'),
@@ -220,8 +221,17 @@ export default {
     result: Block,
   },
   'chain.get_blocks_by_number': {
-    params: Type.Tuple([Type.Integer(), Type.Integer()]),
-    result: Type.Array(BlockSummary),
+    params: Type.Tuple([Type.Integer(), Type.Integer({ maximum: 32 })]),
+    result: Type.Array(
+      Type.Intersect([
+        BlockSummary,
+        Type.Object({
+          body: Type.Object({
+            Hashes: Type.Array(Type.String()),
+          }),
+        }),
+      ]),
+    ),
   },
   'chain.get_headers': {
     params: Type.Tuple([Type.Array(Type.String())]),

@@ -8,14 +8,15 @@ import {
   Box,
   Alert,
   MenuItemOption,
+  useColorModeValue,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 
+import { useNetwork } from '../contexts/network'
 import useAsync from '../hooks/use-async'
-import { useJsonRpcCall } from '../hooks/use-json-rpc'
 import { CardWithHeader } from '../layouts/card-with-header'
-import API from '../utils/json-rpc'
+import { API, call } from '../utils/json-rpc'
 import JsonCode from './json-code'
 
 export default function JsonRpcUtil() {
@@ -32,10 +33,17 @@ export default function JsonRpcUtil() {
       return undefined
     }
   }, [input])
-  const handleJsonRpcCall = useAsync(useJsonRpcCall(method, params))
+  const network = useNetwork()
+  const handleCall = useAsync(
+    useCallback(
+      () => (method && params ? call(network, method, params) : undefined),
+      [method, network, params],
+    ),
+  )
   useEffect(() => {
     setInput(method && API[method].params.items.length === 0 ? '[]' : '')
   }, [method])
+  const buttonBackground = useColorModeValue('white', undefined)
 
   return (
     <CardWithHeader
@@ -44,9 +52,10 @@ export default function JsonRpcUtil() {
         <Button
           size="sm"
           mr={-4}
+          bg={buttonBackground}
           disabled={!method || !params}
-          isLoading={handleJsonRpcCall.status === 'pending'}
-          onClick={handleJsonRpcCall.execute}
+          isLoading={handleCall.status === 'pending'}
+          onClick={handleCall.execute}
         >
           Call
         </Button>
@@ -84,14 +93,14 @@ export default function JsonRpcUtil() {
             `}
           />
         ) : null}
-        {handleJsonRpcCall.value ? (
+        {handleCall.value ? (
           <Box mt={4}>
-            <JsonCode>{handleJsonRpcCall.value}</JsonCode>
+            <JsonCode>{handleCall.value}</JsonCode>
           </Box>
         ) : null}
-        {handleJsonRpcCall.error ? (
+        {handleCall.error ? (
           <Alert status="error" mt={4}>
-            {handleJsonRpcCall.error.message}
+            {handleCall.error.message}
           </Alert>
         ) : null}
       </Box>
