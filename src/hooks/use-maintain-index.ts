@@ -65,6 +65,7 @@ export default function useMaintainIndex(network: 'main' | 'barnard' | 'halley' 
     }
     const count = await atlasDatabase[network].count()
     if (lastIndex.height - firstIndex.height === count - 1) {
+      // eslint-disable-next-line no-console
       console.log(firstIndex, lastIndex)
     }
   }, [network])
