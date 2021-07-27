@@ -1,29 +1,13 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
-import last from 'lodash/last'
-import sumBy from 'lodash/sumBy'
-import { useMemo } from 'react'
 import Link from 'next/link'
 import TimeAgo from 'timeago-react'
 import useNetwork from 'hooks/use-network'
-import { useResource } from 'hooks/use-provider'
 import { formatNumber } from 'utils/formatter'
-import { Block } from 'utils/types'
+import useJsonRpc from 'hooks/use-json-rpc'
 
-export default function EpochStat(props: { blocks?: Block[] }) {
+export default function EpochStat() {
   const network = useNetwork()
-  const { data: epoch } = useResource('0x1', '0x1::Epoch::Epoch', { refreshInterval: 60000 })
-  const hashRate = useMemo(() => {
-    if (!props.blocks?.length) {
-      return 0
-    }
-    const totalDifficulty = sumBy(props.blocks, 'header.difficulty_number')
-    const averageBlockDiff = totalDifficulty / props.blocks.length
-    const endTime = props.blocks[0].header.timestamp
-    const startTime = last(props.blocks)!.header.timestamp
-    const blockTime =
-      ((endTime as unknown as number) - (startTime as unknown as number)) / props.blocks.length
-    return (averageBlockDiff / blockTime) * 1000
-  }, [props.blocks])
+  const { data: epoch } = useJsonRpc('chain.epoch', [])
 
   return (
     <>
@@ -38,7 +22,7 @@ export default function EpochStat(props: { blocks?: Block[] }) {
             <Stat>
               <StatLabel>Epoch</StatLabel>
               <Skeleton isLoaded={!!epoch}>
-                <StatNumber>{epoch?.number}th</StatNumber>
+                <StatNumber>{epoch?.epoch.number}th</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -47,16 +31,16 @@ export default function EpochStat(props: { blocks?: Block[] }) {
               <StatLabel>Start time</StatLabel>
               <Skeleton isLoaded={!!epoch}>
                 <StatNumber>
-                  <TimeAgo datetime={epoch?.start_time} />
+                  <TimeAgo datetime={epoch?.epoch.start_time || 0} />
                 </StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
           <GridItem colSpan={1}>
             <Stat>
-              <StatLabel>Hash rate</StatLabel>
+              <StatLabel>Reward per block</StatLabel>
               <Skeleton isLoaded={!!epoch}>
-                <StatNumber>{formatNumber(Math.round(hashRate))}H/s</StatNumber>
+                <StatNumber>{formatNumber(epoch?.epoch.reward_per_block || 0)}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -72,9 +56,9 @@ export default function EpochStat(props: { blocks?: Block[] }) {
             <Stat>
               <StatLabel>Start block</StatLabel>
               <Skeleton isLoaded={!!epoch}>
-                <Link href={`/${network}/block/${epoch?.start_block_number}`} passHref={true}>
+                <Link href={`/${network}/block/${epoch?.epoch.start_block_number}`} passHref={true}>
                   <StatNumber as="a" color="blue.500">
-                    #{epoch?.start_block_number}
+                    #{epoch?.epoch.start_block_number}
                   </StatNumber>
                 </Link>
               </Skeleton>
@@ -84,9 +68,9 @@ export default function EpochStat(props: { blocks?: Block[] }) {
             <Stat>
               <StatLabel>End block</StatLabel>
               <Skeleton isLoaded={!!epoch}>
-                <Link href={`/${network}/block/${epoch?.end_block_number}`} passHref={true}>
+                <Link href={`/${network}/block/${epoch?.epoch.end_block_number}`} passHref={true}>
                   <StatNumber as="a" color="blue.500">
-                    #{epoch?.end_block_number}
+                    #{epoch?.epoch.end_block_number}
                   </StatNumber>
                 </Link>
               </Skeleton>
@@ -97,7 +81,7 @@ export default function EpochStat(props: { blocks?: Block[] }) {
               <StatLabel>Block time</StatLabel>
               <Skeleton isLoaded={!!epoch}>
                 <StatNumber>
-                  {formatNumber(Math.round(epoch?.block_time_target / 100) / 10)}s
+                  {formatNumber(Math.round((epoch?.epoch.block_time_target || 0) / 100) / 10)}s
                 </StatNumber>
               </Skeleton>
             </Stat>

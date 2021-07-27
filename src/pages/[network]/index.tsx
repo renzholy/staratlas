@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { AnimateSharedLayout, motion } from 'framer-motion'
 
 import useNetwork from 'hooks/use-network'
-import { useBlockList } from 'hooks/use-block-api'
 import { useTransactionList } from 'hooks/use-transaction-api'
 import { formatNumber } from 'utils/formatter'
 import TransactionListItem from 'components/transaction-list-item'
@@ -18,8 +17,7 @@ const SIZE = 20
 
 export default function Index() {
   const network = useNetwork()
-  const { data: blocks } = useBlockList(1, { refreshInterval: 2000 })
-  const { data } = useSWR(
+  const { data: blocks } = useSWR(
     [network, 'database', 'blocks'],
     () => atlasDatabase[network].orderBy('height').reverse().limit(10).toArray(),
     { refreshInterval: 2000 },
@@ -33,7 +31,7 @@ export default function Index() {
       gap={6}
       padding={6}
     >
-      <EpochStat blocks={blocks?.contents} />
+      <EpochStat />
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Latest blocks"
@@ -46,8 +44,8 @@ export default function Index() {
           }
         >
           <AnimateSharedLayout>
-            {data?.length ? (
-              data.map(({ block }, index) => (
+            {blocks?.length ? (
+              blocks.map(({ block }, index) => (
                 <motion.div layout={true} key={block}>
                   {index === 0 ? null : <Divider />}
                   <BlockListItem2 block={block} relativeTime={true} />
