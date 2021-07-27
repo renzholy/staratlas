@@ -1,12 +1,11 @@
 import { Box } from '@chakra-ui/layout'
 import { Button, Text } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import TimeAgo from 'timeago-react'
-
-import { useNetwork } from '../contexts/network'
-import { formatTimeSimple, formatNumber } from '../utils/formatter'
-import { Block } from '../utils/types'
+import useNetwork from 'hooks/use-network'
+import { formatTimeSimple, formatNumber } from 'utils/formatter'
+import { Block } from 'utils/types'
 
 export default function UncleListItem(props: {
   uncle: Block['uncles'][0]
@@ -36,14 +35,11 @@ export default function UncleListItem(props: {
       `}
     >
       <Box width={32} display="inline-block">
-        <Button
-          as={Link}
-          to={`/${network}/uncle/${uncle.block_hash}`}
-          variant="link"
-          color="purple.500"
-        >
-          #{uncle.number}
-        </Button>
+        <Link href={`/${network}/uncle/${uncle.block_hash}`} passHref={true}>
+          <Button as="a" variant="link" color="purple.500">
+            #{uncle.number}
+          </Button>
+        </Link>
       </Box>
       <Text
         css={css`
@@ -57,15 +53,16 @@ export default function UncleListItem(props: {
         )}
       </Text>
       Author:&nbsp;
-      <Button
-        as={Link}
-        to={`/${network}/address/${uncle.author}`}
-        variant="link"
-        color="green.500"
-        width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
-      >
-        {uncle.author}
-      </Button>
+      <Link href={`/${network}/address/${uncle.author}`} passHref={true}>
+        <Button
+          as="a"
+          variant="link"
+          color="green.500"
+          width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
+        >
+          {uncle.author}
+        </Button>
+      </Link>
       <br />
       <Text minWidth={32}>Gas:&nbsp;{formatNumber(uncle.gas_used as bigint)}</Text>
       <Text>Difficulty:&nbsp;{formatNumber(BigInt(uncle.difficulty_number))}</Text>

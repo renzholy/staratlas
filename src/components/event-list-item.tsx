@@ -3,8 +3,8 @@ import { css } from '@emotion/react'
 import { onchain_events } from '@starcoin/starcoin'
 import { useMemo } from 'react'
 
-import { formatNumber } from '../utils/formatter'
-import { Event } from '../utils/types'
+import { formatNumber } from 'utils/formatter'
+import { Event } from 'utils/types'
 import CopyLink from './copy-link'
 import JsonCode from './json-code'
 

@@ -3,8 +3,8 @@ import useSWR, { SWRConfiguration } from 'swr'
 import { providers, utils, types, bcs, encoding } from '@starcoin/starcoin'
 import { arrayify, hexlify } from 'ethers/lib/utils'
 
-import { useNetwork } from '../contexts/network'
 import useAsync from './use-async'
+import useNetwork from './use-network'
 
 export function useProvider() {
   const network = useNetwork()
@@ -30,10 +30,10 @@ export function useResources(address?: string) {
   )
 }
 
-export function useBalances(address: string) {
+export function useBalances(address?: string) {
   const provider = useProvider()
-  return useSWR([provider.connection.url, 'getBalances', address], () =>
-    provider.getBalances(address),
+  return useSWR(address ? [provider.connection.url, 'getBalances', address] : null, () =>
+    provider.getBalances(address!),
   )
 }
 

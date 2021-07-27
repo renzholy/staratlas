@@ -2,10 +2,10 @@ import { Alert, Box, Grid, GridItem, Textarea } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
 import { useMemo, useState } from 'react'
-import JsonRpcUtil from '../components/json-rpc-util'
+import JsonRpcUtil from 'components/json-rpc-util'
 
-import TransactionPayload from '../components/transaction-payload'
-import { CardWithHeader } from '../layouts/card-with-header'
+import TransactionPayload from 'components/transaction-payload'
+import { CardWithHeader } from 'layouts/card-with-header'
 
 export default function Utils() {
   const [text, setText] = useState('')

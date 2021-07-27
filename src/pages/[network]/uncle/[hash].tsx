@@ -1,19 +1,20 @@
 import { Grid, GridItem, Box, Heading, Spinner, Button } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Link, useParams } from 'react-router-dom'
-
-import ListItemPlaceholder from '../components/list-item-placeholder'
-import { useNetwork } from '../contexts/network'
-import { useUncleBlock } from '../hooks/use-block-api'
-import { CardWithHeader } from '../layouts/card-with-header'
-import CopyLink from '../components/copy-link'
-import BlockStat from '../components/block-stat'
-import NotFound from '../components/not-fount'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import ListItemPlaceholder from 'components/list-item-placeholder'
+import useNetwork from 'hooks/use-network'
+import { useUncleBlock } from 'hooks/use-block-api'
+import { CardWithHeader } from 'layouts/card-with-header'
+import CopyLink from 'components/copy-link'
+import BlockStat from 'components/block-stat'
+import NotFound from 'components/not-fount'
 
 export default function Uncle() {
   const network = useNetwork()
-  const params = useParams<{ hash: string }>()
-  const { data: uncle, error } = useUncleBlock(params.hash)
+  const router = useRouter()
+  const { hash } = router.query as { hash?: string }
+  const { data: uncle, error } = useUncleBlock(hash)
 
   if (error) {
     return <NotFound />
@@ -49,25 +50,19 @@ export default function Uncle() {
               <Heading size="sm" mt={4}>
                 Author
               </Heading>
-              <Button
-                as={Link}
-                to={`/${network}/address/${uncle.header.author}`}
-                variant="link"
-                color="green.500"
-              >
-                {uncle.header.author}
-              </Button>
+              <Link href={`/${network}/address/${uncle.header.author}`} passHref={true}>
+                <Button as="a" variant="link" color="green.500">
+                  {uncle.header.author}
+                </Button>
+              </Link>
               <Heading size="sm" mt={4}>
                 Parent hash
               </Heading>
-              <Button
-                as={Link}
-                to={`/${network}/block/${uncle.header.parent_hash}`}
-                variant="link"
-                color="blue.500"
-              >
-                {uncle.header.parent_hash}
-              </Button>
+              <Link href={`/${network}/block/${uncle.header.parent_hash}`} passHref={true}>
+                <Button as="a" variant="link" color="blue.500">
+                  {uncle.header.parent_hash}
+                </Button>
+              </Link>
               <Heading size="sm" mt={4}>
                 Body hash
               </Heading>

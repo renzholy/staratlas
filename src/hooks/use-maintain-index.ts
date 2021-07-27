@@ -7,9 +7,9 @@ import last from 'lodash/last'
 import flatten from 'lodash/flatten'
 import { useCallback, useEffect } from 'react'
 
-import { AtlasDatabase } from '../utils/database'
-import { call } from '../utils/json-rpc'
-import { BlockSimple } from '../utils/json-rpc/chain'
+import { AtlasDatabase } from 'utils/database'
+import { call } from 'utils/json-rpc'
+import { BlockSimple } from 'utils/json-rpc/chain'
 
 const atlasDatabase = new AtlasDatabase()
 

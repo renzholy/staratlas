@@ -3,12 +3,11 @@ import { Button, Text } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import TimeAgo from 'timeago-react'
-
-import { useNetwork } from '../contexts/network'
-import { formatTimeSimple, formatNumber } from '../utils/formatter'
-import { Transaction } from '../utils/types'
+import useNetwork from 'hooks/use-network'
+import { formatTimeSimple, formatNumber } from 'utils/formatter'
+import { Transaction } from 'utils/types'
 
 export default function TransactionListItem(props: {
   transaction: Transaction
@@ -58,16 +57,17 @@ export default function TransactionListItem(props: {
         }
       `}
     >
-      <Button
-        as={Link}
-        to={`/${network}/tx/${transaction.transaction_hash}`}
-        variant="link"
-        color="orange.500"
-        width={{ base: undefined, md: 32 }}
-        marginRight={{ base: undefined, md: 12 }}
-      >
-        {transaction.transaction_hash}
-      </Button>
+      <Link href={`/${network}/tx/${transaction.transaction_hash}`} passHref={true}>
+        <Button
+          as="a"
+          variant="link"
+          color="orange.500"
+          width={{ base: undefined, md: 32 }}
+          marginRight={{ base: undefined, md: 12 }}
+        >
+          {transaction.transaction_hash}
+        </Button>
+      </Link>
       <Text
         css={css`
           float: right;
@@ -80,15 +80,16 @@ export default function TransactionListItem(props: {
         )}
       </Text>
       Sender:&nbsp;
-      <Button
-        as={Link}
-        to={`/${network}/address/${sender}`}
-        variant="link"
-        color="green.500"
-        width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 130px)' }}
-      >
-        {sender}
-      </Button>
+      <Link href={`/${network}/address/${sender}`} passHref={true}>
+        <Button
+          as="a"
+          variant="link"
+          color="green.500"
+          width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 130px)' }}
+        >
+          {sender}
+        </Button>
+      </Link>
       <br />
       <Text minWidth={44}>{payload ? Object.keys(payload)[0] : 'No payload'}</Text>
       <Text minWidth={32} color={status === 'Executed' ? undefined : 'red.500'}>

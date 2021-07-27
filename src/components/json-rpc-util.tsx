@@ -13,10 +13,10 @@ import {
 import { css } from '@emotion/react'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 
-import { useNetwork } from '../contexts/network'
-import useAsync from '../hooks/use-async'
-import { CardWithHeader } from '../layouts/card-with-header'
-import { API, call } from '../utils/json-rpc'
+import useNetwork from 'hooks/use-network'
+import useAsync from 'hooks/use-async'
+import { CardWithHeader } from 'layouts/card-with-header'
+import { API, call } from 'utils/json-rpc'
 import JsonCode from './json-code'
 
 export default function JsonRpcUtil() {

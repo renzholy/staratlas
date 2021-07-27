@@ -2,8 +2,8 @@ import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-u
 import { encoding } from '@starcoin/starcoin'
 import { useMemo } from 'react'
 
-import { formatNumber, formatTime } from '../utils/formatter'
-import { Transaction } from '../utils/types'
+import { formatNumber, formatTime } from 'utils/formatter'
+import { Transaction } from 'utils/types'
 
 export default function TransactionStat(props: { transaction?: Transaction }) {
   const { transaction } = props

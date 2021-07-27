@@ -14,21 +14,19 @@ import {
   useColorMode,
 } from '@chakra-ui/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
-
-import { useBlockList, useUncleBlockList } from '../hooks/use-block-api'
-import BlockListItem from '../components/block-list-item'
-import ListItemPlaceholder from '../components/list-item-placeholder'
-import { CardWithHeader } from '../layouts/card-with-header'
-import { formatNumber } from '../utils/formatter'
-import UncleListItem from '../components/uncle-list-item'
+import ListItemPlaceholder from 'components/list-item-placeholder'
+import { CardWithHeader } from 'layouts/card-with-header'
+import { formatNumber } from 'utils/formatter'
+import { usePendingTransactionList, useTransactionList } from 'hooks/use-transaction-api'
+import TransactionListItem from 'components/transaction-list-item'
 
 const SIZE = 20
 
-export default function Blocks() {
-  const [blockPage, setBlockPage] = useState(1)
-  const [unclePage, setUnclePage] = useState(1)
-  const { data: blocks } = useBlockList(blockPage, { revalidateOnFocus: false })
-  const { data: uncles } = useUncleBlockList(unclePage, { revalidateOnFocus: false })
+export default function Transactions() {
+  const [transactionPage, setTransactionPage] = useState(1)
+  const [pendingPage, setPendingPage] = useState(1)
+  const { data: transactions } = useTransactionList(transactionPage, { revalidateOnFocus: false })
+  const { data: pendings } = usePendingTransactionList(pendingPage, { revalidateOnFocus: false })
   const { colorMode } = useColorMode()
 
   return (
@@ -39,23 +37,23 @@ export default function Blocks() {
     >
       <GridItem colSpan={1} paddingX={6}>
         <Stat>
-          <StatLabel>Blocks</StatLabel>
-          <Skeleton isLoaded={!!blocks}>
-            <StatNumber>{formatNumber(blocks?.total || 0)}</StatNumber>
+          <StatLabel>Transactions</StatLabel>
+          <Skeleton isLoaded={!!transactions}>
+            <StatNumber>{formatNumber(transactions?.total || 0)}</StatNumber>
           </Skeleton>
         </Stat>
       </GridItem>
       <GridItem colSpan={1} paddingX={6}>
         <Stat>
-          <StatLabel>Uncles</StatLabel>
-          <Skeleton isLoaded={!!uncles}>
-            <StatNumber>{formatNumber(uncles?.total || 0)}</StatNumber>
+          <StatLabel>Pendings</StatLabel>
+          <Skeleton isLoaded={!!pendings}>
+            <StatNumber>{formatNumber(pendings?.total || 0)}</StatNumber>
           </Skeleton>
         </Stat>
       </GridItem>
       <GridItem colSpan={1}>
         <CardWithHeader
-          title="Blocks"
+          title="Transactions"
           subtitle={
             <>
               <ButtonGroup
@@ -65,25 +63,25 @@ export default function Blocks() {
                 spacing={0}
                 mr={-4}
               >
-                <Tooltip label={`page ${blockPage - 1}`} placement="top">
+                <Tooltip label={`page ${transactionPage - 1}`} placement="top">
                   <IconButton
-                    aria-label="prev block"
+                    aria-label="prev transaction"
                     icon={<ChevronLeftIcon />}
                     mr="-px"
                     bg={colorMode === 'light' ? 'white' : undefined}
                     onClick={() => {
-                      setBlockPage((old) => old - 1)
+                      setTransactionPage((old) => old - 1)
                     }}
-                    disabled={blockPage === 1}
+                    disabled={transactionPage === 1}
                   />
                 </Tooltip>
-                <Tooltip label={`page ${blockPage + 1}`} placement="top">
+                <Tooltip label={`page ${transactionPage + 1}`} placement="top">
                   <IconButton
-                    aria-label="next block"
+                    aria-label="next transaction"
                     icon={<ChevronRightIcon />}
                     bg={colorMode === 'light' ? 'white' : undefined}
                     onClick={() => {
-                      setBlockPage((old) => old + 1)
+                      setTransactionPage((old) => old + 1)
                     }}
                   />
                 </Tooltip>
@@ -91,11 +89,11 @@ export default function Blocks() {
             </>
           }
         >
-          {blocks?.contents.length ? (
-            blocks.contents.map((block, index) => (
-              <Fragment key={block.header.block_hash}>
+          {transactions?.contents.length ? (
+            transactions.contents.map((transaction, index) => (
+              <Fragment key={transaction.transaction_hash}>
                 {index === 0 ? null : <Divider />}
-                <BlockListItem block={block} />
+                <TransactionListItem transaction={transaction} />
               </Fragment>
             ))
           ) : (
@@ -107,7 +105,7 @@ export default function Blocks() {
       </GridItem>
       <GridItem colSpan={1}>
         <CardWithHeader
-          title="Uncles"
+          title="Pendings"
           subtitle={
             <>
               <ButtonGroup
@@ -117,42 +115,43 @@ export default function Blocks() {
                 spacing={0}
                 mr={-4}
               >
-                <Tooltip label={`page ${unclePage - 1}`} placement="top">
+                <Tooltip label={`page ${pendingPage - 1}`} placement="top">
                   <IconButton
-                    aria-label="prev uncle"
+                    aria-label="prev pending"
                     icon={<ChevronLeftIcon />}
                     mr="-px"
                     bg={colorMode === 'light' ? 'white' : undefined}
                     onClick={() => {
-                      setUnclePage((old) => old - 1)
+                      setPendingPage((old) => old - 1)
                     }}
-                    disabled={unclePage === 1}
+                    disabled={pendingPage === 1}
                   />
                 </Tooltip>
-                <Tooltip label={`page ${unclePage + 1}`} placement="top">
+                <Tooltip label={`page ${pendingPage + 1}`} placement="top">
                   <IconButton
-                    aria-label="next uncle"
+                    aria-label="next pending"
                     icon={<ChevronRightIcon />}
                     bg={colorMode === 'light' ? 'white' : undefined}
                     onClick={() => {
-                      setUnclePage((old) => old + 1)
+                      setPendingPage((old) => old + 1)
                     }}
+                    disabled={pendings && pendings.total <= SIZE}
                   />
                 </Tooltip>
               </ButtonGroup>
             </>
           }
         >
-          {uncles?.contents.length ? (
-            uncles.contents.map((uncle, index) => (
-              <Fragment key={uncle.header.block_hash}>
+          {pendings?.contents.length ? (
+            pendings.contents.map((pending, index) => (
+              <Fragment key={pending.transaction_hash}>
                 {index === 0 ? null : <Divider />}
-                <UncleListItem uncle={uncle.header} />
+                <TransactionListItem transaction={pending} />
               </Fragment>
             ))
           ) : (
             <ListItemPlaceholder height={SIZE * 68 - 1}>
-              <Spinner />
+              {pendings?.contents.length === 0 ? 'No pendings' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>

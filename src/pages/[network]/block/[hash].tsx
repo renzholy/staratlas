@@ -9,31 +9,31 @@ import {
   Spinner,
   ButtonGroup,
   IconButton,
-  Tooltip,
   Button,
   useColorMode,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { Fragment } from 'react'
-import { Link, useParams } from 'react-router-dom'
-
-import ListItemPlaceholder from '../components/list-item-placeholder'
-import TransactionListItem from '../components/transaction-list-item'
-import { useNetwork } from '../contexts/network'
-import { useBlock } from '../hooks/use-block-api'
-import { useBlockTransactions } from '../hooks/use-transaction-api'
-import { CardWithHeader } from '../layouts/card-with-header'
-import { formatNumber } from '../utils/formatter'
-import CopyLink from '../components/copy-link'
-import UncleListItem from '../components/uncle-list-item'
-import BlockStat from '../components/block-stat'
-import NotFound from '../components/not-fount'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import ListItemPlaceholder from 'components/list-item-placeholder'
+import TransactionListItem from 'components/transaction-list-item'
+import { useBlock } from 'hooks/use-block-api'
+import { useBlockTransactions } from 'hooks/use-transaction-api'
+import { CardWithHeader } from 'layouts/card-with-header'
+import { formatNumber } from 'utils/formatter'
+import CopyLink from 'components/copy-link'
+import UncleListItem from 'components/uncle-list-item'
+import BlockStat from 'components/block-stat'
+import NotFound from 'components/not-fount'
+import useNetwork from 'hooks/use-network'
 
 export default function Block() {
+  const router = useRouter()
   const network = useNetwork()
+  const { hash } = router.query as { hash?: string }
   const { colorMode } = useColorMode()
-  const params = useParams<{ hashOrHeight: string }>()
-  const { data: block, error } = useBlock(params.hashOrHeight)
+  const { data: block, error } = useBlock(hash)
   const { data: transactions } = useBlockTransactions(block?.header.block_hash)
 
   if (error) {
@@ -59,25 +59,23 @@ export default function Block() {
                   spacing={0}
                   mr={-4}
                 >
-                  <Tooltip label={`#${block.header.number - 1}`} placement="top">
+                  <Link href={`/${network}/block/${block.header.number - 1}`} passHref={true}>
                     <IconButton
-                      as={Link}
-                      to={`/${network}/block/${block.header.number - 1}`}
+                      as="a"
                       aria-label="prev block"
                       icon={<ChevronLeftIcon />}
                       mr="-px"
                       bg={colorMode === 'light' ? 'white' : undefined}
                     />
-                  </Tooltip>
-                  <Tooltip label={`#${block.header.number + 1}`} placement="top">
+                  </Link>
+                  <Link href={`/${network}/block/${block.header.number + 1}`} passHref={true}>
                     <IconButton
-                      as={Link}
-                      to={`/${network}/block/${block.header.number + 1}`}
+                      as="a"
                       aria-label="next block"
                       icon={<ChevronRightIcon />}
                       bg={colorMode === 'light' ? 'white' : undefined}
                     />
-                  </Tooltip>
+                  </Link>
                 </ButtonGroup>
               </>
             ) : null
@@ -106,25 +104,19 @@ export default function Block() {
               <Heading size="sm" mt={4}>
                 Author
               </Heading>
-              <Button
-                as={Link}
-                to={`/${network}/address/${block.header.author}`}
-                variant="link"
-                color="green.500"
-              >
-                {block.header.author}
-              </Button>
+              <Link href={`/${network}/address/${block.header.author}`} passHref={true}>
+                <Button as="a" variant="link" color="green.500">
+                  {block.header.author}
+                </Button>
+              </Link>
               <Heading size="sm" mt={4}>
                 Parent hash
               </Heading>
-              <Button
-                as={Link}
-                to={`/${network}/block/${block.header.parent_hash}`}
-                variant="link"
-                color="blue.500"
-              >
-                {block.header.parent_hash}
-              </Button>
+              <Link href={`/${network}/block/${block.header.parent_hash}`} passHref={true}>
+                <Button as="a" variant="link" color="blue.500">
+                  {block.header.parent_hash}
+                </Button>
+              </Link>
               <Heading size="sm" mt={4}>
                 Body hash
               </Heading>

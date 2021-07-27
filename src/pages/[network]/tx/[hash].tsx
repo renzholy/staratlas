@@ -13,26 +13,27 @@ import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
 import copy from 'copy-to-clipboard'
 import { Fragment, lazy, Suspense, useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import CopyLink from 'components/copy-link'
+import EventListItem from 'components/event-list-item'
+import JsonCode from 'components/json-code'
+import ListItemPlaceholder from 'components/list-item-placeholder'
+import NotFound from 'components/not-fount'
+import TransactionPayload from 'components/transaction-payload'
+import TransactionStat from 'components/transaction-stat'
+import useNetwork from 'hooks/use-network'
+import { useTransaction } from 'hooks/use-transaction-api'
+import { CardWithHeader } from 'layouts/card-with-header'
+import { formatNumber } from 'utils/formatter'
 
-import CopyLink from '../components/copy-link'
-import EventListItem from '../components/event-list-item'
-import JsonCode from '../components/json-code'
-import ListItemPlaceholder from '../components/list-item-placeholder'
-import NotFound from '../components/not-fount'
-import TransactionPayload from '../components/transaction-payload'
-import TransactionStat from '../components/transaction-stat'
-import { useNetwork } from '../contexts/network'
-import { useTransaction } from '../hooks/use-transaction-api'
-import { CardWithHeader } from '../layouts/card-with-header'
-import { formatNumber } from '../utils/formatter'
-
-const DryRunModal = lazy(() => import('../components/dry-run-modal'))
+const DryRunModal = lazy(() => import('components/dry-run-modal'))
 
 export default function Transaction() {
-  const params = useParams<{ hash: string }>()
+  const router = useRouter()
+  const { hash } = router.query as { hash?: string }
   const network = useNetwork()
-  const { data: transaction, error } = useTransaction(params.hash)
+  const { data: transaction, error } = useTransaction(hash)
   const sender = useMemo(
     () =>
       transaction
@@ -105,25 +106,19 @@ export default function Transaction() {
               <Heading size="sm" mt={4}>
                 Sender
               </Heading>
-              <Button
-                as={Link}
-                to={`/${network}/address/${sender}`}
-                variant="link"
-                color="green.500"
-              >
-                {sender}
-              </Button>
+              <Link href={`/${network}/address/${sender}`} passHref={true}>
+                <Button as="a" variant="link" color="green.500">
+                  {sender}
+                </Button>
+              </Link>
               <Heading size="sm" mt={4}>
                 Block
               </Heading>
-              <Button
-                as={Link}
-                to={`/${network}/block/${transaction.block_hash}`}
-                variant="link"
-                color="blue.500"
-              >
-                {transaction.block_hash}
-              </Button>
+              <Link href={`/${network}/block/${transaction.block_hash}`} passHref={true}>
+                <Button as="a" variant="link" color="blue.500">
+                  {transaction.block_hash}
+                </Button>
+              </Link>
               <Heading size="sm" mt={4}>
                 Event root hash
               </Heading>
