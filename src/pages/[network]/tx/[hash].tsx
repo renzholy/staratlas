@@ -12,7 +12,7 @@ import {
 import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
 import copy from 'copy-to-clipboard'
-import { Fragment, lazy, Suspense, useMemo } from 'react'
+import { Fragment, Suspense, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import CopyLink from 'components/copy-link'
@@ -26,8 +26,9 @@ import useNetwork from 'hooks/use-network'
 import { useTransaction } from 'hooks/use-transaction-api'
 import { CardWithHeader } from 'layouts/card-with-header'
 import { formatNumber } from 'utils/formatter'
+import dynamic from 'next/dynamic'
 
-const DryRunModal = lazy(() => import('components/dry-run-modal'))
+const DryRunModal = dynamic(() => import('components/dry-run-modal'), { ssr: false })
 
 export default function Transaction() {
   const router = useRouter()

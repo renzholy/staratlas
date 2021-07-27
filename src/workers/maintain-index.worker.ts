@@ -5,8 +5,6 @@ import { Static } from '@sinclair/typebox'
 import sumBy from 'lodash/sumBy'
 import last from 'lodash/last'
 import flatten from 'lodash/flatten'
-import { useCallback, useEffect } from 'react'
-
 import { AtlasDatabase } from 'utils/database'
 import { call } from 'utils/json-rpc'
 import { BlockSimple } from 'utils/json-rpc/chain'
@@ -15,7 +13,7 @@ const atlasDatabase = new AtlasDatabase()
 
 const BATCH_SIZE = 10
 
-const INIT_SIZE = 20
+const INIT_SIZE = 10
 
 const BLOCK_PAGE_SIZE = 32
 
@@ -38,10 +36,12 @@ async function init(network: 'main' | 'barnard' | 'halley' | 'proxima') {
     const blocks = flatten(
       await Promise.all(
         Array.from({ length: BATCH_SIZE }).map((_, index) =>
-          call(network, 'chain.get_blocks_by_number', [
-            height - index * BLOCK_PAGE_SIZE,
-            BLOCK_PAGE_SIZE,
-          ]),
+          height - index * BLOCK_PAGE_SIZE >= 0
+            ? call(network, 'chain.get_blocks_by_number', [
+                height - index * BLOCK_PAGE_SIZE,
+                BLOCK_PAGE_SIZE,
+              ])
+            : [],
         ),
       ),
     )
@@ -55,22 +55,17 @@ async function init(network: 'main' | 'barnard' | 'halley' | 'proxima') {
   }
 }
 
-export default function useMaintainIndex(network: 'main' | 'barnard' | 'halley' | 'proxima') {
-  const handleMaintain = useCallback(async () => {
-    const firstIndex = await atlasDatabase[network].orderBy('height').first()
-    const lastIndex = await atlasDatabase[network].orderBy('height').last()
-    if (!firstIndex || !lastIndex) {
-      await init(network)
-      return
-    }
-    const count = await atlasDatabase[network].count()
-    if (lastIndex.height - firstIndex.height === count - 1) {
-      // eslint-disable-next-line no-console
-      console.log(firstIndex, lastIndex)
-    }
-  }, [network])
-
-  useEffect(() => {
-    handleMaintain()
-  }, [handleMaintain])
-}
+globalThis.addEventListener('message', async (e) => {
+  const network = e.data as 'main' | 'barnard' | 'halley' | 'proxima'
+  const firstIndex = await atlasDatabase[network].orderBy('height').first()
+  const lastIndex = await atlasDatabase[network].orderBy('height').last()
+  if (!firstIndex || !lastIndex) {
+    await init(network)
+    return
+  }
+  const count = await atlasDatabase[network].count()
+  if (lastIndex.height - firstIndex.height === count - 1) {
+    // eslint-disable-next-line no-console
+    console.log(firstIndex, lastIndex)
+  }
+})
