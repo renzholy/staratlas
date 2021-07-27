@@ -1,28 +1,42 @@
 import { Grid, GridItem, Button, Divider, Spinner, useColorModeValue } from '@chakra-ui/react'
 import Link from 'next/link'
 import { AnimateSharedLayout, motion } from 'framer-motion'
-
 import useNetwork from 'hooks/use-network'
-import { useTransactionList } from 'hooks/use-transaction-api'
-import { formatNumber } from 'utils/formatter'
-import TransactionListItem from 'components/transaction-list-item'
+import TransactionListItem2 from 'components/transaction-list-item2'
 import BlockListItem2 from 'components/block-list-item2'
 import EpochStat from 'components/epoch-stat'
 import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import useSWR from 'swr'
 import { atlasDatabase } from 'utils/database'
+import flatten from 'lodash/flatten'
+import take from 'lodash/take'
 
-const SIZE = 20
+const SIZE = 10
 
 export default function Index() {
   const network = useNetwork()
   const { data: blocks } = useSWR(
     [network, 'database', 'blocks'],
-    () => atlasDatabase[network].orderBy('height').reverse().limit(10).toArray(),
+    async () => {
+      const data = await atlasDatabase[network].orderBy('height').reverse().limit(SIZE).toArray()
+      return data.map((datum) => datum.block)
+    },
     { refreshInterval: 2000 },
   )
-  const { data: transactions } = useTransactionList(1, { refreshInterval: 2000 })
+  const { data: transactions } = useSWR(
+    [network, 'database', 'transactions'],
+    async () => {
+      const data = await atlasDatabase[network]
+        .orderBy('height')
+        .reverse()
+        .filter((x) => x.transactions.length > 0)
+        .limit(SIZE)
+        .toArray()
+      return take(flatten(data.map((datum) => datum.transactions)), SIZE)
+    },
+    { refreshInterval: 2000 },
+  )
   const buttonBackground = useColorModeValue('white', undefined)
 
   return (
@@ -45,7 +59,7 @@ export default function Index() {
         >
           <AnimateSharedLayout>
             {blocks?.length ? (
-              blocks.map(({ block }, index) => (
+              blocks.map((block, index) => (
                 <motion.div layout={true} key={block}>
                   {index === 0 ? null : <Divider />}
                   <BlockListItem2 block={block} relativeTime={true} />
@@ -65,17 +79,17 @@ export default function Index() {
           subtitle={
             <Link href={`/${network}/txs`} passHref={true}>
               <Button as="a" size="sm" bg={buttonBackground} mr={-4}>
-                View all {transactions ? formatNumber(transactions.total) : '-'}
+                View all
               </Button>
             </Link>
           }
         >
           <AnimateSharedLayout>
-            {transactions?.contents.length ? (
-              transactions.contents.map((transaction, index) => (
-                <motion.div layout={true} key={transaction.transaction_hash}>
+            {transactions?.length ? (
+              transactions.map((transaction, index) => (
+                <motion.div layout={true} key={transaction}>
                   {index === 0 ? null : <Divider />}
-                  <TransactionListItem transaction={transaction} relativeTime={true} />
+                  <TransactionListItem2 transaction={transaction} relativeTime={true} />
                 </motion.div>
               ))
             ) : (

@@ -9,7 +9,7 @@ import { Network } from 'utils/types'
 
 const MAX_BATCH_SIZE = 16
 
-const INIT_SIZE = 10
+const MIN_SIZE = 10
 
 const BLOCK_PAGE_SIZE = 32
 
@@ -49,11 +49,7 @@ async function run(network: Network, height: number, end = 0) {
     uncles += sumBy(blocks, (block) => block.uncles.length)
     transactions += sumBy(blocks, (block) => block.body.Hashes.length)
     batchSize = Math.min(batchSize + 2, MAX_BATCH_SIZE)
-    if (
-      (transactions >= INIT_SIZE && uncles >= INIT_SIZE) ||
-      blocks.length === 0 ||
-      height <= end
-    ) {
+    if ((transactions >= MIN_SIZE && uncles >= MIN_SIZE) || blocks.length === 0 || height <= end) {
       return
     }
   }
@@ -70,13 +66,21 @@ globalThis.addEventListener('message', async (e) => {
     await run(network, currentHeight)
     return
   }
-  const count = await atlasDatabase[network].count()
+  const blocks = await atlasDatabase[network].count()
   if (
-    lastIndex.height - firstIndex.height === count - 1 &&
+    lastIndex.height - firstIndex.height === blocks - 1 &&
     currentHeight - lastIndex.height <= BLOCK_PAGE_SIZE * MAX_BATCH_SIZE * 64 // about 64 times batch call
   ) {
-    // index has no hole and index is not too old
-    await run(network, currentHeight, lastIndex.height)
+    const transactions = await atlasDatabase[network]
+      .filter((x) => x.transactions.length > 0)
+      .count()
+    const uncles = await atlasDatabase[network].filter((x) => x.uncles.length > 0).count()
+    if (transactions >= MIN_SIZE && uncles >= MIN_SIZE) {
+      // index has no hole and index is not too old
+      await run(network, currentHeight, lastIndex.height)
+    } else {
+      await run(network, currentHeight)
+    }
   } else {
     // index has hole or index is too old
     await atlasDatabase[network].clear()
