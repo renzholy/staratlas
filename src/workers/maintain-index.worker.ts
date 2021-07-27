@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-loop-func */
-/* eslint-disable no-await-in-loop */
-
 import { Static } from '@sinclair/typebox'
 import sumBy from 'lodash/sumBy'
 import last from 'lodash/last'
@@ -12,7 +9,7 @@ import { Network } from 'utils/types'
 
 const atlasDatabase = new AtlasDatabase()
 
-const BATCH_SIZE = 10
+const MAX_BATCH_SIZE = 16
 
 const INIT_SIZE = 10
 
@@ -27,16 +24,17 @@ function mapper(block: Static<typeof BlockSimple>) {
   }
 }
 
-async function init(network: Network) {
-  const info = await call(network, 'chain.info', [])
-  let height = parseInt(info.head.number, 10)
+async function run(network: Network, height: number, end = 0) {
   let uncles = 0
   let transactions = 0
+  let batchSize = 1
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const blocks = flatten(
+      // eslint-disable-next-line no-await-in-loop
       await Promise.all(
-        Array.from({ length: BATCH_SIZE }).map((_, index) =>
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        Array.from({ length: batchSize }).map((_, index) =>
           height - index * BLOCK_PAGE_SIZE >= 0
             ? call(network, 'chain.get_blocks_by_number', [
                 height - index * BLOCK_PAGE_SIZE,
@@ -46,27 +44,44 @@ async function init(network: Network) {
         ),
       ),
     )
+    // eslint-disable-next-line no-await-in-loop
     await atlasDatabase[network].bulkPut(blocks.map(mapper))
+    // eslint-disable-next-line no-param-reassign
     height = parseInt(last(blocks)!.header.number, 10) - 1
     uncles += sumBy(blocks, (block) => block.uncles.length)
     transactions += sumBy(blocks, (block) => block.body.Hashes.length)
-    if (transactions >= INIT_SIZE && uncles >= INIT_SIZE) {
+    batchSize = Math.min(batchSize + 2, MAX_BATCH_SIZE)
+    if (
+      (transactions >= INIT_SIZE && uncles >= INIT_SIZE) ||
+      blocks.length === 0 ||
+      height <= end
+    ) {
       return
     }
   }
 }
 
 globalThis.addEventListener('message', async (e) => {
-  const network = e.data as 'main' | 'barnard' | 'halley' | 'proxima'
+  const network = e.data as Network
   const firstIndex = await atlasDatabase[network].orderBy('height').first()
   const lastIndex = await atlasDatabase[network].orderBy('height').last()
+  const info = await call(network, 'chain.info', [])
+  const currentHeight = parseInt(info.head.number, 10)
   if (!firstIndex || !lastIndex) {
-    await init(network)
+    // init
+    await run(network, currentHeight)
     return
   }
   const count = await atlasDatabase[network].count()
-  if (lastIndex.height - firstIndex.height === count - 1) {
-    // eslint-disable-next-line no-console
-    console.log(firstIndex, lastIndex)
+  if (
+    lastIndex.height - firstIndex.height === count - 1 &&
+    currentHeight - lastIndex.height <= BLOCK_PAGE_SIZE * MAX_BATCH_SIZE * 64 // about 64 times batch call
+  ) {
+    // index has no hole and index is not too old
+    await run(network, currentHeight, lastIndex.height)
+  } else {
+    // index has hole or index is too old
+    await atlasDatabase[network].clear()
+    await run(network, currentHeight)
   }
 })
