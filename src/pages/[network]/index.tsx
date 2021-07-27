@@ -11,15 +11,18 @@ import useSWR from 'swr'
 import { atlasDatabase } from 'utils/database'
 import flatten from 'lodash/flatten'
 import take from 'lodash/take'
-
-const SIZE = 10
+import { INDEX_SIZE } from 'utils/constants'
 
 export default function Index() {
   const network = useNetwork()
   const { data: blocks } = useSWR(
     [network, 'database', 'blocks'],
     async () => {
-      const data = await atlasDatabase[network].orderBy('height').reverse().limit(SIZE).toArray()
+      const data = await atlasDatabase[network]
+        .orderBy('height')
+        .reverse()
+        .limit(INDEX_SIZE[network])
+        .toArray()
       return data.map((datum) => datum.block)
     },
     { refreshInterval: 2000 },
@@ -31,9 +34,9 @@ export default function Index() {
         .orderBy('height')
         .reverse()
         .filter((x) => x.transactions.length > 0)
-        .limit(SIZE)
+        .limit(INDEX_SIZE[network])
         .toArray()
-      return take(flatten(data.map((datum) => datum.transactions)), SIZE)
+      return take(flatten(data.map((datum) => datum.transactions)), INDEX_SIZE[network])
     },
     { refreshInterval: 2000 },
   )
@@ -66,7 +69,7 @@ export default function Index() {
                 </motion.div>
               ))
             ) : (
-              <ListItemPlaceholder height={SIZE * 68 - 1}>
+              <ListItemPlaceholder height={INDEX_SIZE[network] * 68 - 1}>
                 <Spinner />
               </ListItemPlaceholder>
             )}
@@ -93,7 +96,7 @@ export default function Index() {
                 </motion.div>
               ))
             ) : (
-              <ListItemPlaceholder height={SIZE * 68 - 1}>
+              <ListItemPlaceholder height={INDEX_SIZE[network] * 68 - 1}>
                 <Spinner />
               </ListItemPlaceholder>
             )}

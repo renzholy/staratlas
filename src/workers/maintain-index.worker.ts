@@ -6,10 +6,9 @@ import { atlasDatabase } from 'utils/database'
 import { call } from 'utils/json-rpc'
 import { BlockSimple } from 'utils/json-rpc/chain'
 import { Network } from 'utils/types'
+import { INDEX_SIZE } from 'utils/constants'
 
 const MAX_BATCH_SIZE = 16
-
-const MIN_SIZE = 10
 
 const BLOCK_PAGE_SIZE = 32
 
@@ -49,14 +48,27 @@ async function run(network: Network, height: number, end = 0) {
     uncles += sumBy(blocks, (block) => block.uncles.length)
     transactions += sumBy(blocks, (block) => block.body.Hashes.length)
     batchSize = Math.min(batchSize + 2, MAX_BATCH_SIZE)
-    if ((transactions >= MIN_SIZE && uncles >= MIN_SIZE) || blocks.length === 0 || height <= end) {
+    if (
+      (transactions >= INDEX_SIZE[network] && uncles >= INDEX_SIZE[network]) ||
+      blocks.length === 0 ||
+      height <= end
+    ) {
       return
     }
   }
 }
 
+let prevNetwork: Network
+
+let isRunning: boolean
+
 globalThis.addEventListener('message', async (e) => {
   const network = e.data as Network
+  if (network === prevNetwork && isRunning) {
+    return
+  }
+  prevNetwork = network
+  isRunning = true
   const firstIndex = await atlasDatabase[network].orderBy('height').first()
   const lastIndex = await atlasDatabase[network].orderBy('height').last()
   const info = await call(network, 'chain.info', [])
@@ -64,6 +76,7 @@ globalThis.addEventListener('message', async (e) => {
   if (!firstIndex || !lastIndex) {
     // init
     await run(network, currentHeight)
+    isRunning = false
     return
   }
   const blocks = await atlasDatabase[network].count()
@@ -75,7 +88,7 @@ globalThis.addEventListener('message', async (e) => {
       .filter((x) => x.transactions.length > 0)
       .count()
     const uncles = await atlasDatabase[network].filter((x) => x.uncles.length > 0).count()
-    if (transactions >= MIN_SIZE && uncles >= MIN_SIZE) {
+    if (transactions >= INDEX_SIZE[network] && uncles >= INDEX_SIZE[network]) {
       // index has no hole and index is not too old
       await run(network, currentHeight, lastIndex.height)
     } else {
@@ -86,4 +99,5 @@ globalThis.addEventListener('message', async (e) => {
     await atlasDatabase[network].clear()
     await run(network, currentHeight)
   }
+  isRunning = false
 })
