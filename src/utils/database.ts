@@ -8,13 +8,25 @@ export type Index = {
 }
 
 export class AtlasDatabase extends Dexie {
-  index: Dexie.Table<Index, number>
+  main: Dexie.Table<Index, number>
+
+  barnard: Dexie.Table<Index, number>
+
+  halley: Dexie.Table<Index, number>
+
+  proxima: Dexie.Table<Index, number>
 
   constructor() {
     super('AtlasDatabase')
     this.version(1).stores({
-      index: 'height, &block, *transactions, *uncles',
+      main: 'height, &block, *transactions, *uncles',
+      barnard: 'height, &block, *transactions, *uncles',
+      halley: 'height, &block, *transactions, *uncles',
+      proxima: 'height, &block, *transactions, *uncles',
     })
-    this.index = this.table('index')
+    this.main = this.table('main')
+    this.barnard = this.table('barnard')
+    this.halley = this.table('halley')
+    this.proxima = this.table('proxima')
   }
 }

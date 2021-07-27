@@ -69,6 +69,15 @@ const Block = Type.Intersect([
   }),
 ])
 
+export const BlockSimple = Type.Intersect([
+  BlockSummary,
+  Type.Object({
+    body: Type.Object({
+      Hashes: Type.Array(Type.String()),
+    }),
+  }),
+])
+
 const AbortLocation = Type.Union([
   Type.Literal('Script'),
   Type.Object({
@@ -222,16 +231,7 @@ export default {
   },
   'chain.get_blocks_by_number': {
     params: Type.Tuple([Type.Integer(), Type.Integer({ maximum: 32 })]),
-    result: Type.Array(
-      Type.Intersect([
-        BlockSummary,
-        Type.Object({
-          body: Type.Object({
-            Hashes: Type.Array(Type.String()),
-          }),
-        }),
-      ]),
-    ),
+    result: Type.Array(BlockSimple),
   },
   'chain.get_headers': {
     params: Type.Tuple([Type.Array(Type.String())]),

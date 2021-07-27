@@ -14,7 +14,7 @@ export async function call<T extends keyof typeof API>(
   network: string,
   method: T,
   params: Static<typeof API[T]['params']>,
-) {
+): Promise<Static<typeof API[T]['result']>> {
   return fetch(`https://${network}-seed.starcoin.org`, {
     method: 'POST',
     body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 0 }),

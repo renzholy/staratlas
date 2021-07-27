@@ -21,6 +21,7 @@ import { AiOutlineHome, AiOutlineTool } from 'react-icons/ai'
 import { NETWORKS } from '../constants'
 import { NetworkProvider } from '../contexts/network'
 import SearchBar from '../components/search-bar'
+import useMaintainIndex from '../hooks/use-maintain-index'
 
 const networks = Object.values(NETWORKS)
 
@@ -41,6 +42,7 @@ export default function Layout(props: { children?: ReactNode }) {
       }[location.pathname.split('/')[2]] || 'gray'),
     [location.pathname],
   )
+  useMaintainIndex(params.network as 'main' | 'barnard' | 'halley' | 'proxima')
 
   return (
     <NetworkProvider value={params.network}>
