@@ -2,8 +2,8 @@ import useSWR, { SWRConfiguration } from 'swr'
 import type { Static } from '@sinclair/typebox'
 import { useMemo } from 'react'
 
-import { useNetwork } from '../contexts/network'
-import { API, call } from '../utils/json-rpc'
+import useNetwork from 'hooks/use-network'
+import { API, call } from 'utils/json-rpc'
 
 export default function useJsonRpc<T extends keyof typeof API>(
   method?: T,

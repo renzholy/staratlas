@@ -3,5 +3,5 @@ yarn.lock
 Dockerfile
 nginx.conf
 .npmrc
-build/
-
+.next/
+out/

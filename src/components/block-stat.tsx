@@ -1,7 +1,7 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
 
-import { formatNumber, formatTime } from '../utils/formatter'
-import { Block } from '../utils/types'
+import { formatNumber, formatTime } from 'utils/formatter'
+import { Block } from 'utils/types'
 
 export default function BlockStat(props: { block?: Block['header'] }) {
   const { block } = props

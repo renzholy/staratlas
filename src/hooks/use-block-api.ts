@@ -1,9 +1,9 @@
 import useSWR, { SWRConfiguration } from 'swr'
 
-import { ENDPOINT } from '../constants'
-import { useNetwork } from '../contexts/network'
-import { jsonFetcher } from '../utils/fetcher'
-import { Block } from '../utils/types'
+import { ENDPOINT } from 'utils/constants'
+import useNetwork from 'hooks/use-network'
+import { jsonFetcher } from 'utils/fetcher'
+import { Block } from 'utils/types'
 
 export function useBlock(hashOrHeight?: string) {
   const network = useNetwork()

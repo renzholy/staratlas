@@ -7,9 +7,9 @@ import last from 'lodash/last'
 import flatten from 'lodash/flatten'
 import { useCallback, useEffect } from 'react'
 
-import { AtlasDatabase } from '../utils/database'
-import { call } from '../utils/json-rpc'
-import { BlockSimple } from '../utils/json-rpc/chain'
+import { AtlasDatabase } from 'utils/database'
+import { call } from 'utils/json-rpc'
+import { BlockSimple } from 'utils/json-rpc/chain'
 
 const atlasDatabase = new AtlasDatabase()
 
@@ -65,6 +65,7 @@ export default function useMaintainIndex(network: 'main' | 'barnard' | 'halley' 
     }
     const count = await atlasDatabase[network].count()
     if (lastIndex.height - firstIndex.height === count - 1) {
+      // eslint-disable-next-line no-console
       console.log(firstIndex, lastIndex)
     }
   }, [network])

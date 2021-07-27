@@ -1,9 +1,9 @@
 import useSWR, { SWRConfiguration } from 'swr'
 
-import { ENDPOINT } from '../constants'
-import { useNetwork } from '../contexts/network'
-import { jsonFetcher } from '../utils/fetcher'
-import { Transaction } from '../utils/types'
+import { ENDPOINT } from 'utils/constants'
+import useNetwork from 'hooks/use-network'
+import { jsonFetcher } from 'utils/fetcher'
+import { Transaction } from 'utils/types'
 
 export function useTransaction(hash?: string) {
   const network = useNetwork()

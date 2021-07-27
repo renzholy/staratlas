@@ -1,12 +1,11 @@
 import { Box, Text } from '@chakra-ui/layout'
 import { Button } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import TimeAgo from 'timeago-react'
-
-import { useNetwork } from '../contexts/network'
-import { formatTimeSimple, formatNumber } from '../utils/formatter'
-import { Block } from '../utils/types'
+import useNetwork from 'hooks/use-network'
+import { formatTimeSimple, formatNumber } from 'utils/formatter'
+import { Block } from 'utils/types'
 
 export default function BlockListItem(props: { block: Block; relativeTime?: boolean }) {
   const { block } = props
@@ -33,14 +32,11 @@ export default function BlockListItem(props: { block: Block; relativeTime?: bool
       `}
     >
       <Box width={32} display="inline-block">
-        <Button
-          as={Link}
-          to={`/${network}/block/${block.header.number}`}
-          variant="link"
-          color="blue.500"
-        >
-          #{block.header.number}
-        </Button>
+        <Link href={`/${network}/block/${block.header.number}`} passHref={true}>
+          <Button as="a" variant="link" color="blue.500">
+            #{block.header.number}
+          </Button>
+        </Link>
       </Box>
       <Text
         css={css`
@@ -54,15 +50,16 @@ export default function BlockListItem(props: { block: Block; relativeTime?: bool
         )}
       </Text>
       Author:&nbsp;
-      <Button
-        as={Link}
-        to={`/${network}/address/${block.header.author}`}
-        variant="link"
-        color="green.500"
-        width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
-      >
-        {block.header.author}
-      </Button>
+      <Link href={`/${network}/address/${block.header.author}`} passHref={true}>
+        <Button
+          as="a"
+          variant="link"
+          color="green.500"
+          width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
+        >
+          {block.header.author}
+        </Button>
+      </Link>
       <br />
       <Text minWidth={32}>Txns:&nbsp;{formatNumber(block.body.Full.length)}</Text>
       <Text minWidth={32}>Uncles:&nbsp;{formatNumber(block.uncles.length)}</Text>

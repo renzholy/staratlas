@@ -2,13 +2,12 @@ import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-u
 import last from 'lodash/last'
 import sumBy from 'lodash/sumBy'
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import TimeAgo from 'timeago-react'
-
-import { useNetwork } from '../contexts/network'
-import { useResource } from '../hooks/use-provider'
-import { formatNumber } from '../utils/formatter'
-import { Block } from '../utils/types'
+import useNetwork from 'hooks/use-network'
+import { useResource } from 'hooks/use-provider'
+import { formatNumber } from 'utils/formatter'
+import { Block } from 'utils/types'
 
 export default function EpochStat(props: { blocks?: Block[] }) {
   const network = useNetwork()
@@ -73,13 +72,11 @@ export default function EpochStat(props: { blocks?: Block[] }) {
             <Stat>
               <StatLabel>Start block</StatLabel>
               <Skeleton isLoaded={!!epoch}>
-                <StatNumber
-                  as={Link}
-                  to={`/${network}/block/${epoch?.start_block_number}`}
-                  color="blue.500"
-                >
-                  #{epoch?.start_block_number}
-                </StatNumber>
+                <Link href={`/${network}/block/${epoch?.start_block_number}`} passHref={true}>
+                  <StatNumber as="a" color="blue.500">
+                    #{epoch?.start_block_number}
+                  </StatNumber>
+                </Link>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -87,13 +84,11 @@ export default function EpochStat(props: { blocks?: Block[] }) {
             <Stat>
               <StatLabel>End block</StatLabel>
               <Skeleton isLoaded={!!epoch}>
-                <StatNumber
-                  as={Link}
-                  to={`/${network}/block/${epoch?.end_block_number}`}
-                  color="blue.500"
-                >
-                  #{epoch?.end_block_number}
-                </StatNumber>
+                <Link href={`/${network}/block/${epoch?.end_block_number}`} passHref={true}>
+                  <StatNumber as="a" color="blue.500">
+                    #{epoch?.end_block_number}
+                  </StatNumber>
+                </Link>
               </Skeleton>
             </Stat>
           </GridItem>

@@ -12,14 +12,14 @@ import {
 } from '@chakra-ui/react'
 import { Search2Icon } from '@chakra-ui/icons'
 import { Ref, useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
 import compact from 'lodash/compact'
-
+import useNetwork from 'hooks/use-network'
+import { useBlock, useUncleBlock } from 'hooks/use-block-api'
+import { useResources } from 'hooks/use-provider'
+import { useTransaction } from 'hooks/use-transaction-api'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
 import ComboBox from './combo-box'
-import { useNetwork } from '../contexts/network'
-import { useBlock, useUncleBlock } from '../hooks/use-block-api'
-import { useResources } from '../hooks/use-provider'
-import { useTransaction } from '../hooks/use-transaction-api'
 
 type Item = {
   type: 'Address' | 'Block' | 'Transaction' | 'Uncle'
@@ -61,34 +61,38 @@ export default function SearchBar() {
     [addressValidating, blockValidating, transactionValidating, trimedKeyword, uncleValidating],
   )
   const network = useNetwork()
-  const history = useHistory()
+  const router = useRouter()
   const inputBackground = useColorModeValue('white', 'whiteAlpha.200')
   const itemBackground = useColorModeValue('gray.100', 'whiteAlpha.200')
   const handleRenderItem = useCallback(
     (item: Item, itemProps: {}, isHighlighted: boolean) => (
-      <ListItem
+      <Link
         key={item.type + item.value}
-        as={Link}
-        to={`/${network}/${item.prefix}/${item.value}`}
-        width="100%"
-        display="flex"
-        alignItems="center"
-        paddingX={4}
-        paddingY={2}
-        bg={isHighlighted ? itemBackground : undefined}
-        {...itemProps}
+        href={`/${network}/${item.prefix}/${item.value}`}
+        passHref={true}
       >
-        <Tag
-          colorScheme={
-            { Address: 'green', Block: 'blue', Transaction: 'orange', Uncle: 'purple' }[item.type]
-          }
+        <ListItem
+          as="a"
+          width="100%"
+          display="flex"
+          alignItems="center"
+          paddingX={4}
+          paddingY={2}
+          bg={isHighlighted ? itemBackground : undefined}
+          {...itemProps}
         >
-          {item.type}
-        </Tag>
-        <Text flex="1" overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis" ml="4">
-          {item.value}
-        </Text>
-      </ListItem>
+          <Tag
+            colorScheme={
+              { Address: 'green', Block: 'blue', Transaction: 'orange', Uncle: 'purple' }[item.type]
+            }
+          >
+            {item.type}
+          </Tag>
+          <Text flex="1" overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis" ml="4">
+            {item.value}
+          </Text>
+        </ListItem>
+      </Link>
     ),
     [itemBackground, network],
   )
@@ -110,13 +114,13 @@ export default function SearchBar() {
   )
   const handleSelectItem = useCallback(
     (item: Item) => {
-      history.push(`/${network}/${item.prefix}/${item.value}`)
+      router.push(`/${network}/${item.prefix}/${item.value}`)
     },
-    [history, network],
+    [router, network],
   )
   useEffect(() => {
     setKeyword('')
-  }, [history.location])
+  }, [router.asPath])
 
   return (
     <ComboBox

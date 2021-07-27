@@ -1,5 +1,5 @@
 import { ReactNode, useMemo } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import {
   Flex,
   Button,
@@ -12,22 +12,26 @@ import {
   useColorMode,
   IconButton,
   useColorModeValue,
+  Input,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 import startCase from 'lodash/startCase'
 import { AiOutlineHome, AiOutlineTool } from 'react-icons/ai'
+import Link from 'next/link'
+import { NETWORKS } from 'utils/constants'
+import dynamic from 'next/dynamic'
 
-import { NETWORKS } from '../constants'
-import { NetworkProvider } from '../contexts/network'
-import SearchBar from '../components/search-bar'
-import useMaintainIndex from '../hooks/use-maintain-index'
+const SearchBar = dynamic(() => import('components/search-bar'), {
+  ssr: false,
+  loading: () => <Input />,
+})
 
 const networks = Object.values(NETWORKS)
 
 export default function Layout(props: { children?: ReactNode }) {
-  const location = useLocation()
-  const params = useParams<{ network: string }>()
+  const router = useRouter()
+  const query = router.query as { network: 'main' | 'barnard' | 'halley' | 'proxima' }
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode, toggleColorMode } = useColorMode()
   const buttonBackground = useColorModeValue('white', undefined)
@@ -39,13 +43,12 @@ export default function Layout(props: { children?: ReactNode }) {
         tx: 'orange',
         block: 'blue',
         uncle: 'purple',
-      }[location.pathname.split('/')[2]] || 'gray'),
-    [location.pathname],
+      }[router.asPath.split('/')[2]] || 'gray'),
+    [router.asPath],
   )
-  useMaintainIndex(params.network as 'main' | 'barnard' | 'halley' | 'proxima')
 
   return (
-    <NetworkProvider value={params.network}>
+    <>
       <Flex
         height={16}
         paddingX={6}
@@ -58,66 +61,72 @@ export default function Layout(props: { children?: ReactNode }) {
           top: 0;
         `}
       >
-        <IconButton
-          as={Link}
-          to={`/${params.network}`}
-          aria-label="index"
-          icon={<AiOutlineHome />}
-          bg={location.pathname === `/${params.network}` ? buttonBackground : undefined}
-          variant={location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
-          mr={4}
-          display={{ base: 'inline-flex', md: 'none' }}
-        />
-        <Button
-          as={Link}
-          to={`/${params.network}`}
-          bg={location.pathname === `/${params.network}` ? buttonBackground : undefined}
-          variant={location.pathname === `/${params.network}` ? 'solid' : 'ghost'}
-          mr={2}
-          display={{ base: 'none', md: 'inline-flex' }}
-        >
-          StarAtlas
-        </Button>
-        <Button
-          as={Link}
-          to={`/${params.network}/blocks`}
-          bg={/\/blocks/.test(location.pathname) ? buttonBackground : undefined}
-          variant={/\/blocks/.test(location.pathname) ? 'solid' : 'ghost'}
-          mr={2}
-          display={{ base: 'none', md: 'inline-flex' }}
-        >
-          Blocks
-        </Button>
-        <Button
-          as={Link}
-          to={`/${params.network}/txs`}
-          bg={/\/txs/.test(location.pathname) ? buttonBackground : undefined}
-          variant={/\/txs/.test(location.pathname) ? 'solid' : 'ghost'}
-          mr={4}
-          display={{ base: 'none', md: 'inline-flex' }}
-        >
-          Transactions
-        </Button>
-        <IconButton
-          as={Link}
-          to={`/${params.network}/utils`}
-          aria-label="index"
-          icon={<AiOutlineTool />}
-          bg={/\/utils/.test(location.pathname) ? buttonBackground : undefined}
-          variant={/\/utils/.test(location.pathname) ? 'solid' : 'ghost'}
-          mr={4}
-          display={{ base: 'inline-flex', md: 'none' }}
-        />
-        <Button
-          as={Link}
-          to={`/${params.network}/utils`}
-          bg={/\/utils/.test(location.pathname) ? buttonBackground : undefined}
-          variant={/\/utils/.test(location.pathname) ? 'solid' : 'ghost'}
-          mr={4}
-          display={{ base: 'none', md: 'inline-flex' }}
-        >
-          Utils
-        </Button>
+        <Link href={`/${query.network}`} passHref={true}>
+          <IconButton
+            as="a"
+            aria-label="index"
+            icon={<AiOutlineHome />}
+            bg={router.asPath === `/${query.network}` ? buttonBackground : undefined}
+            variant={router.asPath === `/${query.network}` ? 'solid' : 'ghost'}
+            mr={4}
+            display={{ base: 'inline-flex', md: 'none' }}
+          />
+        </Link>
+        <Link href={`/${query.network}`} passHref={true}>
+          <Button
+            as="a"
+            bg={router.asPath === `/${query.network}` ? buttonBackground : undefined}
+            variant={router.asPath === `/${query.network}` ? 'solid' : 'ghost'}
+            mr={2}
+            display={{ base: 'none', md: 'inline-flex' }}
+          >
+            StarAtlas
+          </Button>
+        </Link>
+        <Link href={`/${query.network}/blocks`} passHref={true}>
+          <Button
+            as="a"
+            bg={/\/blocks/.test(router.asPath) ? buttonBackground : undefined}
+            variant={/\/blocks/.test(router.asPath) ? 'solid' : 'ghost'}
+            mr={2}
+            display={{ base: 'none', md: 'inline-flex' }}
+          >
+            Blocks
+          </Button>
+        </Link>
+        <Link href={`/${query.network}/txs`} passHref={true}>
+          <Button
+            as="a"
+            bg={/\/txs/.test(router.asPath) ? buttonBackground : undefined}
+            variant={/\/txs/.test(router.asPath) ? 'solid' : 'ghost'}
+            mr={4}
+            display={{ base: 'none', md: 'inline-flex' }}
+          >
+            Transactions
+          </Button>
+        </Link>
+        <Link href={`/${query.network}/utils`} passHref={true}>
+          <IconButton
+            as="a"
+            aria-label="index"
+            icon={<AiOutlineTool />}
+            bg={/\/utils/.test(router.asPath) ? buttonBackground : undefined}
+            variant={/\/utils/.test(router.asPath) ? 'solid' : 'ghost'}
+            mr={4}
+            display={{ base: 'inline-flex', md: 'none' }}
+          />
+        </Link>
+        <Link href={`/${query.network}/utils`} passHref={true}>
+          <Button
+            as="a"
+            bg={/\/utils/.test(router.asPath) ? buttonBackground : undefined}
+            variant={/\/utils/.test(router.asPath) ? 'solid' : 'ghost'}
+            mr={4}
+            display={{ base: 'none', md: 'inline-flex' }}
+          >
+            Utils
+          </Button>
+        </Link>
         <SearchBar />
         <Menu isOpen={isOpen} onClose={onClose} autoSelect={false}>
           <MenuButton
@@ -127,20 +136,20 @@ export default function Layout(props: { children?: ReactNode }) {
             rightIcon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
             onClick={onOpen}
           >
-            {startCase(params.network)}
+            {startCase(query.network)}
           </MenuButton>
           <Portal>
             <MenuList>
               {networks.map((network) => (
                 <MenuItemOption
-                  as={Link}
-                  to={
-                    location.pathname.split('/').length === 3
-                      ? `/${network}/${location.pathname.split('/')[2]}`
+                  as="a"
+                  href={
+                    router.asPath.split('/').length === 3
+                      ? `/${network}/${router.asPath.split('/')[2]}`
                       : `/${network}`
                   }
                   key={network}
-                  isChecked={params.network === network}
+                  isChecked={query.network === network}
                 >
                   {startCase(network)}
                 </MenuItemOption>
@@ -158,6 +167,6 @@ export default function Layout(props: { children?: ReactNode }) {
         />
       </Flex>
       {props.children}
-    </NetworkProvider>
+    </>
   )
 }

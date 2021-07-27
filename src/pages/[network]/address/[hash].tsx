@@ -12,23 +12,23 @@ import {
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { Fragment } from 'react'
-import { useParams } from 'react-router-dom'
-
-import ResourceListItem from '../components/resource-list-item'
-import ListItemPlaceholder from '../components/list-item-placeholder'
-import NotFound from '../components/not-fount'
-import TransactionListItem from '../components/transaction-list-item'
-import { useBalances, useResources } from '../hooks/use-provider'
-import { useAddressTransactions } from '../hooks/use-transaction-api'
-import { CardWithHeader } from '../layouts/card-with-header'
-import { formatNumber } from '../utils/formatter'
-import BalanceAmount from '../components/balance-amount'
+import { useRouter } from 'next/router'
+import ResourceListItem from 'components/resource-list-item'
+import ListItemPlaceholder from 'components/list-item-placeholder'
+import NotFound from 'components/not-fount'
+import TransactionListItem from 'components/transaction-list-item'
+import { useBalances, useResources } from 'hooks/use-provider'
+import { useAddressTransactions } from 'hooks/use-transaction-api'
+import { CardWithHeader } from 'layouts/card-with-header'
+import { formatNumber } from 'utils/formatter'
+import BalanceAmount from 'components/balance-amount'
 
 export default function Address() {
-  const params = useParams<{ hash: string }>()
-  const { data: resources, error } = useResources(params.hash)
-  const { data: transactions } = useAddressTransactions(params.hash)
-  const { data: balances } = useBalances(params.hash)
+  const router = useRouter()
+  const { hash } = router.query as { hash?: string }
+  const { data: resources, error } = useResources(hash)
+  const { data: transactions } = useAddressTransactions(hash)
+  const { data: balances } = useBalances(hash)
 
   if (error) {
     return <NotFound />
@@ -42,7 +42,7 @@ export default function Address() {
       <GridItem colSpan={1} paddingX={6}>
         <Stat>
           <StatLabel>Address</StatLabel>
-          <StatNumber>{params.hash.toLowerCase()}</StatNumber>
+          <StatNumber>{hash?.toLowerCase()}</StatNumber>
         </Stat>
       </GridItem>
       <GridItem colSpan={1} display={{ base: 'none', xl: 'block' }} />
