@@ -106,12 +106,14 @@ async function load(network: Network, height: BigInt) {
     },
   }))
   await Promise.all([
-    blockOperations.length ? collections[network].blocks.bulkWrite(blockOperations) : undefined,
     transactionOperations.length
       ? collections[network].transactions.bulkWrite(transactionOperations)
       : undefined,
     uncleOperations.length ? collections[network].uncles.bulkWrite(uncleOperations) : undefined,
   ])
+  if (blockOperations.length) {
+    await collections[network].blocks.bulkWrite(blockOperations)
+  }
 }
 
 export default async function ListByHeight(
