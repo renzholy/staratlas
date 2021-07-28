@@ -29,14 +29,14 @@ async function list(network: Network, type: Type, height: BigInt) {
     case 'transaction': {
       return collections[network].transactions
         .find({ height: { $lte: new Decimal128(height.toString()) } })
-        .sort({ height: -1 })
+        .sort({ height: -1, _id: 1 })
         .limit(LIMIT)
         .toArray()
     }
     case 'uncle': {
       return collections[network].uncles
         .find({ height: { $lte: new Decimal128(height.toString()) } })
-        .sort({ height: -1 })
+        .sort({ height: -1, _id: 1 })
         .limit(LIMIT)
         .toArray()
     }
