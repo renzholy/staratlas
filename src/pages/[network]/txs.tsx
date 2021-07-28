@@ -25,7 +25,7 @@ export default function Transactions() {
     <Center gap={6} padding={6} width="100%">
       <Box maxWidth="xl">
         {transactions?.length ? (
-          <CardWithHeader>
+          <CardWithHeader title="Transactions">
             {transactions.map((transaction, index) => (
               <Fragment key={transaction._id}>
                 {index === 0 ? null : <Divider />}

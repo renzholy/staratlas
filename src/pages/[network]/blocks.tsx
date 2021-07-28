@@ -25,7 +25,7 @@ export default function Blocks() {
     <Center gap={6} padding={6} width="100%">
       <Box maxWidth="xl">
         {blocks?.length ? (
-          <CardWithHeader>
+          <CardWithHeader title="Blocks">
             {blocks.map((block, index) => (
               <Fragment key={block._id}>
                 {index === 0 ? null : <Divider />}

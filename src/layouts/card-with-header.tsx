@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 
 export function CardWithHeader(props: {
   height?: LayoutProps['height']
-  title?: ReactNode
+  title: ReactNode
   subtitle?: ReactNode
   children?: ReactNode
 }) {
@@ -19,27 +19,23 @@ export function CardWithHeader(props: {
       flexDirection="column"
       overflow="hidden"
     >
-      {props.title || props.subtitle ? (
-        <>
-          <Flex
-            paddingX={6}
-            height={12}
-            alignItems="center"
-            justifyContent="space-between"
-            bg={colorMode === 'light' ? 'gray.100' : 'gray.900'}
-          >
-            {typeof props.title === 'string' ? (
-              <Text size="lg" fontWeight="bold">
-                {props.title}
-              </Text>
-            ) : (
-              props.title
-            )}
-            {props.subtitle}
-          </Flex>
-          <Divider />
-        </>
-      ) : null}
+      <Flex
+        paddingX={6}
+        height={12}
+        alignItems="center"
+        justifyContent="space-between"
+        bg={colorMode === 'light' ? 'gray.100' : 'gray.900'}
+      >
+        {typeof props.title === 'string' ? (
+          <Text size="lg" fontWeight="bold">
+            {props.title}
+          </Text>
+        ) : (
+          props.title
+        )}
+        {props.subtitle}
+      </Flex>
+      <Divider />
       {props.children}
     </Flex>
   )

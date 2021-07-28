@@ -25,7 +25,7 @@ export default function Uncles() {
     <Center gap={6} padding={6} width="100%">
       <Box maxWidth="xl">
         {uncles?.length ? (
-          <CardWithHeader>
+          <CardWithHeader title="Uncles">
             {uncles.map((uncle, index) => (
               <Fragment key={uncle._id}>
                 {index === 0 ? null : <Divider />}
