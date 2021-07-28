@@ -15,7 +15,7 @@ import TransactionListItem from 'components/transaction-list-item'
 import { useTransactionsByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 
-const SIZE = 20
+const SIZE = 10
 
 export default function Transactions() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })

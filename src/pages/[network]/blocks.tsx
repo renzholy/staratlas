@@ -15,7 +15,7 @@ import { CardWithHeader } from 'layouts/card-with-header'
 import { useBlocksByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 
-const SIZE = 20
+const SIZE = 10
 
 export default function Blocks() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })

@@ -15,7 +15,7 @@ import UncleListItem from 'components/uncle-list-item'
 import { useUnclesByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 
-const SIZE = 20
+const SIZE = 10
 
 export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
