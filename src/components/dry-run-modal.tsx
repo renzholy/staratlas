@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useMemo, useEffect } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import 'react-perfect-scrollbar/dist/css/styles.css'
 import { useDryRunRaw } from 'hooks/use-provider'
 import { Static } from '@sinclair/typebox'
 import { SignedUserTransaction } from 'utils/json-rpc/chain'
