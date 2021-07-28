@@ -9,7 +9,7 @@ import useNetwork from 'hooks/use-network'
 import { formatTimeSimple, formatNumber } from 'utils/formatter'
 import useJsonRpc from 'hooks/use-json-rpc'
 
-export default function TransactionListItem2(props: {
+export default function TransactionListItem(props: {
   transaction: string
   relativeTime?: boolean
 }) {

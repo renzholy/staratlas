@@ -11,7 +11,7 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import { CardWithHeader } from 'layouts/card-with-header'
-import TransactionListItem2 from 'components/transaction-list-item2'
+import TransactionListItem from 'components/transaction-list-item'
 import { useTransactionsByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 
@@ -75,7 +75,7 @@ export default function Transactions() {
             transactions.map((transaction, index) => (
               <Fragment key={transaction._id}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem2 transaction={transaction._id} />
+                <TransactionListItem transaction={transaction._id} />
               </Fragment>
             ))
           ) : (

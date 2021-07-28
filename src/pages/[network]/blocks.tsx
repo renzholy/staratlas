@@ -9,10 +9,10 @@ import {
   useColorMode,
 } from '@chakra-ui/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
-import BlockListItem2 from 'components/block-list-item2'
+import BlockListItem from 'components/block-list-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import { CardWithHeader } from 'layouts/card-with-header'
-import UncleListItem2 from 'components/uncle-list-item2'
+import UncleListItem from 'components/uncle-list-item'
 import { useBlocksByHeight, useUnclesByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 
@@ -75,7 +75,7 @@ export default function Blocks() {
             blocks.map((block, index) => (
               <Fragment key={block._id}>
                 {index === 0 ? null : <Divider />}
-                <BlockListItem2 block={block._id} />
+                <BlockListItem block={block._id} />
               </Fragment>
             ))
           ) : (
@@ -124,7 +124,7 @@ export default function Blocks() {
             uncles.map((uncle, index) => (
               <Fragment key={uncle._id}>
                 {index === 0 ? null : <Divider />}
-                <UncleListItem2 uncle={uncle._id} />
+                <UncleListItem uncle={uncle._id} />
               </Fragment>
             ))
           ) : (

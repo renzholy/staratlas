@@ -17,11 +17,11 @@ import { Fragment } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
-import TransactionListItem2 from 'components/transaction-list-item2'
+import TransactionListItem from 'components/transaction-list-item'
 import { CardWithHeader } from 'layouts/card-with-header'
 import { formatNumber } from 'utils/formatter'
 import CopyLink from 'components/copy-link'
-import UncleListItem2 from 'components/uncle-list-item2'
+import UncleListItem from 'components/uncle-list-item'
 import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
@@ -163,7 +163,7 @@ export default function Block() {
             transactions.map((transaction, index) => (
               <Fragment key={transaction.transaction_hash}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem2 transaction={transaction.transaction_hash} />
+                <TransactionListItem transaction={transaction.transaction_hash} />
               </Fragment>
             ))
           ) : (
@@ -181,7 +181,7 @@ export default function Block() {
             block.uncles.map((uncle, index) => (
               <Fragment key={uncle.block_hash}>
                 {index === 0 ? null : <Divider />}
-                <UncleListItem2 uncle={uncle.block_hash} />
+                <UncleListItem uncle={uncle.block_hash} />
               </Fragment>
             ))
           ) : (

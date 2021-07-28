@@ -2,8 +2,8 @@ import { Grid, GridItem, Button, Divider, Spinner, useColorModeValue } from '@ch
 import Link from 'next/link'
 import { AnimateSharedLayout, motion } from 'framer-motion'
 import useNetwork from 'hooks/use-network'
-import TransactionListItem2 from 'components/transaction-list-item2'
-import BlockListItem2 from 'components/block-list-item2'
+import TransactionListItem from 'components/transaction-list-item'
+import BlockListItem from 'components/block-list-item'
 import EpochStat from 'components/epoch-stat'
 import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -43,7 +43,7 @@ export default function Index() {
               blocks.map((block, index) => (
                 <motion.div layout={true} key={block._id}>
                   {index === 0 ? null : <Divider />}
-                  <BlockListItem2 block={block._id} relativeTime={true} />
+                  <BlockListItem block={block._id} relativeTime={true} />
                 </motion.div>
               ))
             ) : (
@@ -70,7 +70,7 @@ export default function Index() {
               transactions.map((transaction, index) => (
                 <motion.div layout={true} key={transaction._id}>
                   {index === 0 ? null : <Divider />}
-                  <TransactionListItem2 transaction={transaction._id} relativeTime={true} />
+                  <TransactionListItem transaction={transaction._id} relativeTime={true} />
                 </motion.div>
               ))
             ) : (

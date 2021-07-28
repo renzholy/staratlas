@@ -16,7 +16,7 @@ import { useRouter } from 'next/router'
 import ResourceListItem from 'components/resource-list-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import NotFound from 'components/not-fount'
-import TransactionListItem2 from 'components/transaction-list-item2'
+import TransactionListItem from 'components/transaction-list-item'
 import { useBalances, useResources } from 'hooks/use-provider'
 import { CardWithHeader } from 'layouts/card-with-header'
 import { formatNumber } from 'utils/formatter'
@@ -114,7 +114,7 @@ export default function Address() {
             transactions.map((transaction, index) => (
               <Fragment key={transaction._id}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem2 transaction={transaction._id} />
+                <TransactionListItem transaction={transaction._id} />
               </Fragment>
             ))
           ) : (
