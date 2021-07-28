@@ -23,7 +23,7 @@ function mapper(block: Static<typeof BlockSimple>) {
   }
 }
 
-async function run(network: Network, start: number, end = 0) {
+async function run(network: Network, top: number, bottom = 0) {
   let uncles = 0
   let transactions = 0
   let batchSize = 1
@@ -34,9 +34,9 @@ async function run(network: Network, start: number, end = 0) {
       await Promise.all(
         // eslint-disable-next-line @typescript-eslint/no-loop-func
         Array.from({ length: batchSize }).map((_, index) =>
-          start - index * BLOCK_PAGE_SIZE >= 0
+          top - index * BLOCK_PAGE_SIZE >= 0
             ? call(network, 'chain.get_blocks_by_number', [
-                start - index * BLOCK_PAGE_SIZE,
+                top - index * BLOCK_PAGE_SIZE,
                 BLOCK_PAGE_SIZE,
               ])
             : [],
@@ -46,14 +46,14 @@ async function run(network: Network, start: number, end = 0) {
     // eslint-disable-next-line no-await-in-loop
     await atlasDatabase[network].bulkPut(blocks.map(mapper))
     // eslint-disable-next-line no-param-reassign
-    start = parseInt(last(blocks)!.header.number, 10) - 1
+    top = parseInt(last(blocks)!.header.number, 10) - 1
     uncles += sumBy(blocks, (block) => block.uncles.length)
     transactions += sumBy(blocks, (block) => block.body.Hashes.length)
     batchSize = Math.min(batchSize + 2, MAX_BATCH_SIZE)
     if (
       (transactions >= INDEX_SIZE[network] && uncles >= INDEX_SIZE[network]) ||
       blocks.length === 0 ||
-      start <= end
+      top <= bottom
     ) {
       return
     }

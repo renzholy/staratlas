@@ -141,9 +141,7 @@ export default async function List(req: NextApiRequest, res: NextApiResponse): P
             BigInt(data.length - 1)))
     ) {
       res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
-      res.json({
-        data: data.map(mapper),
-      })
+      res.json(data.map(mapper))
       return
     }
     await load(network, cursor)
@@ -151,7 +149,5 @@ export default async function List(req: NextApiRequest, res: NextApiResponse): P
   }
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
-  res.json({
-    data: (await list(network, type, height)).map(mapper),
-  })
+  res.json((await list(network, type, height)).map(mapper))
 }
