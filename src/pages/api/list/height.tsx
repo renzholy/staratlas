@@ -9,9 +9,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { call } from 'utils/json-rpc'
 import { Network } from 'utils/types'
-import { arrayify, hexlify } from 'ethers/lib/utils'
-
-type Type = 'block' | 'transaction' | 'uncle'
+import { arrayify } from 'ethers/lib/utils'
+import { mapper, Type } from 'utils/api'
 
 const LIMIT = 10
 
@@ -44,17 +43,6 @@ async function list(network: Network, type: Type, height: BigInt) {
     default: {
       return []
     }
-  }
-}
-
-function mapper<T extends { _id: Binary; height: Decimal128; author?: Binary; sender?: Binary }>(
-  datum: T,
-) {
-  return {
-    _id: hexlify(datum._id.buffer),
-    height: datum.height.toString(),
-    author: datum.author ? hexlify(datum.author.buffer) : undefined,
-    sender: datum.sender ? hexlify(datum.sender.buffer) : undefined,
   }
 }
 
@@ -126,7 +114,10 @@ async function load(network: Network, height: BigInt) {
   ])
 }
 
-export default async function List(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+export default async function ListByHeight(
+  req: NextApiRequest,
+  res: NextApiResponse,
+): Promise<void> {
   const { type, network, ...query } = req.query as { network: Network; type: Type; height: string }
   const height = BigInt(query.height)
 
