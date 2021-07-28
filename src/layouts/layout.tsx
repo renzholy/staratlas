@@ -124,7 +124,7 @@ export default function Layout(props: { children?: ReactNode }) {
             as="a"
             bg={/\/txs/.test(router.asPath) ? buttonBackground : undefined}
             variant={/\/txs/.test(router.asPath) ? 'solid' : 'ghost'}
-            mr={4}
+            mr={2}
             display={{ base: 'none', xl: 'inline-flex' }}
           >
             Transactions
@@ -135,7 +135,7 @@ export default function Layout(props: { children?: ReactNode }) {
             as="a"
             bg={/\/uncles/.test(router.asPath) ? buttonBackground : undefined}
             variant={/\/uncles/.test(router.asPath) ? 'solid' : 'ghost'}
-            mr={4}
+            mr={2}
             display={{ base: 'none', xl: 'inline-flex' }}
           >
             Uncles
