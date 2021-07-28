@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 
 import flatMap from 'lodash/flatMap'
-import { Decimal128 } from 'bson'
+import { Decimal128, Binary } from 'bson'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { call } from 'utils/json-rpc'
@@ -58,12 +58,13 @@ async function load(network: Network, height: BigInt) {
   const blockOperations = blocks.map((block) => ({
     updateOne: {
       filter: {
-        hash: Buffer.from(block.header.block_hash, 'hex'),
+        hash: new Binary(Buffer.from(block.header.block_hash, 'hex')),
       },
       update: {
         $set: {
+          hash: new Binary(Buffer.from(block.header.block_hash, 'hex')),
           height: new Decimal128(block.header.number),
-          author: Buffer.from(block.header.author, 'hex'),
+          author: new Binary(Buffer.from(block.header.author, 'hex')),
         },
       },
       upsert: true,
@@ -72,13 +73,14 @@ async function load(network: Network, height: BigInt) {
   const transactionOperations = transactions.map((transaction) => ({
     updateOne: {
       filter: {
-        hash: Buffer.from(transaction.transaction_hash, 'hex'),
+        hash: new Binary(Buffer.from(transaction.transaction_hash, 'hex')),
       },
       update: {
         $set: {
+          hash: new Binary(Buffer.from(transaction.transaction_hash, 'hex')),
           height: new Decimal128(transaction.block_number),
           sender: transaction.user_transaction
-            ? Buffer.from(transaction.user_transaction?.raw_txn.sender, 'hex')
+            ? new Binary(Buffer.from(transaction.user_transaction?.raw_txn.sender, 'hex'))
             : undefined,
         },
       },
@@ -88,12 +90,13 @@ async function load(network: Network, height: BigInt) {
   const uncleOperations = uncles.map((uncle) => ({
     updateOne: {
       filter: {
-        hash: Buffer.from(uncle.block_hash, 'hex'),
+        hash: new Binary(Buffer.from(uncle.block_hash, 'hex')),
       },
       update: {
         $set: {
+          hash: new Binary(Buffer.from(uncle.block_hash, 'hex')),
           height: new Decimal128(uncle.number),
-          author: Buffer.from(uncle.author, 'hex'),
+          author: new Binary(Buffer.from(uncle.author, 'hex')),
         },
       },
       upsert: true,
