@@ -1,4 +1,5 @@
-import useSWR, { SWRConfiguration } from 'swr'
+import last from 'lodash/last'
+import useSWR, { SWRConfiguration, useSWRInfinite } from 'swr'
 import { jsonFetcher } from 'utils/fetcher'
 import { call } from 'utils/json-rpc'
 import useNetwork from './use-network'
@@ -32,8 +33,15 @@ export function useUncleByHash(hash?: string, config?: SWRConfiguration) {
 
 export function useBlocksByHeight(height?: BigInt, config?: SWRConfiguration) {
   const network = useNetwork()
-  return useSWR<{ _id: string; height: string; author: string }[]>(
-    height ? `/api/list/height?network=${network}&height=${height}&type=block` : null,
+  return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
+    (_, previousPageData) =>
+      previousPageData?.length
+        ? `/api/list/height?network=${network}&height=${
+            BigInt(last(previousPageData)!.height) - BigInt(1)
+          }&type=block`
+        : height !== undefined
+        ? `/api/list/height?network=${network}&height=${height}&type=block`
+        : null,
     jsonFetcher,
     config,
   )
