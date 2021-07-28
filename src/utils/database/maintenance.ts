@@ -9,7 +9,9 @@ import { collections } from './mongo'
 
 const PAGE_SIZE = 32
 
-const MAINTENANCE_SIZE = 16
+const MAINTENANCE_SIZE = 4
+
+class AbortError extends Error {}
 
 /**
  * find a index range between top & bottom that has gaps
@@ -27,7 +29,7 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
   console.log('find', network, top, bottom, top - bottom + BigInt(1), count, depth)
   if (top - bottom + BigInt(1) > count) {
     if (top - bottom + BigInt(1) < PAGE_SIZE * MAINTENANCE_SIZE) {
-      throw new Error(top.toString())
+      throw new AbortError(top.toString())
     }
     const mid = (top - bottom) / BigInt(2) + bottom
     if (Math.random() > 0.7) {
@@ -122,12 +124,14 @@ export async function maintenance(network: Network) {
     await find(network, BigInt(info.head.number))
     return null
   } catch (err) {
-    const top = BigInt(err.message)
-    await Promise.all(
-      Array.from({ length: MAINTENANCE_SIZE }).map((_, index) =>
-        load(network, BigInt(err.message) + BigInt(index * PAGE_SIZE)),
-      ),
-    )
-    return top
+    if (err instanceof AbortError) {
+      await Promise.all(
+        Array.from({ length: MAINTENANCE_SIZE }).map((_, index) =>
+          load(network, BigInt(err.message) + BigInt(index * PAGE_SIZE)),
+        ),
+      )
+      return BigInt(err.message)
+    }
+    throw err
   }
 }
