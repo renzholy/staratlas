@@ -11,24 +11,21 @@ console.log('mongo connected')
 const db = client.db()
 
 async function prepare(network: Network) {
-  const blocks = db.collection<{ hash: Binary; height: Decimal128; author: Binary }>(
+  const blocks = db.collection<{ _id: Binary; height: Decimal128; author: Binary }>(
     `${network}.blocks`,
   )
-  await blocks.createIndex({ hash: 1 }, { background: true, unique: true })
   await blocks.createIndex({ height: -1 }, { background: true, unique: true })
   await blocks.createIndex({ author: 1 }, { background: true })
 
-  const transactions = db.collection<{ hash: Binary; height: Decimal128; sender?: Binary }>(
+  const transactions = db.collection<{ _id: Binary; height: Decimal128; sender?: Binary }>(
     `${network}.transactions`,
   )
-  await transactions.createIndex({ hash: 1 }, { background: true, unique: true })
   await transactions.createIndex({ height: -1 }, { background: true })
   await transactions.createIndex({ sender: 1 }, { background: true, sparse: true })
 
-  const uncles = db.collection<{ hash: Binary; height: Decimal128; author: Binary }>(
+  const uncles = db.collection<{ _id: Binary; height: Decimal128; author: Binary }>(
     `${network}.uncles`,
   )
-  await uncles.createIndex({ hash: 1 }, { background: true, unique: true })
   await uncles.createIndex({ height: -1 }, { background: true })
   await uncles.createIndex({ author: 1 }, { background: true })
 

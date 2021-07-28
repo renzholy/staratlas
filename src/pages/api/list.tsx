@@ -6,7 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { call } from 'utils/json-rpc'
 import { Network } from 'utils/types'
-import { arrayify } from 'ethers/lib/utils'
+import { arrayify, hexlify } from 'ethers/lib/utils'
 
 type Type = 'block' | 'transaction' | 'uncle'
 
@@ -44,6 +44,17 @@ async function list(network: Network, type: Type, height: BigInt) {
   }
 }
 
+function mapper<T extends { _id: Binary; height: Decimal128; author?: Binary; sender?: Binary }>(
+  datum: T,
+) {
+  return {
+    _id: hexlify(datum._id.buffer),
+    height: datum.height.toString(),
+    author: datum.author ? hexlify(datum.author.buffer) : undefined,
+    sender: datum.sender ? hexlify(datum.sender.buffer) : undefined,
+  }
+}
+
 async function load(network: Network, height: BigInt) {
   console.log('load', network, height)
   const blocks = await call(network, 'chain.get_blocks_by_number', [
@@ -59,11 +70,11 @@ async function load(network: Network, height: BigInt) {
   const blockOperations = blocks.map((block) => ({
     updateOne: {
       filter: {
-        hash: new Binary(arrayify(block.header.block_hash)),
+        _id: new Binary(arrayify(block.header.block_hash)),
       },
       update: {
         $set: {
-          hash: new Binary(arrayify(block.header.block_hash)),
+          _id: new Binary(arrayify(block.header.block_hash)),
           height: new Decimal128(block.header.number),
           author: new Binary(arrayify(block.header.author)),
         },
@@ -74,11 +85,11 @@ async function load(network: Network, height: BigInt) {
   const transactionOperations = transactions.map((transaction) => ({
     updateOne: {
       filter: {
-        hash: new Binary(arrayify(transaction.transaction_hash)),
+        _id: new Binary(arrayify(transaction.transaction_hash)),
       },
       update: {
         $set: {
-          hash: new Binary(arrayify(transaction.transaction_hash)),
+          _id: new Binary(arrayify(transaction.transaction_hash)),
           height: new Decimal128(transaction.block_number),
           sender: transaction.user_transaction
             ? new Binary(arrayify(transaction.user_transaction?.raw_txn.sender))
@@ -91,11 +102,11 @@ async function load(network: Network, height: BigInt) {
   const uncleOperations = uncles.map((uncle) => ({
     updateOne: {
       filter: {
-        hash: new Binary(arrayify(uncle.block_hash)),
+        _id: new Binary(arrayify(uncle.block_hash)),
       },
       update: {
         $set: {
-          hash: new Binary(arrayify(uncle.block_hash)),
+          _id: new Binary(arrayify(uncle.block_hash)),
           height: new Decimal128(uncle.number),
           author: new Binary(arrayify(uncle.author)),
         },
@@ -122,7 +133,7 @@ export default async function List(req: NextApiRequest, res: NextApiResponse): P
     if (data.length >= LIMIT) {
       res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
       res.json({
-        data: data.map((datum) => ({ ...datum, height: datum.height.toString() })),
+        data: data.map(mapper),
       })
       return
     }
@@ -132,9 +143,6 @@ export default async function List(req: NextApiRequest, res: NextApiResponse): P
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json({
-    data: (await list(network, type, height)).map((datum) => ({
-      ...datum,
-      height: datum.height.toString(),
-    })),
+    data: (await list(network, type, height)).map(mapper),
   })
 }
