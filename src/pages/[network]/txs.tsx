@@ -6,6 +6,7 @@ import { useTransactionsByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 import flatMap from 'lodash/flatMap'
 import useOnScreen from 'hooks/use-on-screen'
+import ListItemPlaceholder from 'components/list-item-placeholder'
 
 export default function Transactions() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
@@ -23,19 +24,21 @@ export default function Transactions() {
 
   return (
     <Center gap={6} padding={6} width="100%">
-      <Box maxWidth="xl">
-        {transactions?.length ? (
-          <CardWithHeader title="Transactions">
-            {transactions.map((transaction, index) => (
+      <Box width="xl">
+        <CardWithHeader title="Transactions">
+          {transactions?.length ? (
+            transactions.map((transaction, index) => (
               <Fragment key={transaction._id}>
                 {index === 0 ? null : <Divider />}
                 <TransactionListItem transaction={transaction._id} />
               </Fragment>
-            ))}
-          </CardWithHeader>
-        ) : (
-          <Spinner />
-        )}
+            ))
+          ) : (
+            <ListItemPlaceholder height={67}>
+              <Spinner />
+            </ListItemPlaceholder>
+          )}
+        </CardWithHeader>
         <div ref={ref} />
       </Box>
     </Center>

@@ -6,6 +6,7 @@ import { useUnclesByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 import useOnScreen from 'hooks/use-on-screen'
 import flatMap from 'lodash/flatMap'
+import ListItemPlaceholder from 'components/list-item-placeholder'
 
 export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
@@ -23,19 +24,21 @@ export default function Uncles() {
 
   return (
     <Center gap={6} padding={6} width="100%">
-      <Box maxWidth="xl">
-        {uncles?.length ? (
-          <CardWithHeader title="Uncles">
-            {uncles.map((uncle, index) => (
+      <Box width="xl">
+        <CardWithHeader title="Uncles">
+          {uncles?.length ? (
+            uncles.map((uncle, index) => (
               <Fragment key={uncle._id}>
                 {index === 0 ? null : <Divider />}
                 <UncleListItem uncle={uncle._id} />
               </Fragment>
-            ))}
-          </CardWithHeader>
-        ) : (
-          <Spinner />
-        )}
+            ))
+          ) : (
+            <ListItemPlaceholder height={67}>
+              <Spinner />
+            </ListItemPlaceholder>
+          )}
+        </CardWithHeader>
         <div ref={ref} />
       </Box>
     </Center>
