@@ -1,20 +1,25 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
+import { Static } from '@sinclair/typebox'
 import { encoding } from '@starcoin/starcoin'
+import useJsonRpc from 'hooks/use-json-rpc'
 import { useMemo } from 'react'
 
 import { formatNumber, formatTime } from 'utils/formatter'
-import { Transaction } from 'utils/types'
+import { SignedUserTransaction, TransactionInfo } from 'utils/json-rpc/chain'
 
-export default function TransactionStat(props: { transaction?: Transaction }) {
-  const { transaction } = props
+export default function TransactionStat(props: {
+  transaction?: Static<typeof SignedUserTransaction>
+  info?: Static<typeof TransactionInfo>
+}) {
+  const { transaction, info } = props
   const status = useMemo(
     () =>
-      transaction
-        ? typeof transaction.status === 'string'
-          ? transaction.status
-          : Object.keys(transaction.status)[0]
-        : '-',
-    [transaction],
+      info ? (typeof info.status === 'string' ? info.status : Object.keys(info.status)[0]) : '-',
+    [info],
+  )
+  const { data: block } = useJsonRpc(
+    'chain.get_block_by_hash',
+    info ? [info.block_hash] : undefined,
   )
 
   return (
@@ -29,8 +34,8 @@ export default function TransactionStat(props: { transaction?: Transaction }) {
           <GridItem colSpan={1}>
             <Stat>
               <StatLabel>Height</StatLabel>
-              <Skeleton isLoaded={!!transaction}>
-                <StatNumber>#{transaction?.block_number}</StatNumber>
+              <Skeleton isLoaded={!!info}>
+                <StatNumber>#{info?.block_number}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -47,10 +52,8 @@ export default function TransactionStat(props: { transaction?: Transaction }) {
           <GridItem colSpan={1}>
             <Stat>
               <StatLabel>Gas used</StatLabel>
-              <Skeleton isLoaded={!!transaction}>
-                <StatNumber>
-                  {transaction ? formatNumber(transaction.gas_used as bigint) : '-'}
-                </StatNumber>
+              <Skeleton isLoaded={!!info}>
+                <StatNumber>{info ? formatNumber(BigInt(info.gas_used)) : '-'}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
@@ -67,12 +70,8 @@ export default function TransactionStat(props: { transaction?: Transaction }) {
               <StatLabel>Payload</StatLabel>
               <Skeleton isLoaded={!!transaction}>
                 <StatNumber>
-                  {transaction && 'user_transaction' in transaction
-                    ? Object.keys(
-                        encoding.decodeTransactionPayload(
-                          transaction.user_transaction.raw_txn.payload,
-                        ),
-                      )[0]
+                  {transaction
+                    ? Object.keys(encoding.decodeTransactionPayload(transaction.raw_txn.payload))[0]
                     : 'No payload'}
                 </StatNumber>
               </Skeleton>
@@ -81,9 +80,9 @@ export default function TransactionStat(props: { transaction?: Transaction }) {
           <GridItem colSpan={2}>
             <Stat>
               <StatLabel>Timestamp</StatLabel>
-              <Skeleton isLoaded={!!transaction}>
+              <Skeleton isLoaded={!!block}>
                 <StatNumber>
-                  {transaction ? formatTime(transaction.timestamp as number) : '-'}
+                  {block ? formatTime(parseInt(block.header.timestamp, 10)) : '-'}
                 </StatNumber>
               </Skeleton>
             </Stat>

@@ -1,34 +1,33 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import {
   Divider,
   Grid,
   GridItem,
   Spinner,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Skeleton,
   ButtonGroup,
   IconButton,
-  Tooltip,
   useColorMode,
 } from '@chakra-ui/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
-
-import { useBlockList, useUncleBlockList } from 'hooks/use-block-api'
-import BlockListItem from 'components/block-list-item'
+import BlockListItem2 from 'components/block-list-item2'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import { CardWithHeader } from 'layouts/card-with-header'
-import { formatNumber } from 'utils/formatter'
-import UncleListItem from 'components/uncle-list-item'
+import UncleListItem2 from 'components/uncle-list-item2'
+import { useBlocksByHeight, useUnclesByHeight } from 'hooks/use-api'
+import useJsonRpc from 'hooks/use-json-rpc'
 
 const SIZE = 20
 
 export default function Blocks() {
-  const [blockPage, setBlockPage] = useState(1)
-  const [unclePage, setUnclePage] = useState(1)
-  const { data: blocks } = useBlockList(blockPage, { revalidateOnFocus: false })
-  const { data: uncles } = useUncleBlockList(unclePage, { revalidateOnFocus: false })
+  const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
+  const [blockHeight, setBlockHeight] = useState<bigint | undefined>()
+  const [uncleHeight, setUncleHeight] = useState<bigint | undefined>()
+  const { data: blocks } = useBlocksByHeight(blockHeight, { revalidateOnFocus: false })
+  const { data: uncles } = useUnclesByHeight(uncleHeight, { revalidateOnFocus: false })
+  useEffect(() => {
+    setBlockHeight(info ? BigInt(info.head.number) : undefined)
+    setUncleHeight(info ? BigInt(info.head.number) : undefined)
+  }, [info])
   const { colorMode } = useColorMode()
 
   return (
@@ -37,22 +36,6 @@ export default function Blocks() {
       gap={6}
       padding={6}
     >
-      <GridItem colSpan={1} paddingX={6}>
-        <Stat>
-          <StatLabel>Blocks</StatLabel>
-          <Skeleton isLoaded={!!blocks}>
-            <StatNumber>{formatNumber(blocks?.total || 0)}</StatNumber>
-          </Skeleton>
-        </Stat>
-      </GridItem>
-      <GridItem colSpan={1} paddingX={6}>
-        <Stat>
-          <StatLabel>Uncles</StatLabel>
-          <Skeleton isLoaded={!!uncles}>
-            <StatNumber>{formatNumber(uncles?.total || 0)}</StatNumber>
-          </Skeleton>
-        </Stat>
-      </GridItem>
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Blocks"
@@ -65,37 +48,34 @@ export default function Blocks() {
                 spacing={0}
                 mr={-4}
               >
-                <Tooltip label={`page ${blockPage - 1}`} placement="top">
-                  <IconButton
-                    aria-label="prev block"
-                    icon={<ChevronLeftIcon />}
-                    mr="-px"
-                    bg={colorMode === 'light' ? 'white' : undefined}
-                    onClick={() => {
-                      setBlockPage((old) => old - 1)
-                    }}
-                    disabled={blockPage === 1}
-                  />
-                </Tooltip>
-                <Tooltip label={`page ${blockPage + 1}`} placement="top">
-                  <IconButton
-                    aria-label="next block"
-                    icon={<ChevronRightIcon />}
-                    bg={colorMode === 'light' ? 'white' : undefined}
-                    onClick={() => {
-                      setBlockPage((old) => old + 1)
-                    }}
-                  />
-                </Tooltip>
+                <IconButton
+                  aria-label="prev block"
+                  icon={<ChevronLeftIcon />}
+                  mr="-px"
+                  bg={colorMode === 'light' ? 'white' : undefined}
+                  onClick={() => {
+                    setBlockHeight((old) => (old ? old + BigInt(SIZE) : old))
+                  }}
+                  disabled={!info || !blockHeight || blockHeight >= BigInt(info.head.number)}
+                />
+                <IconButton
+                  aria-label="next block"
+                  icon={<ChevronRightIcon />}
+                  bg={colorMode === 'light' ? 'white' : undefined}
+                  onClick={() => {
+                    setBlockHeight((old) => (old ? old - BigInt(SIZE) : old))
+                  }}
+                  disabled={!blockHeight || blockHeight - BigInt(SIZE) <= BigInt(0)}
+                />
               </ButtonGroup>
             </>
           }
         >
-          {blocks?.contents.length ? (
-            blocks.contents.map((block, index) => (
-              <Fragment key={block.header.block_hash}>
+          {blocks?.length ? (
+            blocks.map((block, index) => (
+              <Fragment key={block._id}>
                 {index === 0 ? null : <Divider />}
-                <BlockListItem block={block} />
+                <BlockListItem2 block={block._id} />
               </Fragment>
             ))
           ) : (
@@ -117,37 +97,34 @@ export default function Blocks() {
                 spacing={0}
                 mr={-4}
               >
-                <Tooltip label={`page ${unclePage - 1}`} placement="top">
-                  <IconButton
-                    aria-label="prev uncle"
-                    icon={<ChevronLeftIcon />}
-                    mr="-px"
-                    bg={colorMode === 'light' ? 'white' : undefined}
-                    onClick={() => {
-                      setUnclePage((old) => old - 1)
-                    }}
-                    disabled={unclePage === 1}
-                  />
-                </Tooltip>
-                <Tooltip label={`page ${unclePage + 1}`} placement="top">
-                  <IconButton
-                    aria-label="next uncle"
-                    icon={<ChevronRightIcon />}
-                    bg={colorMode === 'light' ? 'white' : undefined}
-                    onClick={() => {
-                      setUnclePage((old) => old + 1)
-                    }}
-                  />
-                </Tooltip>
+                <IconButton
+                  aria-label="prev uncle"
+                  icon={<ChevronLeftIcon />}
+                  mr="-px"
+                  bg={colorMode === 'light' ? 'white' : undefined}
+                  onClick={() => {
+                    setUncleHeight((old) => (old ? old + BigInt(SIZE) : old))
+                  }}
+                  disabled={!info || !uncleHeight || uncleHeight >= BigInt(info.head.number)}
+                />
+                <IconButton
+                  aria-label="next uncle"
+                  icon={<ChevronRightIcon />}
+                  bg={colorMode === 'light' ? 'white' : undefined}
+                  onClick={() => {
+                    setUncleHeight((old) => (old ? old - BigInt(SIZE) : old))
+                  }}
+                  disabled={!uncleHeight || uncleHeight - BigInt(SIZE) <= BigInt(0)}
+                />
               </ButtonGroup>
             </>
           }
         >
-          {uncles?.contents.length ? (
-            uncles.contents.map((uncle, index) => (
-              <Fragment key={uncle.header.block_hash}>
+          {uncles?.length ? (
+            uncles.map((uncle, index) => (
+              <Fragment key={uncle._id}>
                 {index === 0 ? null : <Divider />}
-                <UncleListItem uncle={uncle.header} />
+                <UncleListItem2 uncle={uncle._id} />
               </Fragment>
             ))
           ) : (

@@ -2,6 +2,33 @@ import useSWR, { SWRConfiguration } from 'swr'
 import { jsonFetcher } from 'utils/fetcher'
 import useNetwork from './use-network'
 
+export function useBlockByHash(hash?: string, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; author: string }>(
+    hash ? `/api/list/hash?network=${network}&height=${hash}&type=block` : null,
+    jsonFetcher,
+    config,
+  )
+}
+
+export function useTransactionByHash(hash?: string, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; sender?: string }>(
+    hash ? `/api/list/hash?network=${network}&height=${hash}&type=transaction` : null,
+    jsonFetcher,
+    config,
+  )
+}
+
+export function useUncleByHash(hash?: string, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; author: string }>(
+    hash ? `/api/list/hash?network=${network}&height=${hash}&type=uncle` : null,
+    jsonFetcher,
+    config,
+  )
+}
+
 export function useBlocksByHeight(height?: BigInt, config?: SWRConfiguration) {
   const network = useNetwork()
   return useSWR<{ _id: string; height: string; author: string }[]>(

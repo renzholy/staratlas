@@ -16,18 +16,18 @@ import { useRouter } from 'next/router'
 import ResourceListItem from 'components/resource-list-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import NotFound from 'components/not-fount'
-import TransactionListItem from 'components/transaction-list-item'
+import TransactionListItem2 from 'components/transaction-list-item2'
 import { useBalances, useResources } from 'hooks/use-provider'
-import { useAddressTransactions } from 'hooks/use-transaction-api'
 import { CardWithHeader } from 'layouts/card-with-header'
 import { formatNumber } from 'utils/formatter'
 import BalanceAmount from 'components/balance-amount'
+import { useTransactionsByAddress } from 'hooks/use-api'
 
 export default function Address() {
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
   const { data: resources, error } = useResources(hash)
-  const { data: transactions } = useAddressTransactions(hash)
+  const { data: transactions } = useTransactionsByAddress(hash)
   const { data: balances } = useBalances(hash)
 
   if (error) {
@@ -109,20 +109,17 @@ export default function Address() {
         </CardWithHeader>
       </GridItem>
       <GridItem colSpan={1}>
-        <CardWithHeader
-          title="Transactions"
-          subtitle={`Total: ${transactions ? formatNumber(transactions.total) : '-'}`}
-        >
-          {transactions?.contents ? (
-            transactions.contents.map((transaction, index) => (
-              <Fragment key={transaction.transaction_hash}>
+        <CardWithHeader title="Transactions">
+          {transactions?.length ? (
+            transactions.map((transaction, index) => (
+              <Fragment key={transaction._id}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={transaction} />
+                <TransactionListItem2 transaction={transaction._id} />
               </Fragment>
             ))
           ) : (
             <ListItemPlaceholder height={75}>
-              {transactions?.contents?.length === 0 ? 'No transactions' : <Spinner />}
+              {transactions?.length === 0 ? 'No transactions' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>

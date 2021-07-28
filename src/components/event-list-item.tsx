@@ -1,10 +1,10 @@
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { css } from '@emotion/react'
+import { Static } from '@sinclair/typebox'
 import { onchain_events } from '@starcoin/starcoin'
 import { useMemo } from 'react'
-
 import { formatNumber } from 'utils/formatter'
-import { Event } from 'utils/types'
+import { TransactionEvent } from 'utils/json-rpc/chain'
 import CopyLink from './copy-link'
 import JsonCode from './json-code'
 
@@ -16,7 +16,7 @@ function decodeEventData(eventName: string, eventData: string) {
   }
 }
 
-export default function EventListItem(props: { event: Event }) {
+export default function EventListItem(props: { event: Static<typeof TransactionEvent> }) {
   const event = useMemo(() => {
     const [, module, name] = props.event.type_tag.split('::')
     const key = onchain_events.decodeEventKey(props.event.event_key)
@@ -58,7 +58,7 @@ export default function EventListItem(props: { event: Event }) {
       <Heading size="sm" mt={4}>
         Seq
       </Heading>
-      <Text color="gray.500">{formatNumber(props.event.event_seq_number as number)}</Text>
+      <Text color="gray.500">{formatNumber(BigInt(props.event.event_seq_number))}</Text>
       <Heading size="sm" mt={4}>
         Data
       </Heading>
