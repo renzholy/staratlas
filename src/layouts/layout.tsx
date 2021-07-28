@@ -8,16 +8,14 @@ import {
   MenuList,
   MenuItemOption,
   Portal,
-  useDisclosure,
   useColorMode,
   IconButton,
   useColorModeValue,
   Input,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { HamburgerIcon, ChevronDownIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 import startCase from 'lodash/startCase'
-import { AiFillTool, AiFillHome } from 'react-icons/ai'
 import Link from 'next/link'
 import { NETWORKS } from 'utils/constants'
 import dynamic from 'next/dynamic'
@@ -33,7 +31,6 @@ const networks = Object.values(NETWORKS)
 export default function Layout(props: { children?: ReactNode }) {
   const router = useRouter()
   const network = useNetwork()
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode, toggleColorMode } = useColorMode()
   const buttonBackground = useColorModeValue('white', undefined)
   const boxShadow = useColorModeValue('md', 'dark-lg')
@@ -62,23 +59,51 @@ export default function Layout(props: { children?: ReactNode }) {
           top: 0;
         `}
       >
-        <Link href={`/${network}`} passHref={true}>
-          <IconButton
-            as="a"
-            aria-label="index"
-            icon={<AiFillHome />}
-            bg={buttonBackground}
+        <Menu autoSelect={false}>
+          <MenuButton
+            as={IconButton}
             mr={4}
-            display={{ base: 'inline-flex', md: 'none' }}
+            bg={buttonBackground}
+            icon={<HamburgerIcon />}
+            display={{ base: 'inline-flex', xl: 'none' }}
           />
-        </Link>
+          <Portal>
+            <MenuList>
+              <Link href={`/${network}`} passHref={true}>
+                <MenuItemOption as="a" isChecked={router.asPath === `/${network}`}>
+                  Homepage
+                </MenuItemOption>
+              </Link>
+              <Link href={`/${network}/blocks`} passHref={true}>
+                <MenuItemOption as="a" isChecked={/\/blocks/.test(router.asPath)}>
+                  Blocks
+                </MenuItemOption>
+              </Link>
+              <Link href={`/${network}/txs`} passHref={true}>
+                <MenuItemOption as="a" isChecked={/\/txs/.test(router.asPath)}>
+                  Transactions
+                </MenuItemOption>
+              </Link>
+              <Link href={`/${network}/uncles`} passHref={true}>
+                <MenuItemOption as="a" isChecked={/\/uncles/.test(router.asPath)}>
+                  Uncles
+                </MenuItemOption>
+              </Link>
+              <Link href={`/${network}/tools`} passHref={true}>
+                <MenuItemOption as="a" isChecked={/\/tools/.test(router.asPath)}>
+                  Tools
+                </MenuItemOption>
+              </Link>
+            </MenuList>
+          </Portal>
+        </Menu>
         <Link href={`/${network}`} passHref={true}>
           <Button
             as="a"
             bg={router.asPath === `/${network}` ? buttonBackground : undefined}
             variant={router.asPath === `/${network}` ? 'solid' : 'ghost'}
             mr={2}
-            display={{ base: 'none', md: 'inline-flex' }}
+            display={{ base: 'none', xl: 'inline-flex' }}
           >
             StarAtlas
           </Button>
@@ -89,7 +114,7 @@ export default function Layout(props: { children?: ReactNode }) {
             bg={/\/blocks/.test(router.asPath) ? buttonBackground : undefined}
             variant={/\/blocks/.test(router.asPath) ? 'solid' : 'ghost'}
             mr={2}
-            display={{ base: 'none', md: 'inline-flex' }}
+            display={{ base: 'none', xl: 'inline-flex' }}
           >
             Blocks
           </Button>
@@ -100,7 +125,7 @@ export default function Layout(props: { children?: ReactNode }) {
             bg={/\/txs/.test(router.asPath) ? buttonBackground : undefined}
             variant={/\/txs/.test(router.asPath) ? 'solid' : 'ghost'}
             mr={4}
-            display={{ base: 'none', md: 'inline-flex' }}
+            display={{ base: 'none', xl: 'inline-flex' }}
           >
             Transactions
           </Button>
@@ -111,57 +136,54 @@ export default function Layout(props: { children?: ReactNode }) {
             bg={/\/uncles/.test(router.asPath) ? buttonBackground : undefined}
             variant={/\/uncles/.test(router.asPath) ? 'solid' : 'ghost'}
             mr={4}
-            display={{ base: 'none', md: 'inline-flex' }}
+            display={{ base: 'none', xl: 'inline-flex' }}
           >
             Uncles
           </Button>
         </Link>
-        <SearchBar />
-        <Menu isOpen={isOpen} onClose={onClose} autoSelect={false}>
-          <MenuButton
-            as={Button}
-            ml={4}
-            bg={buttonBackground}
-            rightIcon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-            onClick={onOpen}
+        <Link href={`/${network}/tools`} passHref={true}>
+          <Button
+            as="a"
+            bg={/\/tools/.test(router.asPath) ? buttonBackground : undefined}
+            variant={/\/tools/.test(router.asPath) ? 'solid' : 'ghost'}
+            mr={4}
+            display={{ base: 'none', xl: 'inline-flex' }}
           >
+            Tools
+          </Button>
+        </Link>
+        <SearchBar />
+        <Menu autoSelect={false}>
+          <MenuButton as={Button} ml={4} bg={buttonBackground} rightIcon={<ChevronDownIcon />}>
             {startCase(network)}
           </MenuButton>
           <Portal>
             <MenuList>
               {networks.map((n) => (
-                <MenuItemOption
-                  as="a"
+                <Link
+                  key={n}
                   href={
                     router.asPath.split('/').length === 3
                       ? `/${n}/${router.asPath.split('/')[2]}`
                       : `/${n}`
                   }
-                  key={n}
-                  isChecked={n === network}
+                  passHref={true}
                 >
-                  {startCase(n)}
-                </MenuItemOption>
+                  <MenuItemOption as="a" isChecked={n === network}>
+                    {startCase(n)}
+                  </MenuItemOption>
+                </Link>
               ))}
             </MenuList>
           </Portal>
         </Menu>
-        <Link href={`/${network}/utils`} passHref={true}>
-          <IconButton
-            as="a"
-            aria-label="utils"
-            icon={<AiFillTool />}
-            bg={buttonBackground}
-            ml={4}
-          />
-        </Link>
         <IconButton
           aria-label="toggle color mode"
           ml={4}
           bg={buttonBackground}
           onClick={toggleColorMode}
           icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-          display={{ base: 'none', md: 'inline-flex' }}
+          display={{ base: 'none', xl: 'inline-flex' }}
         />
       </Flex>
       {props.children}

@@ -7,7 +7,7 @@ import JsonRpcUtil from 'components/json-rpc-util'
 import TransactionPayload from 'components/transaction-payload'
 import { CardWithHeader } from 'layouts/card-with-header'
 
-export default function Utils() {
+export default function Tools() {
   const [text, setText] = useState('')
   const [error, setError] = useState<Error>()
   const payload = useMemo(() => {
