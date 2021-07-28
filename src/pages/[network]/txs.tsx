@@ -12,6 +12,7 @@ export default function Transactions() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const { data, setSize } = useTransactionsByHeight(info ? BigInt(info.head.number) : undefined, {
     revalidateOnFocus: false,
+    revalidateAll: false,
   })
   const transactions = useMemo(() => flatMap(data, (datum) => datum), [data])
   const ref = useRef<HTMLDivElement>(null)

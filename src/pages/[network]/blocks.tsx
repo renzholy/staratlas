@@ -12,6 +12,7 @@ export default function Blocks() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const { data, setSize } = useBlocksByHeight(info ? BigInt(info.head.number) : undefined, {
     revalidateOnFocus: false,
+    revalidateAll: false,
   })
   const blocks = useMemo(() => flatMap(data, (datum) => datum), [data])
   const ref = useRef<HTMLDivElement>(null)

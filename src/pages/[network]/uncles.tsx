@@ -12,6 +12,7 @@ export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const { data, setSize } = useUnclesByHeight(info ? BigInt(info.head.number) : undefined, {
     revalidateOnFocus: false,
+    revalidateAll: false,
   })
   const uncles = useMemo(() => flatMap(data, (datum) => datum), [data])
   const ref = useRef<HTMLDivElement>(null)

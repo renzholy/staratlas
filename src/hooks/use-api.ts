@@ -1,5 +1,5 @@
 import last from 'lodash/last'
-import useSWR, { SWRConfiguration, useSWRInfinite } from 'swr'
+import useSWR, { SWRConfiguration, SWRInfiniteConfiguration, useSWRInfinite } from 'swr'
 import { jsonFetcher } from 'utils/fetcher'
 import { call } from 'utils/json-rpc'
 import useNetwork from './use-network'
@@ -31,7 +31,7 @@ export function useUncleByHash(hash?: string, config?: SWRConfiguration) {
   )
 }
 
-export function useBlocksByHeight(height?: BigInt, config?: SWRConfiguration) {
+export function useBlocksByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
     (_, previousPageData) =>
@@ -47,7 +47,7 @@ export function useBlocksByHeight(height?: BigInt, config?: SWRConfiguration) {
   )
 }
 
-export function useTransactionsByHeight(height?: BigInt, config?: SWRConfiguration) {
+export function useTransactionsByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; sender?: string }[]>(
     (_, previousPageData) =>
@@ -63,7 +63,7 @@ export function useTransactionsByHeight(height?: BigInt, config?: SWRConfigurati
   )
 }
 
-export function useUnclesByHeight(height?: BigInt, config?: SWRConfiguration) {
+export function useUnclesByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
     (_, previousPageData) =>
