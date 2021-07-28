@@ -49,8 +49,15 @@ export function useBlocksByHeight(height?: BigInt, config?: SWRConfiguration) {
 
 export function useTransactionsByHeight(height?: BigInt, config?: SWRConfiguration) {
   const network = useNetwork()
-  return useSWR<{ _id: string; height: string; sender?: string }[]>(
-    height ? `/api/list/height?network=${network}&height=${height}&type=transaction` : null,
+  return useSWRInfinite<{ _id: string; height: string; sender?: string }[]>(
+    (_, previousPageData) =>
+      previousPageData?.length
+        ? `/api/list/height?network=${network}&height=${
+            BigInt(last(previousPageData)!.height) - BigInt(1)
+          }&type=transaction`
+        : height !== undefined
+        ? `/api/list/height?network=${network}&height=${height}&type=transaction`
+        : null,
     jsonFetcher,
     config,
   )
