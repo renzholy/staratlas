@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useRef, useEffect } from 'react'
-import { Divider, Center, Box, Spinner } from '@chakra-ui/react'
+import { Divider, Grid, GridItem, Spinner } from '@chakra-ui/react'
 import BlockListItem from 'components/block-list-item'
 import { useBlocksByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
@@ -23,8 +23,15 @@ export default function Blocks() {
   }, [isNearBottom, setSize])
 
   return (
-    <Center gap={6} padding={6} width="100%">
-      <Box width="2xl">
+    <Grid
+      templateColumns={{
+        base: 'minmax(0, 1fr)',
+        xl: 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
+      }}
+      gap={6}
+      padding={6}
+    >
+      <GridItem colSpan={{ base: 1, xl: 2 }} colStart={{ base: 1, xl: 2 }}>
         <CardWithHeader title="Blocks">
           {blocks?.length ? (
             blocks.map((block, index) => (
@@ -40,7 +47,7 @@ export default function Blocks() {
           )}
         </CardWithHeader>
         <div ref={ref} />
-      </Box>
-    </Center>
+      </GridItem>
+    </Grid>
   )
 }

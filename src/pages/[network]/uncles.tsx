@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef } from 'react'
-import { Divider, Box, Center, Spinner } from '@chakra-ui/react'
+import { Divider, Grid, GridItem, Spinner } from '@chakra-ui/react'
 import { CardWithHeader } from 'layouts/card-with-header'
 import UncleListItem from 'components/uncle-list-item'
 import { useUnclesByHeight } from 'hooks/use-api'
@@ -23,8 +23,15 @@ export default function Uncles() {
   }, [isNearBottom, setSize])
 
   return (
-    <Center gap={6} padding={6} width="100%">
-      <Box width="2xl">
+    <Grid
+      templateColumns={{
+        base: 'minmax(0, 1fr)',
+        xl: 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
+      }}
+      gap={6}
+      padding={6}
+    >
+      <GridItem colSpan={{ base: 1, xl: 2 }} colStart={{ base: 1, xl: 2 }}>
         <CardWithHeader title="Uncles">
           {uncles?.length ? (
             uncles.map((uncle, index) => (
@@ -40,7 +47,7 @@ export default function Uncles() {
           )}
         </CardWithHeader>
         <div ref={ref} />
-      </Box>
-    </Center>
+      </GridItem>
+    </Grid>
   )
 }
