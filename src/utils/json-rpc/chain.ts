@@ -1,13 +1,13 @@
 import { Type } from '@sinclair/typebox'
 
-const TransactionBlockInfo = Type.Object({
+export const TransactionBlockInfo = Type.Object({
   block_hash: Type.String(),
   block_number: Type.String(),
   transaction_hash: Type.String(),
   transaction_index: Type.Integer(),
 })
 
-const RawUserTransaction = Type.Object({
+export const RawUserTransaction = Type.Object({
   sender: Type.String(),
   sequence_number: Type.String(),
   payload: Type.String(),
@@ -18,7 +18,7 @@ const RawUserTransaction = Type.Object({
   chain_id: Type.Integer(),
 })
 
-const TransactionAuthenticator = Type.Union([
+export const TransactionAuthenticator = Type.Union([
   Type.Object({
     Ed25519: Type.Object({
       public_key: Type.String(),
@@ -33,13 +33,13 @@ const TransactionAuthenticator = Type.Union([
   }),
 ])
 
-const SignedUserTransaction = Type.Object({
+export const SignedUserTransaction = Type.Object({
   transaction_hash: Type.String(),
   raw_txn: RawUserTransaction,
   authenticator: TransactionAuthenticator,
 })
 
-const BlockHeader = Type.Object({
+export const BlockHeader = Type.Object({
   block_hash: Type.String(),
   parent_hash: Type.String(),
   timestamp: Type.String(),
@@ -55,12 +55,12 @@ const BlockHeader = Type.Object({
   chain_id: Type.Integer(),
 })
 
-const BlockSummary = Type.Object({
+export const BlockSummary = Type.Object({
   header: BlockHeader,
   uncles: Type.Array(BlockHeader),
 })
 
-const Block = Type.Intersect([
+export const Block = Type.Intersect([
   BlockSummary,
   Type.Object({
     body: Type.Object({
@@ -78,7 +78,7 @@ export const BlockSimple = Type.Intersect([
   }),
 ])
 
-const AbortLocation = Type.Union([
+export const AbortLocation = Type.Union([
   Type.Literal('Script'),
   Type.Object({
     Module: Type.Object({
@@ -88,7 +88,7 @@ const AbortLocation = Type.Union([
   }),
 ])
 
-const TransactionStatus = Type.Union([
+export const TransactionStatus = Type.Union([
   Type.Literal('Executed'),
   Type.Literal('OutOfGas'),
   Type.Literal('MiscellaneousError'),
@@ -112,7 +112,7 @@ const TransactionStatus = Type.Union([
   }),
 ])
 
-const TransactionInfo = Type.Intersect([
+export const TransactionInfo = Type.Intersect([
   TransactionBlockInfo,
   Type.Object({
     state_root_hash: Type.String(),
@@ -122,7 +122,7 @@ const TransactionInfo = Type.Intersect([
   }),
 ])
 
-const TransactionEvent = Type.Intersect([
+export const TransactionEvent = Type.Intersect([
   TransactionBlockInfo,
   Type.Object({
     data: Type.String(),
@@ -132,7 +132,7 @@ const TransactionEvent = Type.Intersect([
   }),
 ])
 
-const EventFilter = Type.Partial(
+export const EventFilter = Type.Partial(
   Type.Object({
     event_keys: Type.Array(Type.String()),
     limit: Type.Integer(),
@@ -141,12 +141,12 @@ const EventFilter = Type.Partial(
   }),
 )
 
-const EventHandle = Type.Object({
+export const EventHandle = Type.Object({
   count: Type.Integer(),
   key: Type.String(),
 })
 
-const Epoch = Type.Object({
+export const Epoch = Type.Object({
   number: Type.Integer(),
   start_time: Type.Integer(),
   start_block_number: Type.Integer(),
@@ -161,22 +161,22 @@ const Epoch = Type.Object({
   new_epoch_events: EventHandle,
 })
 
-const EpochData = Type.Object({
+export const EpochData = Type.Object({
   uncles: Type.Integer(),
   total_reward: Type.Integer(),
   total_gas: Type.Integer(),
 })
 
-const EpochInfo = Type.Object({
+export const EpochInfo = Type.Object({
   epoch: Epoch,
   epoch_data: EpochData,
 })
 
-const GlobalTimeOnChain = Type.Object({
+export const GlobalTimeOnChain = Type.Object({
   milliseconds: Type.Integer(),
 })
 
-const EpochSummary = Type.Object({
+export const EpochSummary = Type.Object({
   uncles: Type.String(),
   sum: Type.String(),
   avg: Type.String(),
@@ -184,20 +184,20 @@ const EpochSummary = Type.Object({
   time_avg: Type.String(),
 })
 
-const EpochUncleSummary = Type.Object({
+export const EpochUncleSummary = Type.Object({
   epoch: Type.String(),
   number_summary: EpochSummary,
   epoch_summary: EpochSummary,
 })
 
-const AccumulatorInfo = Type.Object({
+export const AccumulatorInfo = Type.Object({
   accumulator_root: Type.String(),
   frozen_subtree_roots: Type.Array(Type.String()),
   num_leaves: Type.Integer(),
   num_nodes: Type.Integer(),
 })
 
-const ChainInfo = Type.Object({
+export const ChainInfo = Type.Object({
   chain_id: Type.Integer(),
   genesis_hash: Type.String(),
   head: BlockHeader,

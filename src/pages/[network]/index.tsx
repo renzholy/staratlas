@@ -1,23 +1,19 @@
 import { Grid, GridItem, Button, Divider, Spinner, useColorModeValue } from '@chakra-ui/react'
 import Link from 'next/link'
 import { AnimateSharedLayout, motion } from 'framer-motion'
-
 import useNetwork from 'hooks/use-network'
-import { useBlockList } from 'hooks/use-block-api'
-import { useTransactionList } from 'hooks/use-transaction-api'
-import { formatNumber } from 'utils/formatter'
 import TransactionListItem from 'components/transaction-list-item'
 import BlockListItem from 'components/block-list-item'
 import EpochStat from 'components/epoch-stat'
 import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
-
-const SIZE = 20
+import { INDEX_SIZE } from 'utils/constants'
+import { useBlocksLatest, useTransactionsLatest } from 'hooks/use-api'
 
 export default function Index() {
   const network = useNetwork()
-  const { data: blocks } = useBlockList(1, { refreshInterval: 2000 })
-  const { data: transactions } = useTransactionList(1, { refreshInterval: 2000 })
+  const { data: blocks } = useBlocksLatest({ refreshInterval: 2000 })
+  const { data: transactions } = useTransactionsLatest({ refreshInterval: 2000 })
   const buttonBackground = useColorModeValue('white', undefined)
 
   return (
@@ -26,28 +22,28 @@ export default function Index() {
       gap={6}
       padding={6}
     >
-      <EpochStat blocks={blocks?.contents} />
+      <EpochStat />
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Latest blocks"
           subtitle={
             <Link href={`/${network}/blocks`} passHref={true}>
               <Button as="a" size="sm" bg={buttonBackground} mr={-4}>
-                View all {blocks ? formatNumber(blocks.total) : '-'}
+                View all
               </Button>
             </Link>
           }
         >
           <AnimateSharedLayout>
-            {blocks?.contents.length ? (
-              blocks.contents.map((block, index) => (
-                <motion.div layout={true} key={block.header.block_hash}>
+            {blocks?.length ? (
+              blocks.map((block, index) => (
+                <motion.div layout={true} key={block._id}>
                   {index === 0 ? null : <Divider />}
-                  <BlockListItem block={block} relativeTime={true} />
+                  <BlockListItem block={block._id} relativeTime={true} />
                 </motion.div>
               ))
             ) : (
-              <ListItemPlaceholder height={SIZE * 68 - 1}>
+              <ListItemPlaceholder height={INDEX_SIZE[network] * 68 - 1}>
                 <Spinner />
               </ListItemPlaceholder>
             )}
@@ -60,21 +56,21 @@ export default function Index() {
           subtitle={
             <Link href={`/${network}/txs`} passHref={true}>
               <Button as="a" size="sm" bg={buttonBackground} mr={-4}>
-                View all {transactions ? formatNumber(transactions.total) : '-'}
+                View all
               </Button>
             </Link>
           }
         >
           <AnimateSharedLayout>
-            {transactions?.contents.length ? (
-              transactions.contents.map((transaction, index) => (
-                <motion.div layout={true} key={transaction.transaction_hash}>
+            {transactions?.length ? (
+              transactions.map((transaction, index) => (
+                <motion.div layout={true} key={transaction._id}>
                   {index === 0 ? null : <Divider />}
-                  <TransactionListItem transaction={transaction} relativeTime={true} />
+                  <TransactionListItem transaction={transaction._id} relativeTime={true} />
                 </motion.div>
               ))
             ) : (
-              <ListItemPlaceholder height={SIZE * 68 - 1}>
+              <ListItemPlaceholder height={INDEX_SIZE[network] * 68 - 1}>
                 <Spinner />
               </ListItemPlaceholder>
             )}

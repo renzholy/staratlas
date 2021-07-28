@@ -7,34 +7,35 @@ import Link from 'next/link'
 import TimeAgo from 'timeago-react'
 import useNetwork from 'hooks/use-network'
 import { formatTimeSimple, formatNumber } from 'utils/formatter'
-import { Transaction } from 'utils/types'
+import useJsonRpc from 'hooks/use-json-rpc'
 
 export default function TransactionListItem(props: {
-  transaction: Transaction
+  transaction: string
   relativeTime?: boolean
 }) {
   const network = useNetwork()
-  const { transaction } = props
+  const { data: transaction } = useJsonRpc('chain.get_transaction', [props.transaction])
+  const { data: info } = useJsonRpc('chain.get_transaction_info', [props.transaction])
+  const { data: events } = useJsonRpc('chain.get_events_by_txn_hash', [props.transaction])
+  const { data: block } = useJsonRpc(
+    'chain.get_block_by_hash',
+    transaction ? [transaction.block_hash] : undefined,
+  )
   const payload = useMemo(
     () =>
-      'user_transaction' in transaction
+      transaction?.user_transaction
         ? encoding.decodeTransactionPayload(transaction.user_transaction.raw_txn.payload)
         : undefined,
     [transaction],
   )
-  const sender = useMemo(
-    () =>
-      'user_transaction' in transaction
-        ? transaction.user_transaction.raw_txn.sender
-        : transaction.block_metadata.author,
-    [transaction],
-  )
   const status = useMemo(
     () =>
-      typeof transaction.status === 'string'
-        ? transaction.status
-        : Object.keys(transaction.status)[0],
-    [transaction.status],
+      info
+        ? typeof info.status === 'string'
+          ? info.status
+          : Object.keys(info.status)[0]
+        : undefined,
+    [info],
   )
 
   return (
@@ -57,7 +58,7 @@ export default function TransactionListItem(props: {
         }
       `}
     >
-      <Link href={`/${network}/tx/${transaction.transaction_hash}`} passHref={true}>
+      <Link href={`/${network}/tx/${transaction?.transaction_hash}`} passHref={true}>
         <Button
           as="a"
           variant="link"
@@ -65,7 +66,7 @@ export default function TransactionListItem(props: {
           width={{ base: undefined, md: 32 }}
           marginRight={{ base: undefined, md: 12 }}
         >
-          {transaction.transaction_hash}
+          {transaction?.transaction_hash}
         </Button>
       </Link>
       <Text
@@ -73,21 +74,28 @@ export default function TransactionListItem(props: {
           float: right;
         `}
       >
-        {props.relativeTime ? (
-          <TimeAgo datetime={transaction.timestamp.toString()} />
+        {block ? (
+          props.relativeTime ? (
+            <TimeAgo datetime={block?.header.timestamp} />
+          ) : (
+            formatTimeSimple(parseInt(block.header.timestamp, 10))
+          )
         ) : (
-          formatTimeSimple(parseInt(transaction.timestamp.toString(), 10))
+          '-'
         )}
       </Text>
       Sender:&nbsp;
-      <Link href={`/${network}/address/${sender}`} passHref={true}>
+      <Link
+        href={`/${network}/address/${transaction?.user_transaction?.raw_txn.sender}`}
+        passHref={true}
+      >
         <Button
           as="a"
           variant="link"
           color="green.500"
           width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 130px)' }}
         >
-          {sender}
+          {transaction?.user_transaction?.raw_txn.sender}
         </Button>
       </Link>
       <br />
@@ -95,8 +103,8 @@ export default function TransactionListItem(props: {
       <Text minWidth={32} color={status === 'Executed' ? undefined : 'red.500'}>
         {status}
       </Text>
-      <Text minWidth={32}>Events:&nbsp;{formatNumber(transaction.events.length)}</Text>
-      <Text>Gas:&nbsp;{formatNumber(transaction.gas_used as bigint)}</Text>
+      <Text minWidth={32}>Events:&nbsp;{events ? formatNumber(events.length) : '-'}</Text>
+      <Text>Gas:&nbsp;{info ? formatNumber(BigInt(info.gas_used)) : '-'}</Text>
     </Box>
   )
 }

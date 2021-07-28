@@ -11,20 +11,18 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import { CardWithHeader } from 'layouts/card-with-header'
-import TransactionListItem from 'components/transaction-list-item'
-import { useTransactionsByHeight } from 'hooks/use-api'
+import UncleListItem from 'components/uncle-list-item'
+import { useUnclesByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 
 const SIZE = 20
 
-export default function Transactions() {
+export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
-  const [transactionHeight, setTransactionHeight] = useState<bigint | undefined>()
-  const { data: transactions } = useTransactionsByHeight(transactionHeight, {
-    revalidateOnFocus: false,
-  })
+  const [uncleHeight, setUncleHeight] = useState<bigint | undefined>()
+  const { data: uncles } = useUnclesByHeight(uncleHeight, { revalidateOnFocus: false })
   useEffect(() => {
-    setTransactionHeight(info ? BigInt(info.head.number) : undefined)
+    setUncleHeight(info ? BigInt(info.head.number) : undefined)
   }, [info])
   const { colorMode } = useColorMode()
 
@@ -36,7 +34,7 @@ export default function Transactions() {
     >
       <GridItem colSpan={1}>
         <CardWithHeader
-          title="Transactions"
+          title="Uncles"
           subtitle={
             <>
               <ButtonGroup
@@ -47,35 +45,33 @@ export default function Transactions() {
                 mr={-4}
               >
                 <IconButton
-                  aria-label="prev transaction"
+                  aria-label="prev uncle"
                   icon={<ChevronLeftIcon />}
                   mr="-px"
                   bg={colorMode === 'light' ? 'white' : undefined}
                   onClick={() => {
-                    setTransactionHeight((old) => (old ? old + BigInt(SIZE) : old))
+                    setUncleHeight((old) => (old ? old + BigInt(SIZE) : old))
                   }}
-                  disabled={
-                    !info || !transactionHeight || transactionHeight >= BigInt(info.head.number)
-                  }
+                  disabled={!info || !uncleHeight || uncleHeight >= BigInt(info.head.number)}
                 />
                 <IconButton
-                  aria-label="next transaction"
+                  aria-label="next uncle"
                   icon={<ChevronRightIcon />}
                   bg={colorMode === 'light' ? 'white' : undefined}
                   onClick={() => {
-                    setTransactionHeight((old) => (old ? old - BigInt(SIZE) : old))
+                    setUncleHeight((old) => (old ? old - BigInt(SIZE) : old))
                   }}
-                  disabled={!transactionHeight || transactionHeight - BigInt(SIZE) <= BigInt(0)}
+                  disabled={!uncleHeight || uncleHeight - BigInt(SIZE) <= BigInt(0)}
                 />
               </ButtonGroup>
             </>
           }
         >
-          {transactions?.length ? (
-            transactions.map((transaction, index) => (
-              <Fragment key={transaction._id}>
+          {uncles?.length ? (
+            uncles.map((uncle, index) => (
+              <Fragment key={uncle._id}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={transaction._id} />
+                <UncleListItem uncle={uncle._id} />
               </Fragment>
             ))
           ) : (

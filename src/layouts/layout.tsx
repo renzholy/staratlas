@@ -17,7 +17,7 @@ import {
 import { css } from '@emotion/react'
 import { ChevronDownIcon, ChevronUpIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 import startCase from 'lodash/startCase'
-import { AiOutlineHome, AiOutlineTool } from 'react-icons/ai'
+import { AiFillTool, AiFillHome } from 'react-icons/ai'
 import Link from 'next/link'
 import { NETWORKS } from 'utils/constants'
 import dynamic from 'next/dynamic'
@@ -66,9 +66,8 @@ export default function Layout(props: { children?: ReactNode }) {
           <IconButton
             as="a"
             aria-label="index"
-            icon={<AiOutlineHome />}
-            bg={router.asPath === `/${network}` ? buttonBackground : undefined}
-            variant={router.asPath === `/${network}` ? 'solid' : 'ghost'}
+            icon={<AiFillHome />}
+            bg={buttonBackground}
             mr={4}
             display={{ base: 'inline-flex', md: 'none' }}
           />
@@ -106,26 +105,15 @@ export default function Layout(props: { children?: ReactNode }) {
             Transactions
           </Button>
         </Link>
-        <Link href={`/${network}/utils`} passHref={true}>
-          <IconButton
-            as="a"
-            aria-label="index"
-            icon={<AiOutlineTool />}
-            bg={/\/utils/.test(router.asPath) ? buttonBackground : undefined}
-            variant={/\/utils/.test(router.asPath) ? 'solid' : 'ghost'}
-            mr={4}
-            display={{ base: 'inline-flex', md: 'none' }}
-          />
-        </Link>
-        <Link href={`/${network}/utils`} passHref={true}>
+        <Link href={`/${network}/uncles`} passHref={true}>
           <Button
             as="a"
-            bg={/\/utils/.test(router.asPath) ? buttonBackground : undefined}
-            variant={/\/utils/.test(router.asPath) ? 'solid' : 'ghost'}
+            bg={/\/uncles/.test(router.asPath) ? buttonBackground : undefined}
+            variant={/\/uncles/.test(router.asPath) ? 'solid' : 'ghost'}
             mr={4}
             display={{ base: 'none', md: 'inline-flex' }}
           >
-            Utils
+            Uncles
           </Button>
         </Link>
         <SearchBar />
@@ -158,6 +146,15 @@ export default function Layout(props: { children?: ReactNode }) {
             </MenuList>
           </Portal>
         </Menu>
+        <Link href={`/${network}/utils`} passHref={true}>
+          <IconButton
+            as="a"
+            aria-label="utils"
+            icon={<AiFillTool />}
+            bg={buttonBackground}
+            ml={4}
+          />
+        </Link>
         <IconButton
           aria-label="toggle color mode"
           ml={4}

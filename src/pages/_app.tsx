@@ -3,17 +3,9 @@ import type { AppProps } from 'next/app'
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from 'utils/theme'
 import Layout from 'layouts/layout'
-import { useEffect } from 'react'
-import useNetwork from 'hooks/use-network'
 import './global.css'
 
 function App({ Component, pageProps }: AppProps) {
-  const network = useNetwork()
-  useEffect(() => {
-    const worker = new Worker(new URL('workers/maintain-index.worker', import.meta.url))
-    worker.postMessage(network)
-  }, [network])
-
   return (
     <>
       <Head>

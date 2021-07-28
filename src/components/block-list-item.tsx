@@ -5,10 +5,10 @@ import Link from 'next/link'
 import TimeAgo from 'timeago-react'
 import useNetwork from 'hooks/use-network'
 import { formatTimeSimple, formatNumber } from 'utils/formatter'
-import { Block } from 'utils/types'
+import useJsonRpc from 'hooks/use-json-rpc'
 
-export default function BlockListItem(props: { block: Block; relativeTime?: boolean }) {
-  const { block } = props
+export default function BlockListItem(props: { block: string; relativeTime?: boolean }) {
+  const { data: block } = useJsonRpc('chain.get_block_by_hash', [props.block])
   const network = useNetwork()
 
   return (
@@ -32,9 +32,9 @@ export default function BlockListItem(props: { block: Block; relativeTime?: bool
       `}
     >
       <Box width={32} display="inline-block">
-        <Link href={`/${network}/block/${block.header.number}`} passHref={true}>
+        <Link href={`/${network}/block/${block?.header.number}`} passHref={true}>
           <Button as="a" variant="link" color="blue.500">
-            #{block.header.number}
+            #{block?.header.number}
           </Button>
         </Link>
       </Box>
@@ -43,28 +43,34 @@ export default function BlockListItem(props: { block: Block; relativeTime?: bool
           float: right;
         `}
       >
-        {props.relativeTime ? (
-          <TimeAgo datetime={block.header.timestamp.toString()} />
+        {block ? (
+          props.relativeTime ? (
+            <TimeAgo datetime={block.header.timestamp.toString()} />
+          ) : (
+            formatTimeSimple(parseInt(block.header.timestamp.toString(), 10))
+          )
         ) : (
-          formatTimeSimple(parseInt(block.header.timestamp.toString(), 10))
+          '-'
         )}
       </Text>
       Author:&nbsp;
-      <Link href={`/${network}/address/${block.header.author}`} passHref={true}>
+      <Link href={`/${network}/address/${block?.header.author}`} passHref={true}>
         <Button
           as="a"
           variant="link"
           color="green.500"
           width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
         >
-          {block.header.author}
+          {block?.header.author || '-'}
         </Button>
       </Link>
       <br />
-      <Text minWidth={32}>Txns:&nbsp;{formatNumber(block.body.Full.length)}</Text>
-      <Text minWidth={32}>Uncles:&nbsp;{formatNumber(block.uncles.length)}</Text>
-      <Text minWidth={32}>Gas:&nbsp;{formatNumber(block.header.gas_used as bigint)}</Text>
-      <Text>Difficulty:&nbsp;{formatNumber(BigInt(block.header.difficulty_number))}</Text>
+      <Text minWidth={32}>Txns:&nbsp;{block ? formatNumber(block.body.Full.length) : '-'}</Text>
+      <Text minWidth={32}>Uncles:&nbsp;{block ? formatNumber(block.uncles.length) : '-'}</Text>
+      <Text minWidth={32}>
+        Gas:&nbsp;{block ? formatNumber(BigInt(block.header.gas_used)) : '-'}
+      </Text>
+      <Text>Difficulty:&nbsp;{block ? formatNumber(BigInt(block.header.difficulty)) : '-'}</Text>
     </Box>
   )
 }

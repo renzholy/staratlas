@@ -18,8 +18,6 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import TransactionListItem from 'components/transaction-list-item'
-import { useBlock } from 'hooks/use-block-api'
-import { useBlockTransactions } from 'hooks/use-transaction-api'
 import { CardWithHeader } from 'layouts/card-with-header'
 import { formatNumber } from 'utils/formatter'
 import CopyLink from 'components/copy-link'
@@ -27,14 +25,23 @@ import UncleListItem from 'components/uncle-list-item'
 import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
+import useJsonRpc from 'hooks/use-json-rpc'
 
 export default function Block() {
   const router = useRouter()
   const network = useNetwork()
   const { hash } = router.query as { hash?: string }
   const { colorMode } = useColorMode()
-  const { data: block, error } = useBlock(hash)
-  const { data: transactions } = useBlockTransactions(block?.header.block_hash)
+  const isHash = hash?.startsWith('0x')
+  const isHeight = hash && /^\d+$/.test(hash)
+  const { data: block, error } = useJsonRpc(
+    isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
+    hash ? (isHash ? [hash] : isHeight ? [parseInt(hash, 10)] : undefined) : undefined,
+  )
+  const { data: transactions } = useJsonRpc(
+    'chain.get_block_txn_infos',
+    isHash && hash ? [hash] : block ? [block.header.block_hash] : undefined,
+  )
 
   if (error) {
     return <NotFound />
@@ -59,7 +66,10 @@ export default function Block() {
                   spacing={0}
                   mr={-4}
                 >
-                  <Link href={`/${network}/block/${block.header.number - 1}`} passHref={true}>
+                  <Link
+                    href={`/${network}/block/${BigInt(block.header.number) - BigInt(1)}`}
+                    passHref={true}
+                  >
                     <IconButton
                       as="a"
                       aria-label="prev block"
@@ -68,7 +78,10 @@ export default function Block() {
                       bg={colorMode === 'light' ? 'white' : undefined}
                     />
                   </Link>
-                  <Link href={`/${network}/block/${block.header.number + 1}`} passHref={true}>
+                  <Link
+                    href={`/${network}/block/${BigInt(block.header.number) + BigInt(1)}`}
+                    passHref={true}
+                  >
                     <IconButton
                       as="a"
                       aria-label="next block"
@@ -144,18 +157,18 @@ export default function Block() {
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transactions"
-          subtitle={`Total: ${transactions ? formatNumber(transactions.total) : '-'}`}
+          subtitle={`Total: ${transactions ? formatNumber(transactions.length) : '-'}`}
         >
-          {transactions?.contents.length ? (
-            transactions.contents.map((transaction, index) => (
+          {transactions?.length ? (
+            transactions.map((transaction, index) => (
               <Fragment key={transaction.transaction_hash}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={transaction} />
+                <TransactionListItem transaction={transaction.transaction_hash} />
               </Fragment>
             ))
           ) : (
             <ListItemPlaceholder height={67}>
-              {transactions?.contents.length === 0 ? 'No transaction' : <Spinner />}
+              {transactions?.length === 0 ? 'No transaction' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>
@@ -168,7 +181,7 @@ export default function Block() {
             block.uncles.map((uncle, index) => (
               <Fragment key={uncle.block_hash}>
                 {index === 0 ? null : <Divider />}
-                <UncleListItem uncle={uncle} />
+                <UncleListItem uncle={uncle.block_hash} />
               </Fragment>
             ))
           ) : (

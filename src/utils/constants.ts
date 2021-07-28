@@ -16,4 +16,9 @@ export const NETWORKS: {
   [SupportedChainId.PROXIMA]: 'proxima',
 }
 
-export const ENDPOINT = 'https://api.stcscan.io/v1'
+export const INDEX_SIZE: { [key in Network]: number } = {
+  main: 10,
+  barnard: 10,
+  halley: 5,
+  proxima: 5,
+}

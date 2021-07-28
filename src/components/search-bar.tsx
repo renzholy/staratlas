@@ -14,11 +14,10 @@ import { Search2Icon } from '@chakra-ui/icons'
 import { Ref, useCallback, useEffect, useMemo, useState } from 'react'
 import compact from 'lodash/compact'
 import useNetwork from 'hooks/use-network'
-import { useBlock, useUncleBlock } from 'hooks/use-block-api'
 import { useResources } from 'hooks/use-provider'
-import { useTransaction } from 'hooks/use-transaction-api'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useBlockByHash, useTransactionByHash, useUncleByHash } from 'hooks/use-api'
 import ComboBox from './combo-box'
 
 type Item = {
@@ -35,13 +34,13 @@ export default function SearchBar() {
   const { data: address, isValidating: addressValidating } = useResources(
     isHash ? trimedKeyword : undefined,
   )
-  const { data: block, isValidating: blockValidating } = useBlock(
+  const { data: block, isValidating: blockValidating } = useBlockByHash(
     isHash || isHeight ? trimedKeyword : undefined,
   )
-  const { data: transaction, isValidating: transactionValidating } = useTransaction(
+  const { data: transaction, isValidating: transactionValidating } = useTransactionByHash(
     isHash ? trimedKeyword : undefined,
   )
-  const { data: uncle, isValidating: uncleValidating } = useUncleBlock(
+  const { data: uncle, isValidating: uncleValidating } = useUncleByHash(
     isHash || isHeight ? trimedKeyword : undefined,
   )
   const data = useMemo<Item[]>(

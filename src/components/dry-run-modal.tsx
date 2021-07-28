@@ -10,15 +10,17 @@ import {
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react'
-import { types } from '@starcoin/starcoin'
 import { useMemo, useEffect } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import 'react-perfect-scrollbar/dist/css/styles.css'
-
 import { useDryRunRaw } from 'hooks/use-provider'
+import { Static } from '@sinclair/typebox'
+import { SignedUserTransaction } from 'utils/json-rpc/chain'
 import JsonCode from './json-code'
 
-export default function DryRunModal(props: { userTransaction: types.SignedUserTransactionView }) {
+export default function DryRunModal(props: {
+  userTransaction: Static<typeof SignedUserTransaction>
+}) {
   const { userTransaction } = props
   const { isOpen, onOpen, onClose } = useDisclosure()
   const buttonBackground = useColorModeValue('white', undefined)
@@ -33,7 +35,7 @@ export default function DryRunModal(props: { userTransaction: types.SignedUserTr
     senderPublicKey,
     userTransaction.raw_txn.sender,
     userTransaction.raw_txn.payload,
-    userTransaction.raw_txn.max_gas_amount,
+    BigInt(userTransaction.raw_txn.max_gas_amount),
     userTransaction.raw_txn.chain_id,
   )
   const toast = useToast()

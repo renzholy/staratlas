@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react'
 import useSWR, { SWRConfiguration } from 'swr'
-import { providers, utils, types, bcs, encoding } from '@starcoin/starcoin'
+import { providers, utils, bcs, encoding } from '@starcoin/starcoin'
 import { arrayify, hexlify } from 'ethers/lib/utils'
 
 import useAsync from './use-async'
@@ -38,11 +38,11 @@ export function useBalances(address?: string) {
 }
 
 export function useDryRunRaw(
-  publicKeyHex?: types.HexString,
-  senderAddress?: types.HexString,
-  transactionPayload?: types.HexString,
-  maxGasAmount?: types.U64,
-  chainId?: types.U8,
+  publicKeyHex?: string,
+  senderAddress?: string,
+  transactionPayload?: string,
+  maxGasAmount?: bigint,
+  chainId?: number,
 ) {
   const provider = useProvider()
   const handleDryRunRaw = useCallback(async () => {
