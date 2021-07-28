@@ -41,6 +41,9 @@ module.exports = withTM({
       patchSsrPlugin(ssrPlugin)
     }
 
+    // eslint-disable-next-line no-param-reassign
+    config.experiments = { topLevelAwait: true }
+
     return config
   },
 })
