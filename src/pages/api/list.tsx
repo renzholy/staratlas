@@ -136,9 +136,9 @@ export default async function List(req: NextApiRequest, res: NextApiResponse): P
     if (
       data.length >= LIMIT &&
       (type !== 'block' ||
-        BigInt(first(data as { height: Decimal128 }[])!.height.toString()) -
-          BigInt(last(data as { height: Decimal128 }[])!.height.toString()) ===
-          BigInt(data.length - 1))
+        (BigInt(first(data as { height: Decimal128 }[])!.height.toString()) === height &&
+          height - BigInt(last(data as { height: Decimal128 }[])!.height.toString()) ===
+            BigInt(data.length - 1)))
     ) {
       res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
       res.json({
