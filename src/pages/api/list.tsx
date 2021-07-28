@@ -6,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { call } from 'utils/json-rpc'
 import { Network } from 'utils/types'
+import { arrayify } from 'ethers/lib/utils'
 
 type Type = 'block' | 'transaction' | 'uncle'
 
@@ -58,13 +59,13 @@ async function load(network: Network, height: BigInt) {
   const blockOperations = blocks.map((block) => ({
     updateOne: {
       filter: {
-        hash: new Binary(Buffer.from(block.header.block_hash, 'hex')),
+        hash: new Binary(arrayify(block.header.block_hash)),
       },
       update: {
         $set: {
-          hash: new Binary(Buffer.from(block.header.block_hash, 'hex')),
+          hash: new Binary(arrayify(block.header.block_hash)),
           height: new Decimal128(block.header.number),
-          author: new Binary(Buffer.from(block.header.author, 'hex')),
+          author: new Binary(arrayify(block.header.author)),
         },
       },
       upsert: true,
@@ -73,14 +74,14 @@ async function load(network: Network, height: BigInt) {
   const transactionOperations = transactions.map((transaction) => ({
     updateOne: {
       filter: {
-        hash: new Binary(Buffer.from(transaction.transaction_hash, 'hex')),
+        hash: new Binary(arrayify(transaction.transaction_hash)),
       },
       update: {
         $set: {
-          hash: new Binary(Buffer.from(transaction.transaction_hash, 'hex')),
+          hash: new Binary(arrayify(transaction.transaction_hash)),
           height: new Decimal128(transaction.block_number),
           sender: transaction.user_transaction
-            ? new Binary(Buffer.from(transaction.user_transaction?.raw_txn.sender, 'hex'))
+            ? new Binary(arrayify(transaction.user_transaction?.raw_txn.sender))
             : undefined,
         },
       },
@@ -90,13 +91,13 @@ async function load(network: Network, height: BigInt) {
   const uncleOperations = uncles.map((uncle) => ({
     updateOne: {
       filter: {
-        hash: new Binary(Buffer.from(uncle.block_hash, 'hex')),
+        hash: new Binary(arrayify(uncle.block_hash)),
       },
       update: {
         $set: {
-          hash: new Binary(Buffer.from(uncle.block_hash, 'hex')),
+          hash: new Binary(arrayify(uncle.block_hash)),
           height: new Decimal128(uncle.number),
-          author: new Binary(Buffer.from(uncle.author, 'hex')),
+          author: new Binary(arrayify(uncle.author)),
         },
       },
       upsert: true,
@@ -121,7 +122,7 @@ export default async function List(req: NextApiRequest, res: NextApiResponse): P
     if (data.length >= LIMIT) {
       res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
       res.json({
-        data,
+        data: data.map((datum) => ({ ...datum, height: datum.height.toString() })),
       })
       return
     }
@@ -131,6 +132,9 @@ export default async function List(req: NextApiRequest, res: NextApiResponse): P
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json({
-    data: await list(network, type, height),
+    data: (await list(network, type, height)).map((datum) => ({
+      ...datum,
+      height: datum.height.toString(),
+    })),
   })
 }
