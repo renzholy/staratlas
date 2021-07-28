@@ -9,19 +9,19 @@ async function list(network: Network, type: Type, address: string) {
   switch (type) {
     case 'block': {
       return collections[network].blocks
-        .find({ address: new Binary(arrayify(address)) })
+        .find({ author: new Binary(arrayify(address)) })
         .sort({ height: -1 })
         .toArray()
     }
     case 'transaction': {
       return collections[network].transactions
-        .find({ address: new Binary(arrayify(address)) })
+        .find({ sender: new Binary(arrayify(address)) })
         .sort({ height: -1, _id: 1 })
         .toArray()
     }
     case 'uncle': {
       return collections[network].uncles
-        .find({ address: new Binary(arrayify(address)) })
+        .find({ author: new Binary(arrayify(address)) })
         .sort({ height: -1, _id: 1 })
         .toArray()
     }
