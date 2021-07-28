@@ -15,7 +15,6 @@ const MAINTENANCE_SIZE = 16
  * find a index range between top & bottom that has gaps
  */
 async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), depth: number = 0) {
-  console.log('find', network, top, bottom, depth)
   if (top <= bottom) {
     return
   }
@@ -25,15 +24,18 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
       $gte: new Decimal128(bottom.toString()),
     },
   })
-  if (top - bottom > count - 1) {
-    if (top - bottom < PAGE_SIZE * MAINTENANCE_SIZE - 1) {
+  console.log('find', network, top, bottom, top - bottom + BigInt(1), count, depth)
+  if (top - bottom + BigInt(1) > count) {
+    if (top - bottom + BigInt(1) < PAGE_SIZE * MAINTENANCE_SIZE) {
       throw new Error(top.toString())
     }
     const mid = (top - bottom) / BigInt(2) + bottom
-    if (Math.random() > 0.6) {
+    if (Math.random() > 0.7) {
       await find(network, top, mid, depth + 1)
+      await find(network, mid, bottom, depth + 1)
     } else {
       await find(network, mid, bottom, depth + 1)
+      await find(network, top, mid, depth + 1)
     }
   }
 }
