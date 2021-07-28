@@ -2,6 +2,8 @@
 /* eslint-disable no-await-in-loop */
 
 import flatMap from 'lodash/flatMap'
+import first from 'lodash/first'
+import last from 'lodash/last'
 import { Decimal128, Binary } from 'bson'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
@@ -131,7 +133,13 @@ export default async function List(req: NextApiRequest, res: NextApiResponse): P
   let cursor = height
   while (cursor > 0) {
     const data = await list(network, type, height)
-    if (data.length >= LIMIT) {
+    if (
+      data.length >= LIMIT &&
+      (type !== 'block' ||
+        BigInt(first(data as { height: Decimal128 }[])!.height.toString()) -
+          BigInt(last(data as { height: Decimal128 }[])!.height.toString()) ===
+          BigInt(data.length - 1))
+    ) {
       res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
       res.json({
         data: data.map(mapper),
