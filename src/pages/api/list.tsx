@@ -18,19 +18,22 @@ async function list(network: Network, type: Type, height: BigInt) {
   switch (type) {
     case 'block': {
       return collections[network].blocks
-        .find({ height: new Decimal128(height.toString()) })
+        .find({ height: { $lte: new Decimal128(height.toString()) } })
+        .sort({ height: -1 })
         .limit(LIMIT)
         .toArray()
     }
     case 'transaction': {
       return collections[network].transactions
-        .find({ height: new Decimal128(height.toString()) })
+        .find({ height: { $lte: new Decimal128(height.toString()) } })
+        .sort({ height: -1 })
         .limit(LIMIT)
         .toArray()
     }
     case 'uncle': {
       return collections[network].uncles
-        .find({ height: new Decimal128(height.toString()) })
+        .find({ height: { $lte: new Decimal128(height.toString()) } })
+        .sort({ height: -1 })
         .limit(LIMIT)
         .toArray()
     }
