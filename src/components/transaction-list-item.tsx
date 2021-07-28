@@ -74,9 +74,9 @@ export default function TransactionListItem(props: {
           float: right;
         `}
       >
-        {block ? (
+        {block?.header ? (
           props.relativeTime ? (
-            <TimeAgo datetime={block?.header.timestamp} />
+            <TimeAgo datetime={block.header.timestamp} />
           ) : (
             formatTimeSimple(parseInt(block.header.timestamp, 10))
           )

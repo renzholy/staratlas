@@ -12,7 +12,7 @@ export default function useJsonRpc<T extends keyof typeof API>(
 ) {
   const network = useNetwork()
   const key = useMemo(
-    () => (method && params ? [network, method, JSON.stringify(params)] : null),
+    () => (method && params ? [network, 'rpc', method, JSON.stringify(params)] : null),
     [method, network, params],
   )
   return useSWR<Static<typeof API[T]['result']>>(key, () => call(network, method!, params!), config)
