@@ -85,14 +85,17 @@ export default function TransactionListItem2(props: {
         )}
       </Text>
       Sender:&nbsp;
-      <Link href={`/${network}/address/${block?.header.author}`} passHref={true}>
+      <Link
+        href={`/${network}/address/${transaction?.user_transaction?.raw_txn.sender}`}
+        passHref={true}
+      >
         <Button
           as="a"
           variant="link"
           color="green.500"
           width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 130px)' }}
         >
-          {block?.header.author}
+          {transaction?.user_transaction?.raw_txn.sender}
         </Button>
       </Link>
       <br />
