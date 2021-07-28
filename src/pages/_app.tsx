@@ -3,6 +3,8 @@ import type { AppProps } from 'next/app'
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from 'utils/theme'
 import Layout from 'layouts/layout'
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import 'react-perfect-scrollbar/dist/css/styles.css'
 import './global.css'
 
 function App({ Component, pageProps }: AppProps) {
@@ -18,10 +20,12 @@ function App({ Component, pageProps }: AppProps) {
         <title>StarAtlas</title>
       </Head>
       <ChakraProvider theme={theme}>
-        <Layout>
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-          <Component {...pageProps} />
-        </Layout>
+        <PerfectScrollbar>
+          <Layout>
+            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+            <Component {...pageProps} />
+          </Layout>
+        </PerfectScrollbar>
       </ChakraProvider>
     </>
   )
