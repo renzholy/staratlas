@@ -26,7 +26,7 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
     },
   })
   if (top - bottom > count - 1) {
-    if (top - bottom <= PAGE_SIZE * MAINTENANCE_SIZE - 1) {
+    if (top - bottom < PAGE_SIZE * MAINTENANCE_SIZE - 1) {
       throw new Error(top.toString())
     }
     const mid = (top - bottom) / BigInt(2) + bottom
