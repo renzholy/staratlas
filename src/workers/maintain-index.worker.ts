@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import { Static } from '@sinclair/typebox'
 import sumBy from 'lodash/sumBy'
 import last from 'lodash/last'
@@ -21,7 +23,7 @@ function mapper(block: Static<typeof BlockSimple>) {
   }
 }
 
-async function run(network: Network, height: number, end = 0) {
+async function run(network: Network, start: number, end = 0) {
   let uncles = 0
   let transactions = 0
   let batchSize = 1
@@ -32,9 +34,9 @@ async function run(network: Network, height: number, end = 0) {
       await Promise.all(
         // eslint-disable-next-line @typescript-eslint/no-loop-func
         Array.from({ length: batchSize }).map((_, index) =>
-          height - index * BLOCK_PAGE_SIZE >= 0
+          start - index * BLOCK_PAGE_SIZE >= 0
             ? call(network, 'chain.get_blocks_by_number', [
-                height - index * BLOCK_PAGE_SIZE,
+                start - index * BLOCK_PAGE_SIZE,
                 BLOCK_PAGE_SIZE,
               ])
             : [],
@@ -44,14 +46,14 @@ async function run(network: Network, height: number, end = 0) {
     // eslint-disable-next-line no-await-in-loop
     await atlasDatabase[network].bulkPut(blocks.map(mapper))
     // eslint-disable-next-line no-param-reassign
-    height = parseInt(last(blocks)!.header.number, 10) - 1
+    start = parseInt(last(blocks)!.header.number, 10) - 1
     uncles += sumBy(blocks, (block) => block.uncles.length)
     transactions += sumBy(blocks, (block) => block.body.Hashes.length)
     batchSize = Math.min(batchSize + 2, MAX_BATCH_SIZE)
     if (
       (transactions >= INDEX_SIZE[network] && uncles >= INDEX_SIZE[network]) ||
       blocks.length === 0 ||
-      height <= end
+      start <= end
     ) {
       return
     }
@@ -75,6 +77,7 @@ globalThis.addEventListener('message', async (e) => {
   const currentHeight = parseInt(info.head.number, 10)
   if (!firstIndex || !lastIndex) {
     // init
+    console.log('init run', network, currentHeight)
     await run(network, currentHeight)
     isRunning = false
     return
@@ -84,17 +87,24 @@ globalThis.addEventListener('message', async (e) => {
     lastIndex.height - firstIndex.height === blocks - 1 &&
     currentHeight - lastIndex.height <= BLOCK_PAGE_SIZE * MAX_BATCH_SIZE * 64 // about 64 times batch call
   ) {
-    const transactions = await atlasDatabase[network]
-      .filter((x) => x.transactions.length > 0)
-      .count()
-    const uncles = await atlasDatabase[network].filter((x) => x.uncles.length > 0).count()
+    const transactions = sumBy(
+      await atlasDatabase[network].filter((x) => x.transactions.length > 0).toArray(),
+      (x) => x.transactions.length,
+    )
+    const uncles = sumBy(
+      await atlasDatabase[network].filter((x) => x.uncles.length > 0).toArray(),
+      (x) => x.uncles.length,
+    )
     if (transactions >= INDEX_SIZE[network] && uncles >= INDEX_SIZE[network]) {
+      console.log('increment run', network, currentHeight, lastIndex.height)
       // index has no hole and index is not too old
       await run(network, currentHeight, lastIndex.height)
     } else {
+      console.log('init run2', network, currentHeight)
       await run(network, currentHeight)
     }
   } else {
+    console.log('clear run', network, currentHeight)
     // index has hole or index is too old
     await atlasDatabase[network].clear()
     await run(network, currentHeight)
