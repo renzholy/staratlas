@@ -4,6 +4,7 @@ import { collections } from 'utils/database/mongo'
 import { Network } from 'utils/types'
 import { mapper, Type } from 'utils/api'
 import { arrayify } from 'ethers/lib/utils'
+import { maintenance } from 'utils/database/maintenance'
 
 async function list(network: Network, type: Type, address: string) {
   switch (type) {
@@ -38,6 +39,8 @@ export default async function ListByAddress(
   const { type, network, address } = req.query as { network: Network; type: Type; address: string }
 
   const data = await list(network, type, address)
+
+  maintenance(network)
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json(data.map(mapper))

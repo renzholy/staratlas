@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import { call } from 'utils/json-rpc'
 import { Network } from 'utils/types'
 import flatMap from 'lodash/flatMap'
@@ -7,13 +9,13 @@ import { collections } from './mongo'
 
 const PAGE_SIZE = 32
 
-export async function maintenance(
-  network: Network,
-  top: bigint,
-  bottom: bigint = BigInt(0),
-  depth: number = 0,
-) {
-  console.log('maintenance', network, top, bottom, depth)
+const MAINTENANCE_SIZE = 16
+
+/**
+ * find a index range between top & bottom that has gaps
+ */
+async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), depth: number = 0) {
+  console.log('find', network, top, bottom, depth)
   if (top <= bottom) {
     return
   }
@@ -24,22 +26,25 @@ export async function maintenance(
     },
   })
   if (top - bottom > count - 1) {
-    if (top - bottom <= PAGE_SIZE - 1) {
+    if (top - bottom <= PAGE_SIZE * MAINTENANCE_SIZE - 1) {
       throw new Error(top.toString())
     }
     const mid = (top - bottom) / BigInt(2) + bottom
     if (Math.random() > 0.6) {
-      await maintenance(network, top, mid, depth + 1)
+      await find(network, top, mid, depth + 1)
     } else {
-      await maintenance(network, mid, bottom, depth + 1)
+      await find(network, mid, bottom, depth + 1)
     }
   }
 }
 
-export async function load(network: Network, height: BigInt) {
-  console.log('load', network, height)
+/**
+ * fetch data from top to top + PAGE_SIZE and load them into database
+ */
+export async function load(network: Network, top: BigInt) {
+  console.log('load', network, top)
   const blocks = await call(network, 'chain.get_blocks_by_number', [
-    parseInt(height.toString(), 10),
+    parseInt(top.toString(), 10),
     PAGE_SIZE,
   ])
   const uncles = flatMap(blocks, (block) => block.uncles)
@@ -103,5 +108,24 @@ export async function load(network: Network, height: BigInt) {
   ])
   if (blockOperations.length) {
     await collections[network].blocks.bulkWrite(blockOperations)
+  }
+}
+
+/**
+ * start a maintenance job
+ */
+export async function maintenance(network: Network) {
+  const info = await call(network, 'chain.info', [])
+  try {
+    await find(network, BigInt(info.head.number))
+    return null
+  } catch (err) {
+    const top = BigInt(err.message)
+    await Promise.all(
+      Array.from({ length: MAINTENANCE_SIZE }).map((_, index) =>
+        load(network, BigInt(err.message) + BigInt(index * PAGE_SIZE)),
+      ),
+    )
+    return top
   }
 }
