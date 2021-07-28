@@ -26,6 +26,7 @@
     "framer-motion": "^4.1.17",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.26.1",
+    "mongodb": "^4.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
