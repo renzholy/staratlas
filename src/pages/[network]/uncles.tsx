@@ -24,7 +24,7 @@ export default function Uncles() {
 
   return (
     <Center gap={6} padding={6} width="100%">
-      <Box width="xl">
+      <Box width="2xl">
         <CardWithHeader title="Uncles">
           {uncles?.length ? (
             uncles.map((uncle, index) => (

@@ -24,7 +24,7 @@ export default function Blocks() {
 
   return (
     <Center gap={6} padding={6} width="100%">
-      <Box width="xl">
+      <Box width="2xl">
         <CardWithHeader title="Blocks">
           {blocks?.length ? (
             blocks.map((block, index) => (
