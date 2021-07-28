@@ -1,38 +1,57 @@
-import useSWR from 'swr'
-import { Network } from 'utils/types'
+import useSWR, { SWRConfiguration } from 'swr'
+import { jsonFetcher } from 'utils/fetcher'
+import useNetwork from './use-network'
 
-export function useBlocksByHeight(network: Network, height: BigInt) {
-  return useSWR<{ _id: string; height: string; author: string }>(
-    `/api/list/height?network=${network}&height=${height}&type=block`,
+export function useBlocksByHeight(height?: BigInt, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; author: string }[]>(
+    height ? `/api/list/height?network=${network}&height=${height}&type=block` : null,
+    jsonFetcher,
+    config,
   )
 }
 
-export function useTransactionsByHeight(network: Network, height: BigInt) {
-  return useSWR<{ _id: string; height: string; sender?: string }>(
-    `/api/list/height?network=${network}&height=${height}&type=transaction`,
+export function useTransactionsByHeight(height?: BigInt, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; sender?: string }[]>(
+    height ? `/api/list/height?network=${network}&height=${height}&type=transaction` : null,
+    jsonFetcher,
+    config,
   )
 }
 
-export function useUnclesByHeight(network: Network, height: BigInt) {
-  return useSWR<{ _id: string; height: string; author: string }>(
-    `/api/list/height?network=${network}&height=${height}&type=uncle`,
+export function useUnclesByHeight(height?: BigInt, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; author: string }[]>(
+    height ? `/api/list/height?network=${network}&height=${height}&type=uncle` : null,
+    jsonFetcher,
+    config,
   )
 }
 
-export function useBlocksByAddress(network: Network, address: string) {
-  return useSWR<{ _id: string; height: string; author: string }>(
-    `/api/list/address?network=${network}&address=${address}&type=block`,
+export function useBlocksByAddress(address?: string, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; author: string }[]>(
+    address ? `/api/list/address?network=${network}&address=${address}&type=block` : null,
+    jsonFetcher,
+    config,
   )
 }
 
-export function useTransactionsByAddress(network: Network, address: string) {
-  return useSWR<{ _id: string; height: string; sender?: string }>(
-    `/api/list/address?network=${network}&address=${address}&type=transaction`,
+export function useTransactionsByAddress(address?: string, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; sender?: string }[]>(
+    address ? `/api/list/address?network=${network}&address=${address}&type=transaction` : null,
+    jsonFetcher,
+    config,
   )
 }
 
-export function useUnclesByAddress(network: Network, address: string) {
-  return useSWR<{ _id: string; height: string; author: string }>(
-    `/api/list/address?network=${network}&address=${address}&type=uncle`,
+export function useUnclesByAddress(address?: string, config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; author: string }[]>(
+    address ? `/api/list/address?network=${network}&address=${address}&type=uncle` : null,
+    jsonFetcher,
+    config,
   )
 }

@@ -6,8 +6,6 @@ const client = await new MongoClient(process.env.MONGO_URL!, {
   readPreference: 'secondaryPreferred',
 }).connect()
 
-console.log('mongo connected')
-
 const db = client.db()
 
 async function prepare(network: Network) {
