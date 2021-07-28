@@ -8,16 +8,12 @@ import EpochStat from 'components/epoch-stat'
 import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import { INDEX_SIZE } from 'utils/constants'
-import { useBlocksByHeight, useTransactionsByHeight } from 'hooks/use-api'
-import useJsonRpc from 'hooks/use-json-rpc'
+import { useBlocksLatest, useTransactionsLatest } from 'hooks/use-api'
 
 export default function Index() {
   const network = useNetwork()
-  const { data: info } = useJsonRpc('chain.info', [], { refreshInterval: 2000 })
-  const { data: blocks } = useBlocksByHeight(info ? BigInt(info.head.number) : undefined)
-  const { data: transactions } = useTransactionsByHeight(
-    info ? BigInt(info.head.number) : undefined,
-  )
+  const { data: blocks } = useBlocksLatest({ refreshInterval: 2000 })
+  const { data: transactions } = useTransactionsLatest({ refreshInterval: 2000 })
   const buttonBackground = useColorModeValue('white', undefined)
 
   return (

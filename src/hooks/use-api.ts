@@ -1,5 +1,6 @@
 import useSWR, { SWRConfiguration } from 'swr'
 import { jsonFetcher } from 'utils/fetcher'
+import { call } from 'utils/json-rpc'
 import useNetwork from './use-network'
 
 export function useBlockByHash(hash?: string, config?: SWRConfiguration) {
@@ -79,6 +80,34 @@ export function useUnclesByAddress(address?: string, config?: SWRConfiguration) 
   return useSWR<{ _id: string; height: string; author: string }[]>(
     address ? `/api/list/address?network=${network}&address=${address}&type=uncle` : null,
     jsonFetcher,
+    config,
+  )
+}
+
+export function useBlocksLatest(config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; author: string }[]>(
+    [network, 'blocks', 'latest'],
+    async () => {
+      const info = await call(network, 'chain.info', [])
+      return jsonFetcher(
+        `/api/list/height?network=${network}&height=${info.head.number}&type=block`,
+      )
+    },
+    config,
+  )
+}
+
+export function useTransactionsLatest(config?: SWRConfiguration) {
+  const network = useNetwork()
+  return useSWR<{ _id: string; height: string; sender?: string }[]>(
+    [network, 'transactions', 'latest'],
+    async () => {
+      const info = await call(network, 'chain.info', [])
+      return jsonFetcher(
+        `/api/list/height?network=${network}&height=${info.head.number}&type=transaction`,
+      )
+    },
     config,
   )
 }
