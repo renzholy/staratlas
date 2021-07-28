@@ -4,17 +4,17 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import useNetwork from 'hooks/use-network'
-import { useUncleBlock } from 'hooks/use-block-api'
 import { CardWithHeader } from 'layouts/card-with-header'
 import CopyLink from 'components/copy-link'
 import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
+import useJsonRpc from 'hooks/use-json-rpc'
 
 export default function Uncle() {
   const network = useNetwork()
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
-  const { data: uncle, error } = useUncleBlock(hash)
+  const { data: uncle, error } = useJsonRpc('chain.get_block_by_hash', hash ? [hash] : undefined)
 
   if (error) {
     return <NotFound />
