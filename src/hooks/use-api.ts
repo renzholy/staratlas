@@ -65,8 +65,15 @@ export function useTransactionsByHeight(height?: BigInt, config?: SWRConfigurati
 
 export function useUnclesByHeight(height?: BigInt, config?: SWRConfiguration) {
   const network = useNetwork()
-  return useSWR<{ _id: string; height: string; author: string }[]>(
-    height ? `/api/list/height?network=${network}&height=${height}&type=uncle` : null,
+  return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
+    (_, previousPageData) =>
+      previousPageData?.length
+        ? `/api/list/height?network=${network}&height=${
+            BigInt(last(previousPageData)!.height) - BigInt(1)
+          }&type=uncle`
+        : height !== undefined
+        ? `/api/list/height?network=${network}&height=${height}&type=uncle`
+        : null,
     jsonFetcher,
     config,
   )
