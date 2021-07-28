@@ -7,6 +7,7 @@ import {
   Heading,
   Spacer,
   Spinner,
+  Text,
   useToast,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
@@ -58,7 +59,7 @@ export default function Transaction() {
       gap={6}
       padding={6}
     >
-      <TransactionStat transaction={transaction?.user_transaction || undefined} info={info} />
+      <TransactionStat payload={payload} info={info} />
       <GridItem colSpan={1}>
         <CardWithHeader
           title="Transaction"
@@ -70,7 +71,7 @@ export default function Transaction() {
             ) : null
           }
         >
-          {transaction?.user_transaction?.raw_txn.sender ? (
+          {transaction ? (
             <Box
               paddingX={6}
               paddingY={4}
@@ -101,14 +102,18 @@ export default function Transaction() {
               <Heading size="sm" mt={4}>
                 Sender
               </Heading>
-              <Link
-                href={`/${network}/address/${transaction.user_transaction.raw_txn.sender}`}
-                passHref={true}
-              >
-                <Button as="a" variant="link" color="green.500">
-                  {transaction.user_transaction.raw_txn.sender}
-                </Button>
-              </Link>
+              {transaction.user_transaction ? (
+                <Link
+                  href={`/${network}/address/${transaction.user_transaction.raw_txn.sender}`}
+                  passHref={true}
+                >
+                  <Button as="a" variant="link" color="green.500">
+                    {transaction.user_transaction.raw_txn.sender}
+                  </Button>
+                </Link>
+              ) : (
+                <Text color="gray.500">none</Text>
+              )}
               <Heading size="sm" mt={4}>
                 Block
               </Heading>
@@ -133,35 +138,64 @@ export default function Transaction() {
           )}
         </CardWithHeader>
         <Spacer height={6} />
-        <CardWithHeader
-          title="Payload"
-          subtitle={
-            transaction?.user_transaction ? (
-              <Button
-                size="sm"
-                mr={-4}
-                onClick={() => {
-                  if (transaction?.user_transaction) {
-                    copy(transaction.user_transaction.raw_txn.payload)
-                    toast({
-                      title: 'Copied to clipboard',
-                      status: 'success',
-                      duration: 1000,
-                    })
+        {!transaction || transaction.user_transaction ? (
+          <CardWithHeader
+            title="Payload"
+            subtitle={
+              transaction?.user_transaction ? (
+                <Button
+                  size="sm"
+                  mr={-4}
+                  onClick={() => {
+                    if (transaction?.user_transaction) {
+                      copy(transaction.user_transaction.raw_txn.payload)
+                      toast({
+                        title: 'Copied to clipboard',
+                        status: 'success',
+                        duration: 1000,
+                      })
+                    }
+                  }}
+                >
+                  Copy hex
+                </Button>
+              ) : null
+            }
+          >
+            {payload ? (
+              <Box
+                paddingX={6}
+                paddingY={4}
+                css={css`
+                  button {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    max-width: 100%;
+                    display: inline-block;
+                    text-align: start;
+                    vertical-align: text-bottom;
+                    font-weight: normal;
                   }
-                }}
+                `}
               >
-                Copy hex
-              </Button>
-            ) : null
-          }
-        >
-          {payload ? (
+                <TransactionPayload payload={payload} />
+              </Box>
+            ) : (
+              <ListItemPlaceholder height={67}>
+                {transaction ? 'No payload' : <Spinner />}
+              </ListItemPlaceholder>
+            )}
+          </CardWithHeader>
+        ) : null}
+        {!transaction || transaction.block_metadata ? (
+          <CardWithHeader title="Block metadata">
             <Box
               paddingX={6}
               paddingY={4}
               css={css`
-                button {
+                button,
+                a {
                   text-overflow: ellipsis;
                   overflow: hidden;
                   white-space: nowrap;
@@ -173,14 +207,29 @@ export default function Transaction() {
                 }
               `}
             >
-              <TransactionPayload payload={payload} />
+              <Heading size="sm">Author</Heading>
+              <Link
+                href={`/${network}/address/${transaction?.block_metadata.author}`}
+                passHref={true}
+              >
+                <Button as="a" variant="link" color="green.500">
+                  {transaction?.block_metadata.author}
+                </Button>
+              </Link>
+              <Heading size="sm" mt={4}>
+                Parent hash
+              </Heading>
+              <Link
+                href={`/${network}/block/${transaction?.block_metadata.parent_hash}`}
+                passHref={true}
+              >
+                <Button as="a" variant="link" color="blue.500">
+                  {transaction?.block_metadata.parent_hash}
+                </Button>
+              </Link>
             </Box>
-          ) : (
-            <ListItemPlaceholder height={67}>
-              {transaction ? 'No payload' : <Spinner />}
-            </ListItemPlaceholder>
-          )}
-        </CardWithHeader>
+          </CardWithHeader>
+        ) : null}
       </GridItem>
       <GridItem colSpan={1}>
         <CardWithHeader

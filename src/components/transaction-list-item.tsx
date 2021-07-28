@@ -85,19 +85,23 @@ export default function TransactionListItem(props: {
         )}
       </Text>
       Sender:&nbsp;
-      <Link
-        href={`/${network}/address/${transaction?.user_transaction?.raw_txn.sender}`}
-        passHref={true}
-      >
-        <Button
-          as="a"
-          variant="link"
-          color="green.500"
-          width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 130px)' }}
+      {transaction?.user_transaction?.raw_txn.sender ? (
+        <Link
+          href={`/${network}/address/${transaction.user_transaction.raw_txn.sender}`}
+          passHref={true}
         >
-          {transaction?.user_transaction?.raw_txn.sender}
-        </Button>
-      </Link>
+          <Button
+            as="a"
+            variant="link"
+            color="green.500"
+            width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 130px)' }}
+          >
+            {transaction.user_transaction.raw_txn.sender}
+          </Button>
+        </Link>
+      ) : (
+        'none'
+      )}
       <br />
       <Text minWidth={44}>{payload ? Object.keys(payload)[0] : 'No payload'}</Text>
       <Text minWidth={32} color={status === 'Executed' ? undefined : 'red.500'}>

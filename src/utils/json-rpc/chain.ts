@@ -39,6 +39,16 @@ export const SignedUserTransaction = Type.Object({
   authenticator: TransactionAuthenticator,
 })
 
+export const BlockMetadata = Type.Object({
+  author: Type.String(),
+  chain_id: Type.Integer(),
+  number: Type.String(),
+  parent_gas_used: Type.String(),
+  parent_hash: Type.String(),
+  timestamp: Type.String(),
+  uncles: Type.String(),
+})
+
 export const BlockHeader = Type.Object({
   block_hash: Type.String(),
   parent_hash: Type.String(),
@@ -241,7 +251,14 @@ export default {
     params: Type.Tuple([Type.String()]),
     result: Type.Intersect([
       TransactionBlockInfo,
-      Type.Object({ user_transaction: Type.Union([SignedUserTransaction, Type.Null()]) }),
+      Type.Union([
+        Type.Object({
+          user_transaction: SignedUserTransaction,
+        }),
+        Type.Object({
+          block_metadata: BlockMetadata,
+        }),
+      ]),
     ]),
   },
   'chain.get_transaction_info': {

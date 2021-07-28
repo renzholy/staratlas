@@ -1,17 +1,16 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
 import { Static } from '@sinclair/typebox'
-import { encoding } from '@starcoin/starcoin'
+import { types } from '@starcoin/starcoin'
 import useJsonRpc from 'hooks/use-json-rpc'
 import { useMemo } from 'react'
-
 import { formatNumber, formatTime } from 'utils/formatter'
-import { SignedUserTransaction, TransactionInfo } from 'utils/json-rpc/chain'
+import { TransactionInfo } from 'utils/json-rpc/chain'
 
 export default function TransactionStat(props: {
-  transaction?: Static<typeof SignedUserTransaction>
+  payload?: types.TransactionPayload
   info?: Static<typeof TransactionInfo>
 }) {
-  const { transaction, info } = props
+  const { payload, info } = props
   const status = useMemo(
     () =>
       info ? (typeof info.status === 'string' ? info.status : Object.keys(info.status)[0]) : '-',
@@ -42,7 +41,7 @@ export default function TransactionStat(props: {
           <GridItem colSpan={1}>
             <Stat>
               <StatLabel>Status</StatLabel>
-              <Skeleton isLoaded={!!transaction}>
+              <Skeleton isLoaded={!!status}>
                 <StatNumber color={status === 'Executed' ? 'green.500' : 'red.500'}>
                   {status}
                 </StatNumber>
@@ -68,12 +67,8 @@ export default function TransactionStat(props: {
           <GridItem colSpan={1}>
             <Stat>
               <StatLabel>Payload</StatLabel>
-              <Skeleton isLoaded={!!transaction}>
-                <StatNumber>
-                  {transaction
-                    ? Object.keys(encoding.decodeTransactionPayload(transaction.raw_txn.payload))[0]
-                    : 'No payload'}
-                </StatNumber>
+              <Skeleton isLoaded={!!info}>
+                <StatNumber>{payload ? Object.keys(payload)[0] : 'No payload'}</StatNumber>
               </Skeleton>
             </Stat>
           </GridItem>
