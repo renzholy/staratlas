@@ -23,7 +23,7 @@ import useNetwork from 'hooks/use-network'
 
 const SearchBar = dynamic(() => import('components/search-bar'), {
   ssr: false,
-  loading: () => <Input />,
+  loading: () => <Input flex={1} width={0} />,
 })
 
 const networks = Object.values(NETWORKS)

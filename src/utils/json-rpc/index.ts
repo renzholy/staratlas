@@ -15,7 +15,7 @@ export async function call<T extends keyof typeof API>(
   method: T,
   params: Static<typeof API[T]['params']>,
 ): Promise<Static<typeof API[T]['result']>> {
-  if (!ajv.validate(API[method!].params, params)) {
+  if (!ajv.validate(API[method].params, params)) {
     throw new Error(ajv.errorsText(ajv.errors))
   }
   return fetch(`https://${network}-seed.starcoin.org`, {
@@ -28,7 +28,7 @@ export async function call<T extends keyof typeof API>(
     .then((response) => response.json())
     .then((json) => {
       if ('result' in json) {
-        if (ajv.validate(API[method!].result, json.result)) {
+        if (ajv.validate(API[method].result, json.result)) {
           return json.result
         }
         throw new Error(ajv.errorsText(ajv.errors))

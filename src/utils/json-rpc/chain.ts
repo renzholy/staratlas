@@ -221,14 +221,14 @@ export const ChainInfo = Type.Object({
 
 export default {
   'chain.id': {
-    params: Type.Tuple([]),
+    params: Type.Array(Type.Void()),
     result: Type.Object({
       name: Type.String(),
       id: Type.Integer(),
     }),
   },
   'chain.info': {
-    params: Type.Tuple([]),
+    params: Type.Array(Type.Void()),
     result: ChainInfo,
   },
   'chain.get_block_by_hash': {
@@ -278,7 +278,7 @@ export default {
     result: Type.Array(TransactionEvent),
   },
   'chain.epoch': {
-    params: Type.Tuple([]),
+    params: Type.Array(Type.Void()),
     result: EpochInfo,
   },
   'chain.get_epoch_info_by_number': {

@@ -17,13 +17,13 @@ async function list(network: Network, type: Type, address: string) {
     case 'transaction': {
       return collections[network].transactions
         .find({ sender: new Binary(arrayify(address)) })
-        .sort({ height: -1, _id: 1 })
+        .sort({ height: -1 })
         .toArray()
     }
     case 'uncle': {
       return collections[network].uncles
         .find({ author: new Binary(arrayify(address)) })
-        .sort({ height: -1, _id: 1 })
+        .sort({ height: -1 })
         .toArray()
     }
     default: {

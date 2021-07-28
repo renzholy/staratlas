@@ -105,6 +105,8 @@ export default function SearchBar() {
           placeholder="Search hash or height"
           border="none"
           bg={inputBackground}
+          flex={1}
+          width={0}
           {...inputProps}
         />
       </InputGroup>
