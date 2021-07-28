@@ -1,16 +1,14 @@
 /* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
 
-import flatMap from 'lodash/flatMap'
 import first from 'lodash/first'
 import last from 'lodash/last'
-import { Decimal128, Binary } from 'bson'
+import { Decimal128 } from 'bson'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
-import { call } from 'utils/json-rpc'
 import { Network } from 'utils/types'
-import { arrayify } from 'ethers/lib/utils'
 import { mapper, Type } from 'utils/api'
+import { load, maintenance } from 'utils/database/maintenance'
 
 const LIMIT = 10
 
@@ -46,76 +44,6 @@ async function list(network: Network, type: Type, height: BigInt) {
   }
 }
 
-async function load(network: Network, height: BigInt) {
-  console.log('load', network, height)
-  const blocks = await call(network, 'chain.get_blocks_by_number', [
-    parseInt(height.toString(), 10),
-    PAGE_SIZE,
-  ])
-  const uncles = flatMap(blocks, (block) => block.uncles)
-  const transactions = await Promise.all(
-    flatMap(blocks, (block) =>
-      block.body.Hashes.map((transaction) => call(network, 'chain.get_transaction', [transaction])),
-    ),
-  )
-  const blockOperations = blocks.map((block) => ({
-    updateOne: {
-      filter: {
-        _id: new Binary(arrayify(block.header.block_hash)),
-      },
-      update: {
-        $set: {
-          _id: new Binary(arrayify(block.header.block_hash)),
-          height: new Decimal128(block.header.number),
-          author: new Binary(arrayify(block.header.author)),
-        },
-      },
-      upsert: true,
-    },
-  }))
-  const transactionOperations = transactions.map((transaction) => ({
-    updateOne: {
-      filter: {
-        _id: new Binary(arrayify(transaction.transaction_hash)),
-      },
-      update: {
-        $set: {
-          _id: new Binary(arrayify(transaction.transaction_hash)),
-          height: new Decimal128(transaction.block_number),
-          sender: transaction.user_transaction
-            ? new Binary(arrayify(transaction.user_transaction?.raw_txn.sender))
-            : undefined,
-        },
-      },
-      upsert: true,
-    },
-  }))
-  const uncleOperations = uncles.map((uncle) => ({
-    updateOne: {
-      filter: {
-        _id: new Binary(arrayify(uncle.block_hash)),
-      },
-      update: {
-        $set: {
-          _id: new Binary(arrayify(uncle.block_hash)),
-          height: new Decimal128(uncle.number),
-          author: new Binary(arrayify(uncle.author)),
-        },
-      },
-      upsert: true,
-    },
-  }))
-  await Promise.all([
-    transactionOperations.length
-      ? collections[network].transactions.bulkWrite(transactionOperations)
-      : undefined,
-    uncleOperations.length ? collections[network].uncles.bulkWrite(uncleOperations) : undefined,
-  ])
-  if (blockOperations.length) {
-    await collections[network].blocks.bulkWrite(blockOperations)
-  }
-}
-
 export default async function ListByHeight(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -140,6 +68,8 @@ export default async function ListByHeight(
     await load(network, cursor)
     cursor -= BigInt(PAGE_SIZE)
   }
+
+  maintenance(network, BigInt(query.height)).catch(() => null)
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json((await list(network, type, height)).map(mapper))
