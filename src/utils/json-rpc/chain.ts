@@ -95,7 +95,7 @@ export const TransactionStatus = Type.Union([
   Type.Object({
     MoveAbort: Type.Object({
       location: AbortLocation,
-      abort_code: Type.Integer(),
+      abort_code: Type.String(),
     }),
   }),
   Type.Object({
