@@ -8,6 +8,7 @@ import {
   Spacer,
   Spinner,
   Text,
+  useColorModeValue,
   useToast,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
@@ -48,6 +49,7 @@ export default function Transaction() {
         : undefined,
     [transaction],
   )
+  const buttonBackground = useColorModeValue('white', undefined)
   const toast = useToast()
 
   if (error) {
@@ -146,6 +148,7 @@ export default function Transaction() {
                 <Button
                   size="sm"
                   mr={-4}
+                  bg={buttonBackground}
                   onClick={() => {
                     if (transaction?.user_transaction) {
                       copy(transaction.user_transaction.raw_txn.payload)
