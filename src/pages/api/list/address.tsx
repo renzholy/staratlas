@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { Network } from 'utils/types'
 import { mapper, Type } from 'utils/api'
-import { maintenance } from 'utils/database/maintenance'
+// import { maintenance } from 'utils/database/maintenance'
 import { arrayify } from 'utils/encoding'
 
 const LIMIT = 10
@@ -59,7 +59,7 @@ export default async function ListByAddress(
 
   const data = await list(network, type, address)
 
-  maintenance(network)
+  // maintenance(network)
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json(data.map(mapper))

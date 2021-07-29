@@ -82,14 +82,20 @@ export function useUnclesByHeight(height?: BigInt, config?: SWRInfiniteConfigura
 export function useBlocksByAddress(address?: string, config?: SWRConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
-    (_, previousPageData) =>
-      previousPageData
-        ? previousPageData.length
-          ? `/api/list/address?network=${network}&address=${address}&height=${
-              BigInt(last(previousPageData)!.height) - BigInt(1)
-            }&type=block`
-          : null
-        : `/api/list/address?network=${network}&address=${address}&type=block`,
+    (_, previousPageData) => {
+      if (!address) {
+        return null
+      }
+      if (previousPageData && !previousPageData.length) {
+        return null
+      }
+      if (previousPageData) {
+        return `/api/list/address?network=${network}&address=${address}&height=${
+          BigInt(last(previousPageData)!.height) - BigInt(1)
+        }&type=block`
+      }
+      return `/api/list/address?network=${network}&address=${address}&type=block`
+    },
     jsonFetcher,
     config,
   )
@@ -98,14 +104,20 @@ export function useBlocksByAddress(address?: string, config?: SWRConfiguration) 
 export function useTransactionsByAddress(address?: string, config?: SWRConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; sender?: string }[]>(
-    (_, previousPageData) =>
-      previousPageData
-        ? previousPageData.length
-          ? `/api/list/address?network=${network}&address=${address}&height=${
-              BigInt(last(previousPageData)!.height) - BigInt(1)
-            }&type=transaction`
-          : null
-        : `/api/list/address?network=${network}&address=${address}&type=transaction`,
+    (_, previousPageData) => {
+      if (!address) {
+        return null
+      }
+      if (previousPageData && !previousPageData.length) {
+        return null
+      }
+      if (previousPageData) {
+        return `/api/list/address?network=${network}&address=${address}&height=${
+          BigInt(last(previousPageData)!.height) - BigInt(1)
+        }&type=transaction`
+      }
+      return `/api/list/address?network=${network}&address=${address}&type=transaction`
+    },
     jsonFetcher,
     config,
   )
@@ -114,14 +126,20 @@ export function useTransactionsByAddress(address?: string, config?: SWRConfigura
 export function useUnclesByAddress(address?: string, config?: SWRConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
-    (_, previousPageData) =>
-      previousPageData
-        ? previousPageData.length
-          ? `/api/list/address?network=${network}&address=${address}&height=${
-              BigInt(last(previousPageData)!.height) - BigInt(1)
-            }&type=uncle`
-          : null
-        : `/api/list/address?network=${network}&address=${address}&type=uncle`,
+    (_, previousPageData) => {
+      if (!address) {
+        return null
+      }
+      if (previousPageData && !previousPageData.length) {
+        return null
+      }
+      if (previousPageData) {
+        return `/api/list/address?network=${network}&address=${address}&height=${
+          BigInt(last(previousPageData)!.height) - BigInt(1)
+        }&type=uncle`
+      }
+      return `/api/list/address?network=${network}&address=${address}&type=uncle`
+    },
     jsonFetcher,
     config,
   )
