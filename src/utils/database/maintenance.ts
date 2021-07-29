@@ -32,13 +32,8 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
       throw new AbortError(top.toString())
     }
     const mid = (top - bottom) / BigInt(2) + bottom
-    if (Math.random() > 0.7) {
-      await find(network, top, mid, depth + 1)
-      await find(network, mid, bottom, depth + 1)
-    } else {
-      await find(network, mid, bottom, depth + 1)
-      await find(network, top, mid, depth + 1)
-    }
+    await find(network, top, mid, depth + 1)
+    await find(network, mid, bottom, depth + 1)
   }
 }
 
@@ -118,16 +113,16 @@ export async function load(network: Network, top: BigInt) {
 /**
  * start a maintenance job
  */
-export async function maintenance(network: Network) {
-  const info = await call(network, 'chain.info', [])
+export async function maintenance(network: Network, height?: bigint) {
+  const top = height || BigInt((await call(network, 'chain.info', [])).head.number)
   try {
-    await find(network, BigInt(info.head.number))
+    await find(network, top)
     return null
   } catch (err) {
     if (err instanceof AbortError) {
       await Promise.all(
         Array.from({ length: MAINTENANCE_SIZE }).map((_, index) =>
-          load(network, BigInt(err.message) + BigInt(index * PAGE_SIZE)),
+          load(network, BigInt(err.message) - BigInt(index * PAGE_SIZE)),
         ),
       )
       return BigInt(err.message)

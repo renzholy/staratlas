@@ -6,11 +6,11 @@ export default async function Maintenance(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
-  const { network } = req.query as { network: Network }
+  const { network, height } = req.query as { network: Network; height?: string }
 
-  const height = await maintenance(network)
+  const top = await maintenance(network, height ? BigInt(height) : undefined)
 
   res.json({
-    height: height?.toString(),
+    top: top?.toString(),
   })
 }

@@ -69,7 +69,7 @@ export default async function ListByHeight(
     cursor -= BigInt(PAGE_SIZE)
   }
 
-  maintenance(network)
+  maintenance(network, height)
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json((await list(network, type, height)).map(mapper))
