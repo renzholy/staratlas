@@ -83,10 +83,12 @@ export function useBlocksByAddress(address?: string, config?: SWRConfiguration) 
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
     (_, previousPageData) =>
-      previousPageData?.length
-        ? `/api/list/address?network=${network}&address=${address}&height=${
-            BigInt(last(previousPageData)!.height) - BigInt(1)
-          }&type=block`
+      previousPageData
+        ? previousPageData.length
+          ? `/api/list/address?network=${network}&address=${address}&height=${
+              BigInt(last(previousPageData)!.height) - BigInt(1)
+            }&type=block`
+          : null
         : `/api/list/address?network=${network}&address=${address}&type=block`,
     jsonFetcher,
     config,
@@ -97,10 +99,12 @@ export function useTransactionsByAddress(address?: string, config?: SWRConfigura
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; sender?: string }[]>(
     (_, previousPageData) =>
-      previousPageData?.length
-        ? `/api/list/address?network=${network}&address=${address}&height=${
-            BigInt(last(previousPageData)!.height) - BigInt(1)
-          }&type=transaction`
+      previousPageData
+        ? previousPageData.length
+          ? `/api/list/address?network=${network}&address=${address}&height=${
+              BigInt(last(previousPageData)!.height) - BigInt(1)
+            }&type=transaction`
+          : null
         : `/api/list/address?network=${network}&address=${address}&type=transaction`,
     jsonFetcher,
     config,
@@ -111,10 +115,12 @@ export function useUnclesByAddress(address?: string, config?: SWRConfiguration) 
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
     (_, previousPageData) =>
-      previousPageData?.length
-        ? `/api/list/address?network=${network}&address=${address}&height=${
-            BigInt(last(previousPageData)!.height) - BigInt(1)
-          }&type=uncle`
+      previousPageData
+        ? previousPageData.length
+          ? `/api/list/address?network=${network}&address=${address}&height=${
+              BigInt(last(previousPageData)!.height) - BigInt(1)
+            }&type=uncle`
+          : null
         : `/api/list/address?network=${network}&address=${address}&type=uncle`,
     jsonFetcher,
     config,
