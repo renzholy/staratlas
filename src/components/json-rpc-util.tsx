@@ -41,7 +41,7 @@ export default function JsonRpcUtil() {
     ),
   )
   useEffect(() => {
-    setInput(method && API[method].params.items.length === 0 ? '[]' : '')
+    setInput(method && API[method].params.items?.length ? '' : '[]')
   }, [method])
   const buttonBackground = useColorModeValue('white', undefined)
 
