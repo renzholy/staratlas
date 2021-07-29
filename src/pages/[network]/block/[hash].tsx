@@ -153,6 +153,24 @@ export default function Block() {
             </ListItemPlaceholder>
           )}
         </CardWithHeader>
+        <Spacer h={6} />
+        <CardWithHeader
+          title="Uncles"
+          subtitle={`Total: ${block ? formatNumber(block.uncles.length) : '-'}`}
+        >
+          {block?.uncles.length ? (
+            block.uncles.map((uncle, index) => (
+              <Fragment key={uncle.block_hash}>
+                {index === 0 ? null : <Divider />}
+                <UncleListItem uncle={uncle.block_hash} />
+              </Fragment>
+            ))
+          ) : (
+            <ListItemPlaceholder height={67}>
+              {block?.uncles.length === 0 ? 'No uncle' : <Spinner />}
+            </ListItemPlaceholder>
+          )}
+        </CardWithHeader>
       </GridItem>
       <GridItem colSpan={1}>
         <CardWithHeader
@@ -169,24 +187,6 @@ export default function Block() {
           ) : (
             <ListItemPlaceholder height={67}>
               {transactions?.length === 0 ? 'No transaction' : <Spinner />}
-            </ListItemPlaceholder>
-          )}
-        </CardWithHeader>
-        <Spacer h={6} />
-        <CardWithHeader
-          title="Uncles"
-          subtitle={`Total: ${block ? formatNumber(block.uncles.length) : '-'}`}
-        >
-          {block?.uncles.length ? (
-            block.uncles.map((uncle, index) => (
-              <Fragment key={uncle.block_hash}>
-                {index === 0 ? null : <Divider />}
-                <UncleListItem uncle={uncle.block_hash} />
-              </Fragment>
-            ))
-          ) : (
-            <ListItemPlaceholder height={67}>
-              {block?.uncles.length === 0 ? 'No uncle' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>
