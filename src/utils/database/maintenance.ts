@@ -9,7 +9,7 @@ import { collections } from './mongo'
 
 const PAGE_SIZE = 32
 
-const MAINTENANCE_SIZE = 4
+const MAINTENANCE_SIZE = 16
 
 class AbortError extends Error {}
 
