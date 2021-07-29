@@ -13,13 +13,12 @@ import {
   useColorMode,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment, useMemo } from 'react'
+import { Fragment, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import TransactionListItem from 'components/transaction-list-item'
 import { CardWithHeader } from 'layouts/card-with-header'
-import { formatNumber } from 'utils/formatter'
 import CopyLink from 'components/copy-link'
 import UncleListItem from 'components/uncle-list-item'
 import BlockStat from 'components/block-stat'
@@ -28,6 +27,7 @@ import useNetwork from 'hooks/use-network'
 import useJsonRpc from 'hooks/use-json-rpc'
 import { useTransactionsByHeight } from 'hooks/use-api'
 import flatten from 'lodash/flatten'
+import useOnScreen from 'hooks/use-on-screen'
 
 export default function Block() {
   const router = useRouter()
@@ -40,8 +40,15 @@ export default function Block() {
     isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
     hash ? (isHash ? [hash] : isHeight ? [parseInt(hash, 10)] : undefined) : undefined,
   )
-  const { data } = useTransactionsByHeight(block ? BigInt(block.header.number) : undefined)
+  const { data, setSize } = useTransactionsByHeight(block ? BigInt(block.header.number) : undefined)
   const transactions = useMemo(() => (data ? flatten(data) : undefined), [data])
+  const ref = useRef<HTMLDivElement>(null)
+  const isNearBottom = useOnScreen(ref, '-20px')
+  useEffect(() => {
+    if (isNearBottom) {
+      setSize((old) => old + 1)
+    }
+  }, [isNearBottom, setSize])
 
   if (error) {
     return <NotFound />
@@ -154,10 +161,7 @@ export default function Block() {
           )}
         </CardWithHeader>
         <Spacer h={6} />
-        <CardWithHeader
-          title="Uncles"
-          subtitle={`Total: ${block ? formatNumber(block.uncles.length) : '-'}`}
-        >
+        <CardWithHeader title="Uncles">
           {block?.uncles.length ? (
             block.uncles.map((uncle, index) => (
               <Fragment key={uncle.block_hash}>
@@ -173,10 +177,7 @@ export default function Block() {
         </CardWithHeader>
       </GridItem>
       <GridItem colSpan={1}>
-        <CardWithHeader
-          title="Transactions"
-          subtitle={`Total: ${transactions ? formatNumber(transactions.length) : '-'}`}
-        >
+        <CardWithHeader title="Transactions">
           {transactions?.length ? (
             transactions.map((transaction, index) => (
               <Fragment key={transaction._id}>
@@ -190,6 +191,7 @@ export default function Block() {
             </ListItemPlaceholder>
           )}
         </CardWithHeader>
+        <div ref={ref} />
       </GridItem>
     </Grid>
   )
