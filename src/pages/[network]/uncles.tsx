@@ -1,20 +1,20 @@
-import { Fragment, useEffect, useMemo, useRef } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { Divider, Grid, GridItem, Spinner } from '@chakra-ui/react'
 import { CardWithHeader } from 'layouts/card-with-header'
 import UncleListItem from 'components/uncle-list-item'
 import { useUnclesByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 import useOnScreen from 'hooks/use-on-screen'
-import flatten from 'lodash/flatten'
 import ListItemPlaceholder from 'components/list-item-placeholder'
+import useInfinite from 'hooks/use-infinite'
 
 export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
-  const { data, setSize } = useUnclesByHeight(info ? BigInt(info.head.number) : undefined, {
+  const list = useUnclesByHeight(info ? BigInt(info.head.number) : undefined, {
     revalidateOnFocus: false,
     revalidateAll: false,
   })
-  const uncles = useMemo(() => (data ? flatten(data) : undefined), [data])
+  const { data: uncles, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {
@@ -34,16 +34,15 @@ export default function Uncles() {
     >
       <GridItem colSpan={{ base: 1, xl: 2 }} colStart={{ base: 1, xl: 2 }}>
         <CardWithHeader title="Uncles">
-          {uncles?.length ? (
-            uncles.map((uncle, index) => (
-              <Fragment key={uncle._id}>
-                {index === 0 ? null : <Divider />}
-                <UncleListItem uncle={uncle._id} />
-              </Fragment>
-            ))
-          ) : (
+          {uncles?.map((uncle, index) => (
+            <Fragment key={uncle._id}>
+              {index === 0 ? null : <Divider />}
+              <UncleListItem uncle={uncle._id} />
+            </Fragment>
+          ))}
+          {isReachingEnd ? null : (
             <ListItemPlaceholder height={67}>
-              <Spinner />
+              {isEmpty ? 'No uncles' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>

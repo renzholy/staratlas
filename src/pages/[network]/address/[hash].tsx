@@ -11,7 +11,7 @@ import {
   StatNumber,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment, useEffect, useMemo, useRef } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import ResourceListItem from 'components/resource-list-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -21,16 +21,16 @@ import { useBalances, useResources } from 'hooks/use-provider'
 import { CardWithHeader } from 'layouts/card-with-header'
 import BalanceAmount from 'components/balance-amount'
 import { useTransactionsByAddress } from 'hooks/use-api'
-import flatten from 'lodash/flatten'
 import useOnScreen from 'hooks/use-on-screen'
+import useInfinite from 'hooks/use-infinite'
 
 export default function Address() {
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
   const { data: resources, error } = useResources(hash)
-  const { data, setSize } = useTransactionsByAddress(hash)
+  const list = useTransactionsByAddress(hash)
+  const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const { data: balances } = useBalances(hash)
-  const transactions = useMemo(() => (data ? flatten(data) : undefined), [data])
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {
@@ -113,16 +113,15 @@ export default function Address() {
       </GridItem>
       <GridItem colSpan={1}>
         <CardWithHeader title="Transactions">
-          {transactions?.length ? (
-            transactions.map((transaction, index) => (
-              <Fragment key={transaction._id}>
-                {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={transaction._id} />
-              </Fragment>
-            ))
-          ) : (
+          {transactions?.map((transaction, index) => (
+            <Fragment key={transaction._id}>
+              {index === 0 ? null : <Divider />}
+              <TransactionListItem transaction={transaction._id} />
+            </Fragment>
+          ))}
+          {isReachingEnd ? null : (
             <ListItemPlaceholder height={75}>
-              {transactions?.length === 0 ? 'No transactions' : <Spinner />}
+              {isEmpty ? 'No transactions' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>
