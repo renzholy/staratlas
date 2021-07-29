@@ -1,6 +1,6 @@
 import { Network } from './types'
 
-enum SupportedChainId {
+enum ChainId {
   MAINNET = 1,
   PROXIMA = 2,
   BARNARD = 251,
@@ -8,19 +8,12 @@ enum SupportedChainId {
 }
 
 export const NETWORKS: {
-  [chain in SupportedChainId]: Network
+  [chain in ChainId]: Network
 } = {
-  [SupportedChainId.MAINNET]: 'main',
-  [SupportedChainId.BARNARD]: 'barnard',
-  [SupportedChainId.HALLEY]: 'halley',
-  [SupportedChainId.PROXIMA]: 'proxima',
-}
-
-export const INDEX_SIZE: { [key in Network]: number } = {
-  main: 10,
-  barnard: 10,
-  halley: 5,
-  proxima: 5,
+  [ChainId.MAINNET]: 'main',
+  [ChainId.BARNARD]: 'barnard',
+  [ChainId.HALLEY]: 'halley',
+  [ChainId.PROXIMA]: 'proxima',
 }
 
 export const API_PAGE_SIZE = 10

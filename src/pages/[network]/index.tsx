@@ -7,7 +7,7 @@ import BlockListItem from 'components/block-list-item'
 import EpochStat from 'components/epoch-stat'
 import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
-import { INDEX_SIZE } from 'utils/constants'
+import { API_PAGE_SIZE } from 'utils/constants'
 import { useBlocksLatest, useTransactionsLatest } from 'hooks/use-api'
 
 export default function Index() {
@@ -43,7 +43,7 @@ export default function Index() {
                 </motion.div>
               ))
             ) : (
-              <ListItemPlaceholder height={INDEX_SIZE[network] * 68 - 1}>
+              <ListItemPlaceholder height={API_PAGE_SIZE * 68 - 1}>
                 <Spinner />
               </ListItemPlaceholder>
             )}
@@ -70,7 +70,7 @@ export default function Index() {
                 </motion.div>
               ))
             ) : (
-              <ListItemPlaceholder height={INDEX_SIZE[network] * 68 - 1}>
+              <ListItemPlaceholder height={API_PAGE_SIZE * 68 - 1}>
                 <Spinner />
               </ListItemPlaceholder>
             )}
