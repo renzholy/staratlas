@@ -17,7 +17,13 @@ import useNetwork from 'hooks/use-network'
 import { useResources } from 'hooks/use-provider'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useBlockByHash, useTransactionByHash, useUncleByHash } from 'hooks/use-api'
+import {
+  useBlockByHash,
+  useBlocksByHeight,
+  useTransactionByHash,
+  useUncleByHash,
+  useUnclesByHeight,
+} from 'hooks/use-api'
 import ComboBox from './combo-box'
 
 type Item = {
@@ -35,38 +41,72 @@ export default function SearchBar() {
     isHash ? trimedKeyword : undefined,
   )
   const { data: block, isValidating: blockValidating } = useBlockByHash(
-    isHash || isHeight ? trimedKeyword : undefined,
+    isHash ? trimedKeyword : undefined,
+  )
+  const { data: blocks, isValidating: blocksValidating } = useBlocksByHeight(
+    isHeight ? BigInt(trimedKeyword) : undefined,
   )
   const { data: transaction, isValidating: transactionValidating } = useTransactionByHash(
     isHash ? trimedKeyword : undefined,
   )
   const { data: uncle, isValidating: uncleValidating } = useUncleByHash(
-    isHash || isHeight ? trimedKeyword : undefined,
+    isHash ? trimedKeyword : undefined,
+  )
+  const { data: uncles, isValidating: unclesValidating } = useUnclesByHeight(
+    isHeight ? BigInt(trimedKeyword) : undefined,
   )
   const data = useMemo<Item[]>(
     () =>
-      compact([
-        address ? { type: 'Address', prefix: 'address', value: trimedKeyword } : undefined,
-        block ? { type: 'Block', prefix: 'block', value: trimedKeyword } : undefined,
-        transaction ? { type: 'Transaction', prefix: 'tx', value: trimedKeyword } : undefined,
-        uncle ? { type: 'Uncle', prefix: 'uncle', value: trimedKeyword } : undefined,
-      ]),
-    [address, block, transaction, trimedKeyword, uncle],
+      trimedKeyword
+        ? compact([
+            address ? { type: 'Address', prefix: 'address', value: trimedKeyword } : undefined,
+            block ? { type: 'Block', prefix: 'block', value: trimedKeyword } : undefined,
+            blocks?.[0]?.[0]?.height === trimedKeyword
+              ? { type: 'Block', prefix: 'block', value: blocks[0][0]._id }
+              : undefined,
+            transaction ? { type: 'Transaction', prefix: 'tx', value: trimedKeyword } : undefined,
+            uncle ? { type: 'Uncle', prefix: 'uncle', value: trimedKeyword } : undefined,
+            ...(uncles?.[0]
+              .filter((u) => u.height === trimedKeyword)
+              .map(
+                (u) =>
+                  ({
+                    type: 'Uncle',
+                    prefix: 'uncle',
+                    value: u._id,
+                  } as Item),
+              ) || []),
+          ])
+        : [],
+    [address, block, blocks, transaction, trimedKeyword, uncle, uncles],
   )
   const isLoading = useMemo(
     () =>
       trimedKeyword &&
-      (addressValidating || blockValidating || transactionValidating || uncleValidating),
-    [addressValidating, blockValidating, transactionValidating, trimedKeyword, uncleValidating],
+      (addressValidating ||
+        blockValidating ||
+        blocksValidating ||
+        transactionValidating ||
+        uncleValidating ||
+        unclesValidating),
+    [
+      addressValidating,
+      blockValidating,
+      blocksValidating,
+      transactionValidating,
+      trimedKeyword,
+      uncleValidating,
+      unclesValidating,
+    ],
   )
   const network = useNetwork()
   const router = useRouter()
   const inputBackground = useColorModeValue('white', 'whiteAlpha.200')
   const itemBackground = useColorModeValue('gray.100', 'whiteAlpha.200')
   const handleRenderItem = useCallback(
-    (item: Item, itemProps: {}, isHighlighted: boolean) => (
+    (item: Item, itemProps: {}, index: number, isHighlighted: boolean) => (
       <Link
-        key={item.type + item.value}
+        key={item.type + item.value + index}
         href={`/${network}/${item.prefix}/${item.value}`}
         passHref={true}
       >

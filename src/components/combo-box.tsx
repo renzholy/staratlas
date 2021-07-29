@@ -9,7 +9,7 @@ export default function ComboBox<T>(props: {
   value: string
   onChange(value: string): void
   renderInput(inputProps: { ref: Ref<HTMLInputElement> }): ReactNode
-  renderItem(item: T, itemProps: {}, isHighlighted?: boolean): ReactNode
+  renderItem(item: T, itemProps: {}, index: number, isHighlighted?: boolean): ReactNode
   onSelectItem(item: T): void
 }) {
   const { onSelectItem, onChange } = props
@@ -68,7 +68,12 @@ export default function ComboBox<T>(props: {
       >
         {isOpen
           ? props.items.map((item, index) =>
-              props.renderItem(item, getItemProps({ item, index }), index === highlightedIndex),
+              props.renderItem(
+                item,
+                getItemProps({ item, index }),
+                index,
+                index === highlightedIndex,
+              ),
             )
           : null}
       </List>
