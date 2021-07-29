@@ -26,7 +26,6 @@ import TransactionPayload from 'components/transaction-payload'
 import TransactionStat from 'components/transaction-stat'
 import useNetwork from 'hooks/use-network'
 import { CardWithHeader } from 'layouts/card-with-header'
-import { formatNumber } from 'utils/formatter'
 import dynamic from 'next/dynamic'
 import useJsonRpc from 'hooks/use-json-rpc'
 
@@ -235,10 +234,7 @@ export default function Transaction() {
         ) : null}
       </GridItem>
       <GridItem colSpan={1}>
-        <CardWithHeader
-          title="Events"
-          subtitle={`Total: ${events ? formatNumber(events.length) : '-'}`}
-        >
+        <CardWithHeader title="Events">
           {events?.length ? (
             events.map((event, index) => (
               <Fragment key={event.event_key + event.event_seq_number}>

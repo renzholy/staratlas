@@ -94,7 +94,7 @@ export default function TransactionListItem(props: {
             as="a"
             variant="link"
             color="green.500"
-            width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 130px)' }}
+            width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 140px)' }}
           >
             {transaction.user_transaction.raw_txn.sender}
           </Button>

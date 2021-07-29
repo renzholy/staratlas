@@ -11,7 +11,7 @@ import {
   StatNumber,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import ResourceListItem from 'components/resource-list-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -19,16 +19,25 @@ import NotFound from 'components/not-fount'
 import TransactionListItem from 'components/transaction-list-item'
 import { useBalances, useResources } from 'hooks/use-provider'
 import { CardWithHeader } from 'layouts/card-with-header'
-import { formatNumber } from 'utils/formatter'
 import BalanceAmount from 'components/balance-amount'
 import { useTransactionsByAddress } from 'hooks/use-api'
+import useOnScreen from 'hooks/use-on-screen'
+import useInfinite from 'hooks/use-infinite'
 
 export default function Address() {
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
   const { data: resources, error } = useResources(hash)
-  const { data: transactions } = useTransactionsByAddress(hash)
+  const list = useTransactionsByAddress(hash)
+  const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const { data: balances } = useBalances(hash)
+  const ref = useRef<HTMLDivElement>(null)
+  const isNearBottom = useOnScreen(ref, '-20px')
+  useEffect(() => {
+    if (isNearBottom) {
+      setSize((old) => old + 1)
+    }
+  }, [isNearBottom, setSize])
 
   if (error) {
     return <NotFound />
@@ -47,10 +56,7 @@ export default function Address() {
       </GridItem>
       <GridItem colSpan={1} display={{ base: 'none', xl: 'block' }} />
       <GridItem colSpan={1}>
-        <CardWithHeader
-          title="Balances"
-          subtitle={`Total: ${balances ? formatNumber(Object.keys(balances).length) : '-'}`}
-        >
+        <CardWithHeader title="Balances">
           {balances ? (
             <Box paddingX={6} paddingY={4}>
               {Object.entries(balances).map(([key, value], index) => (
@@ -69,10 +75,7 @@ export default function Address() {
           )}
         </CardWithHeader>
         <Spacer height={6} />
-        <CardWithHeader
-          title="Resources"
-          subtitle={`Total: ${resources ? formatNumber(Object.keys(resources).length) : '-'}`}
-        >
+        <CardWithHeader title="Resources">
           {resources ? (
             <Box
               paddingX={6}
@@ -110,19 +113,19 @@ export default function Address() {
       </GridItem>
       <GridItem colSpan={1}>
         <CardWithHeader title="Transactions">
-          {transactions?.length ? (
-            transactions.map((transaction, index) => (
-              <Fragment key={transaction._id}>
-                {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={transaction._id} />
-              </Fragment>
-            ))
-          ) : (
+          {transactions?.map((transaction, index) => (
+            <Fragment key={transaction._id}>
+              {index === 0 ? null : <Divider />}
+              <TransactionListItem transaction={transaction._id} />
+            </Fragment>
+          ))}
+          {isReachingEnd ? null : (
             <ListItemPlaceholder height={75}>
-              {transactions?.length === 0 ? 'No transactions' : <Spinner />}
+              {isEmpty ? 'No transactions' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>
+        <div ref={ref} />
       </GridItem>
     </Grid>
   )
