@@ -41,7 +41,7 @@ async function list(network: Network, type: Type, height: BigInt) {
   }
 }
 
-export default async function ListByHeight(
+export default async function listByHeight(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {

@@ -23,10 +23,7 @@ async function get(network: Network, type: Type, hash: string) {
   }
 }
 
-export default async function getByAddress(
-  req: NextApiRequest,
-  res: NextApiResponse,
-): Promise<void> {
+export default async function getByHash(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   const { type, network, hash } = req.query as { network: Network; type: Type; hash: string }
 
   const data = await get(network, type, hash)

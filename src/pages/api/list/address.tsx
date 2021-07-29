@@ -45,7 +45,7 @@ async function list(network: Network, type: Type, address: string, height?: stri
   }
 }
 
-export default async function ListByAddress(
+export default async function listByAddress(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
