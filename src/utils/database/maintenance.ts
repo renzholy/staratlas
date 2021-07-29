@@ -51,7 +51,7 @@ export async function load(network: Network, top: BigInt) {
   const transactions = await Bluebird.map(
     flatMap(blocks, (block) => block.body.Hashes),
     (transaction) => call(network, 'chain.get_transaction', [transaction]),
-    { concurrency: 8 },
+    { concurrency: 4 },
   )
   const blockOperations = blocks.map((block) => ({
     updateOne: {
