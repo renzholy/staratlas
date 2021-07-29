@@ -42,16 +42,17 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
  * fetch data from top to top + PAGE_SIZE and load them into database
  */
 export async function load(network: Network, top: BigInt) {
-  console.log('load', network, top)
   const blocks = await call(network, 'chain.get_blocks_by_number', [
     parseInt(top.toString(), 10),
     PAGE_SIZE,
   ])
   const uncles = flatMap(blocks, (block) => block.uncles)
+  const hashes = flatMap(blocks, (block) => block.body.Hashes)
+  console.log('load', network, top, blocks.length, uncles.length, hashes.length)
   const transactions = await Bluebird.map(
-    flatMap(blocks, (block) => block.body.Hashes),
+    hashes,
     (transaction) => call(network, 'chain.get_transaction', [transaction]),
-    { concurrency: 4 },
+    { concurrency: 3 },
   )
   const blockOperations = blocks.map((block) => ({
     updateOne: {
