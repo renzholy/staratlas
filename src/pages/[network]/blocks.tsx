@@ -4,7 +4,7 @@ import BlockListItem from 'components/block-list-item'
 import { useBlocksByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 import { CardWithHeader } from 'layouts/card-with-header'
-import flatMap from 'lodash/flatMap'
+import flatten from 'lodash/flatten'
 import useOnScreen from 'hooks/use-on-screen'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 
@@ -14,7 +14,7 @@ export default function Blocks() {
     revalidateOnFocus: false,
     revalidateAll: false,
   })
-  const blocks = useMemo(() => flatMap(data, (datum) => datum), [data])
+  const blocks = useMemo(() => (data ? flatten(data) : undefined), [data])
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {

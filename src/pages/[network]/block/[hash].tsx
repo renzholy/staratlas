@@ -13,7 +13,7 @@ import {
   useColorMode,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -26,6 +26,8 @@ import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
 import useJsonRpc from 'hooks/use-json-rpc'
+import { useTransactionsByHeight } from 'hooks/use-api'
+import flatten from 'lodash/flatten'
 
 export default function Block() {
   const router = useRouter()
@@ -38,10 +40,8 @@ export default function Block() {
     isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
     hash ? (isHash ? [hash] : isHeight ? [parseInt(hash, 10)] : undefined) : undefined,
   )
-  const { data: transactions } = useJsonRpc(
-    'chain.get_block_txn_infos',
-    isHash && hash ? [hash] : block ? [block.header.block_hash] : undefined,
-  )
+  const { data } = useTransactionsByHeight(block ? BigInt(block.header.number) : undefined)
+  const transactions = useMemo(() => (data ? flatten(data) : undefined), [data])
 
   if (error) {
     return <NotFound />
@@ -179,9 +179,9 @@ export default function Block() {
         >
           {transactions?.length ? (
             transactions.map((transaction, index) => (
-              <Fragment key={transaction.transaction_hash}>
+              <Fragment key={transaction._id}>
                 {index === 0 ? null : <Divider />}
-                <TransactionListItem transaction={transaction.transaction_hash} />
+                <TransactionListItem transaction={transaction._id} />
               </Fragment>
             ))
           ) : (

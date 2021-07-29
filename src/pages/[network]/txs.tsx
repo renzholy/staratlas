@@ -4,7 +4,7 @@ import { CardWithHeader } from 'layouts/card-with-header'
 import TransactionListItem from 'components/transaction-list-item'
 import { useTransactionsByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
-import flatMap from 'lodash/flatMap'
+import flatten from 'lodash/flatten'
 import useOnScreen from 'hooks/use-on-screen'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 
@@ -14,7 +14,7 @@ export default function Transactions() {
     revalidateOnFocus: false,
     revalidateAll: false,
   })
-  const transactions = useMemo(() => flatMap(data, (datum) => datum), [data])
+  const transactions = useMemo(() => (data ? flatten(data) : undefined), [data])
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {

@@ -11,7 +11,7 @@ import {
   StatNumber,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import ResourceListItem from 'components/resource-list-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -22,13 +22,15 @@ import { CardWithHeader } from 'layouts/card-with-header'
 import { formatNumber } from 'utils/formatter'
 import BalanceAmount from 'components/balance-amount'
 import { useTransactionsByAddress } from 'hooks/use-api'
+import flatten from 'lodash/flatten'
 
 export default function Address() {
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
   const { data: resources, error } = useResources(hash)
-  const { data: transactions } = useTransactionsByAddress(hash)
+  const { data } = useTransactionsByAddress(hash)
   const { data: balances } = useBalances(hash)
+  const transactions = useMemo(() => (data ? flatten(data) : undefined), [data])
 
   if (error) {
     return <NotFound />

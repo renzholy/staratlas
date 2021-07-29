@@ -5,7 +5,7 @@ import UncleListItem from 'components/uncle-list-item'
 import { useUnclesByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 import useOnScreen from 'hooks/use-on-screen'
-import flatMap from 'lodash/flatMap'
+import flatten from 'lodash/flatten'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 
 export default function Uncles() {
@@ -14,7 +14,7 @@ export default function Uncles() {
     revalidateOnFocus: false,
     revalidateAll: false,
   })
-  const uncles = useMemo(() => flatMap(data, (datum) => datum), [data])
+  const uncles = useMemo(() => (data ? flatten(data) : undefined), [data])
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {
