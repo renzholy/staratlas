@@ -4,8 +4,9 @@ import { call } from 'utils/json-rpc'
 import { Network } from 'utils/types'
 import flatMap from 'lodash/flatMap'
 import { Decimal128, Binary } from 'bson'
-import { arrayify } from 'ethers/lib/utils'
 import Bluebird from 'bluebird'
+import { arrayify } from 'utils/encoding'
+import difference from 'lodash/difference'
 import { collections } from './mongo'
 
 const PAGE_SIZE = 32
@@ -49,10 +50,23 @@ export async function load(network: Network, top: BigInt) {
   const uncles = flatMap(blocks, (block) => block.uncles)
   const hashes = flatMap(blocks, (block) => block.body.Hashes)
   console.log('load', network, top, blocks.length, uncles.length, hashes.length)
-  const transactions = await Bluebird.map(
-    hashes,
+  const transactions = flatMap(
+    await Bluebird.map(
+      blocks,
+      (block) => call(network, 'chain.get_block_by_hash', [block.header.block_hash]),
+      { concurrency: 4 },
+    ),
+    (block) => block.body.Full.map((transaction) => ({ ...transaction, block: block.header })),
+  )
+  // 'chain.get_block_by_hash' does not return blockMeta transactions
+  const blockMetaTransactionHashes = difference(
+    flatMap(blocks, (block) => block.body.Hashes),
+    transactions.map((transaction) => transaction.transaction_hash),
+  )
+  const blockMetaTransactions = await Bluebird.map(
+    blockMetaTransactionHashes,
     (transaction) => call(network, 'chain.get_transaction', [transaction]),
-    { concurrency: 3 },
+    { concurrency: 4 },
   )
   const blockOperations = blocks.map((block) => ({
     updateOne: {
@@ -70,6 +84,23 @@ export async function load(network: Network, top: BigInt) {
     },
   }))
   const transactionOperations = transactions.map((transaction) => ({
+    updateOne: {
+      filter: {
+        _id: new Binary(arrayify(transaction.transaction_hash)),
+      },
+      update: {
+        $set: {
+          _id: new Binary(arrayify(transaction.transaction_hash)),
+          height: new Decimal128(transaction.block.number),
+          sender: transaction.raw_txn
+            ? new Binary(arrayify(transaction.raw_txn.sender))
+            : undefined,
+        },
+      },
+      upsert: true,
+    },
+  }))
+  const blockMetaTransactionOperations = blockMetaTransactions.map((transaction) => ({
     updateOne: {
       filter: {
         _id: new Binary(arrayify(transaction.transaction_hash)),
@@ -103,6 +134,9 @@ export async function load(network: Network, top: BigInt) {
   }))
   if (transactionOperations.length) {
     await collections[network].transactions.bulkWrite(transactionOperations)
+  }
+  if (blockMetaTransactionOperations.length) {
+    await collections[network].transactions.bulkWrite(blockMetaTransactionOperations)
   }
   if (uncleOperations.length) {
     await collections[network].uncles.bulkWrite(uncleOperations)
