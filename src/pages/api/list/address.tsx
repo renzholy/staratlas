@@ -3,10 +3,9 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { Network } from 'utils/types'
 import { mapper, Type } from 'utils/api'
-// import { maintenance } from 'utils/database/maintenance'
+import { maintenance } from 'utils/database/maintenance'
 import { arrayify } from 'utils/encoding'
-
-const LIMIT = 10
+import { API_PAGE_SIZE } from 'utils/constants'
 
 async function list(network: Network, type: Type, address: string, height?: string) {
   switch (type) {
@@ -17,7 +16,7 @@ async function list(network: Network, type: Type, address: string, height?: stri
           ...(height ? { height: { $lte: new Decimal128(height) } } : {}),
         })
         .sort({ height: -1 })
-        .limit(LIMIT)
+        .limit(API_PAGE_SIZE)
         .toArray()
     }
     case 'transaction': {
@@ -27,7 +26,7 @@ async function list(network: Network, type: Type, address: string, height?: stri
           ...(height ? { height: { $lte: new Decimal128(height) } } : {}),
         })
         .sort({ height: -1 })
-        .limit(LIMIT)
+        .limit(API_PAGE_SIZE)
         .toArray()
     }
     case 'uncle': {
@@ -37,7 +36,7 @@ async function list(network: Network, type: Type, address: string, height?: stri
           ...(height ? { height: { $lte: new Decimal128(height) } } : {}),
         })
         .sort({ height: -1 })
-        .limit(LIMIT)
+        .limit(API_PAGE_SIZE)
         .toArray()
     }
     default: {
@@ -50,16 +49,18 @@ export default async function ListByAddress(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
-  const { type, network, address } = req.query as {
+  const { type, network, address, height } = req.query as {
     network: Network
     type: Type
     address: string
     height?: string
   }
 
-  const data = await list(network, type, address)
+  const data = await list(network, type, address, height)
 
-  // maintenance(network)
+  if (!height) {
+    maintenance(network)
+  }
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json(data.map(mapper))

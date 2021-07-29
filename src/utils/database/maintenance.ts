@@ -7,9 +7,8 @@ import { Decimal128, Binary } from 'bson'
 import Bluebird from 'bluebird'
 import { arrayify } from 'utils/encoding'
 import difference from 'lodash/difference'
+import { RPC_BLOCK_LIMIT } from 'utils/constants'
 import { collections } from './mongo'
-
-const PAGE_SIZE = 32
 
 const MAINTENANCE_SIZE = 8
 
@@ -30,7 +29,7 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
   })
   console.log('find', network, top, bottom, top - bottom + BigInt(1), count, depth)
   if (top - bottom + BigInt(1) > count) {
-    if (top - bottom + BigInt(1) < PAGE_SIZE * MAINTENANCE_SIZE) {
+    if (top - bottom + BigInt(1) < RPC_BLOCK_LIMIT * MAINTENANCE_SIZE) {
       throw new AbortError(top.toString())
     }
     const mid = (top - bottom) / BigInt(2) + bottom
@@ -40,12 +39,12 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
 }
 
 /**
- * fetch data from top to top + PAGE_SIZE and load them into database
+ * fetch data from top to top + RPC_API_BLOCK_LIMIT and load them into database
  */
 export async function load(network: Network, top: BigInt) {
   const blocks = await call(network, 'chain.get_blocks_by_number', [
     parseInt(top.toString(), 10),
-    PAGE_SIZE,
+    RPC_BLOCK_LIMIT,
   ])
   const uncles = flatMap(blocks, (block) => block.uncles)
   const hashes = flatMap(blocks, (block) => block.body.Hashes)
@@ -158,7 +157,7 @@ export async function maintenance(network: Network, height?: bigint) {
     if (err instanceof AbortError) {
       await Promise.all(
         Array.from({ length: MAINTENANCE_SIZE }).map((_, index) =>
-          load(network, BigInt(err.message) - BigInt(index * PAGE_SIZE)),
+          load(network, BigInt(err.message) - BigInt(index * RPC_BLOCK_LIMIT)),
         ),
       )
       return BigInt(err.message)

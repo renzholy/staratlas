@@ -22,3 +22,7 @@ export const INDEX_SIZE: { [key in Network]: number } = {
   halley: 5,
   proxima: 5,
 }
+
+export const API_PAGE_SIZE = 10
+
+export const RPC_BLOCK_LIMIT = 32

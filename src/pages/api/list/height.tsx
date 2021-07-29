@@ -9,10 +9,7 @@ import { collections } from 'utils/database/mongo'
 import { Network } from 'utils/types'
 import { mapper, Type } from 'utils/api'
 import { load, maintenance } from 'utils/database/maintenance'
-
-const LIMIT = 10
-
-const PAGE_SIZE = 32
+import { RPC_BLOCK_LIMIT, API_PAGE_SIZE } from 'utils/constants'
 
 async function list(network: Network, type: Type, height: BigInt) {
   console.log('list', network, type, height)
@@ -21,21 +18,21 @@ async function list(network: Network, type: Type, height: BigInt) {
       return collections[network].blocks
         .find({ height: { $lte: new Decimal128(height.toString()) } })
         .sort({ height: -1 })
-        .limit(LIMIT)
+        .limit(API_PAGE_SIZE)
         .toArray()
     }
     case 'transaction': {
       return collections[network].transactions
         .find({ height: { $lte: new Decimal128(height.toString()) } })
         .sort({ height: -1, _id: 1 })
-        .limit(LIMIT)
+        .limit(API_PAGE_SIZE)
         .toArray()
     }
     case 'uncle': {
       return collections[network].uncles
         .find({ height: { $lte: new Decimal128(height.toString()) } })
         .sort({ height: -1, _id: 1 })
-        .limit(LIMIT)
+        .limit(API_PAGE_SIZE)
         .toArray()
     }
     default: {
@@ -55,7 +52,7 @@ export default async function ListByHeight(
   while (cursor > 0) {
     const data = await list(network, type, height)
     if (
-      data.length >= LIMIT &&
+      data.length >= API_PAGE_SIZE &&
       (type !== 'block' ||
         (BigInt(first(data as { height: Decimal128 }[])!.height.toString()) === height &&
           height - BigInt(last(data as { height: Decimal128 }[])!.height.toString()) ===
@@ -66,7 +63,7 @@ export default async function ListByHeight(
       return
     }
     await load(network, cursor)
-    cursor -= BigInt(PAGE_SIZE)
+    cursor -= BigInt(RPC_BLOCK_LIMIT)
   }
 
   maintenance(network, height)

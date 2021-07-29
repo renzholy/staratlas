@@ -1,4 +1,5 @@
 import { Type } from '@sinclair/typebox'
+import { RPC_BLOCK_LIMIT } from 'utils/constants'
 
 export const TransactionBlockInfo = Type.Object({
   block_hash: Type.String(),
@@ -240,7 +241,7 @@ export default {
     result: Block,
   },
   'chain.get_blocks_by_number': {
-    params: Type.Tuple([Type.Integer(), Type.Integer({ maximum: 32 })]),
+    params: Type.Tuple([Type.Integer(), Type.Integer({ maximum: RPC_BLOCK_LIMIT })]),
     result: Type.Array(BlockSimple),
   },
   'chain.get_headers': {
