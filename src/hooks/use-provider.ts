@@ -1,8 +1,7 @@
 import { useMemo, useCallback } from 'react'
 import useSWR, { SWRConfiguration } from 'swr'
 import { providers, utils, bcs, encoding } from '@starcoin/starcoin'
-import { arrayify, hexlify } from 'ethers/lib/utils'
-
+import { arrayify, hexlify } from 'utils/encoding'
 import useAsync from './use-async'
 import useNetwork from './use-network'
 

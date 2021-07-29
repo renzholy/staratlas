@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { types, serde } from '@starcoin/starcoin'
-import { hexlify } from 'ethers/lib/utils'
+import { hexlify } from './encoding'
 
 export const numberFormat = Intl.NumberFormat()
 

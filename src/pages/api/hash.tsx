@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { Network } from 'utils/types'
 import { mapper, Type } from 'utils/api'
-import { arrayify } from 'ethers/lib/utils'
+import { arrayify } from 'utils/encoding'
 import { maintenance } from 'utils/database/maintenance'
 
 async function get(network: Network, type: Type, hash: string) {

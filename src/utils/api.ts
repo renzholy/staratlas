@@ -1,5 +1,5 @@
 import { Decimal128, Binary } from 'bson'
-import { hexlify } from 'ethers/lib/utils'
+import { hexlify } from './encoding'
 
 export type Type = 'block' | 'transaction' | 'uncle'
 
