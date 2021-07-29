@@ -5,11 +5,12 @@ import { Network } from 'utils/types'
 import flatMap from 'lodash/flatMap'
 import { Decimal128, Binary } from 'bson'
 import { arrayify } from 'ethers/lib/utils'
+import Bluebird from 'bluebird'
 import { collections } from './mongo'
 
 const PAGE_SIZE = 32
 
-const MAINTENANCE_SIZE = 10
+const MAINTENANCE_SIZE = 8
 
 class AbortError extends Error {}
 
@@ -47,10 +48,10 @@ export async function load(network: Network, top: BigInt) {
     PAGE_SIZE,
   ])
   const uncles = flatMap(blocks, (block) => block.uncles)
-  const transactions = await Promise.all(
-    flatMap(blocks, (block) =>
-      block.body.Hashes.map((transaction) => call(network, 'chain.get_transaction', [transaction])),
-    ),
+  const transactions = await Bluebird.map(
+    flatMap(blocks, (block) => block.body.Hashes),
+    (transaction) => call(network, 'chain.get_transaction', [transaction]),
+    { concurrency: 8 },
   )
   const blockOperations = blocks.map((block) => ({
     updateOne: {
@@ -99,12 +100,12 @@ export async function load(network: Network, top: BigInt) {
       upsert: true,
     },
   }))
-  await Promise.all([
-    transactionOperations.length
-      ? collections[network].transactions.bulkWrite(transactionOperations)
-      : undefined,
-    uncleOperations.length ? collections[network].uncles.bulkWrite(uncleOperations) : undefined,
-  ])
+  if (transactionOperations.length) {
+    await collections[network].transactions.bulkWrite(transactionOperations)
+  }
+  if (uncleOperations.length) {
+    await collections[network].uncles.bulkWrite(uncleOperations)
+  }
   if (blockOperations.length) {
     await collections[network].blocks.bulkWrite(blockOperations)
   }
