@@ -10,3 +10,5 @@ export default function Index() {
 
   return null
 }
+
+export { getServerSideProps } from 'layouts/chakra'

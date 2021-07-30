@@ -255,3 +255,5 @@ export default function Transaction() {
     </Grid>
   )
 }
+
+export { getServerSideProps } from 'layouts/chakra'

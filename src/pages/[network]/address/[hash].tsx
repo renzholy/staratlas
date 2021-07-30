@@ -136,3 +136,5 @@ export default function Address() {
     </Grid>
   )
 }
+
+export { getServerSideProps } from 'layouts/chakra'

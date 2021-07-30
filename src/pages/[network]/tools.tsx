@@ -62,3 +62,5 @@ export default function Tools() {
     </Grid>
   )
 }
+
+export { getServerSideProps } from 'layouts/chakra'

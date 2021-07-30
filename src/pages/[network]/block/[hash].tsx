@@ -207,3 +207,5 @@ export default function Block() {
     </Grid>
   )
 }
+
+export { getServerSideProps } from 'layouts/chakra'

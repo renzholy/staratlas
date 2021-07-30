@@ -92,3 +92,5 @@ export default function Index() {
     </Grid>
   )
 }
+
+export { getServerSideProps } from 'layouts/chakra'

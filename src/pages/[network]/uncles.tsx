@@ -83,3 +83,5 @@ export default function Uncles() {
     </Grid>
   )
 }
+
+export { getServerSideProps } from 'layouts/chakra'
