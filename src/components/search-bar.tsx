@@ -45,6 +45,7 @@ export default function SearchBar() {
   )
   const { data: blocks, isValidating: blocksValidating } = useBlocksByHeight(
     isHeight ? BigInt(trimedKeyword) : undefined,
+    true,
   )
   const { data: transaction, isValidating: transactionValidating } = useTransactionByHash(
     isHash ? trimedKeyword : undefined,
@@ -54,31 +55,7 @@ export default function SearchBar() {
   )
   const { data: uncles, isValidating: unclesValidating } = useUnclesByHeight(
     isHeight ? BigInt(trimedKeyword) : undefined,
-  )
-  const data = useMemo<Item[]>(
-    () =>
-      trimedKeyword
-        ? compact([
-            address ? { type: 'Address', prefix: 'address', value: trimedKeyword } : undefined,
-            block ? { type: 'Block', prefix: 'block', value: trimedKeyword } : undefined,
-            blocks?.[0]?.[0]?.height === trimedKeyword
-              ? { type: 'Block', prefix: 'block', value: blocks[0][0]._id }
-              : undefined,
-            transaction ? { type: 'Transaction', prefix: 'tx', value: trimedKeyword } : undefined,
-            uncle ? { type: 'Uncle', prefix: 'uncle', value: trimedKeyword } : undefined,
-            ...(uncles?.[0]
-              .filter((u) => u.height === trimedKeyword)
-              .map(
-                (u) =>
-                  ({
-                    type: 'Uncle',
-                    prefix: 'uncle',
-                    value: u._id,
-                  } as Item),
-              ) || []),
-          ])
-        : [],
-    [address, block, blocks, transaction, trimedKeyword, uncle, uncles],
+    true,
   )
   const isLoading = useMemo(
     () =>
@@ -98,6 +75,29 @@ export default function SearchBar() {
       uncleValidating,
       unclesValidating,
     ],
+  )
+  const data = useMemo<Item[]>(
+    () =>
+      trimedKeyword && !isLoading
+        ? compact([
+            address ? { type: 'Address', prefix: 'address', value: trimedKeyword } : undefined,
+            block ? { type: 'Block', prefix: 'block', value: trimedKeyword } : undefined,
+            blocks?.[0]?.[0]
+              ? { type: 'Block', prefix: 'block', value: blocks[0][0]._id }
+              : undefined,
+            transaction ? { type: 'Transaction', prefix: 'tx', value: trimedKeyword } : undefined,
+            uncle ? { type: 'Uncle', prefix: 'uncle', value: trimedKeyword } : undefined,
+            ...(uncles?.[0].map(
+              (u) =>
+                ({
+                  type: 'Uncle',
+                  prefix: 'uncle',
+                  value: u._id,
+                } as Item),
+            ) || []),
+          ])
+        : [],
+    [address, block, blocks, isLoading, transaction, trimedKeyword, uncle, uncles],
   )
   const network = useNetwork()
   const router = useRouter()

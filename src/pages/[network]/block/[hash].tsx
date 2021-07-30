@@ -40,7 +40,7 @@ export default function Block() {
     isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
     hash ? (isHash ? [hash] : isHeight ? [parseInt(hash, 10)] : undefined) : undefined,
   )
-  const list = useTransactionsByHeight(block ? BigInt(block.header.number) : undefined)
+  const list = useTransactionsByHeight(block ? BigInt(block.header.number) : undefined, true)
   const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
@@ -184,7 +184,7 @@ export default function Block() {
               <TransactionListItem transaction={transaction._id} />
             </Fragment>
           ))}
-          {isReachingEnd ? null : (
+          {isReachingEnd && !isEmpty ? null : (
             <ListItemPlaceholder height={67}>
               {isEmpty ? 'No transactions' : <Spinner />}
             </ListItemPlaceholder>

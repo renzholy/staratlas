@@ -10,7 +10,7 @@ import useInfinite from 'hooks/use-infinite'
 
 export default function Blocks() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
-  const list = useBlocksByHeight(info ? BigInt(info.head.number) : undefined, {
+  const list = useBlocksByHeight(info ? BigInt(info.head.number) : undefined, false, {
     revalidateOnFocus: false,
     revalidateAll: false,
   })
@@ -40,7 +40,7 @@ export default function Blocks() {
               <BlockListItem block={block._id} />
             </Fragment>
           ))}
-          {isReachingEnd ? null : (
+          {isReachingEnd && !isEmpty ? null : (
             <ListItemPlaceholder height={67}>
               {isEmpty ? 'No blocks' : <Spinner />}
             </ListItemPlaceholder>

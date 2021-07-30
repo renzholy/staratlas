@@ -31,48 +31,66 @@ export function useUncleByHash(hash?: string, config?: SWRConfiguration) {
   )
 }
 
-export function useBlocksByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
+export function useBlocksByHeight(
+  height?: BigInt,
+  strict?: boolean,
+  config?: SWRInfiniteConfiguration,
+) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
     (_, previousPageData) =>
       previousPageData?.length
         ? `/api/list/height?network=${network}&height=${
             BigInt(last(previousPageData)!.height) - BigInt(1)
-          }&type=block`
+          }&strict=${strict ? '1' : ''}&type=block`
         : height !== undefined
-        ? `/api/list/height?network=${network}&height=${height}&type=block`
+        ? `/api/list/height?network=${network}&height=${height}&strict=${
+            strict ? '1' : ''
+          }&type=block`
         : null,
     jsonFetcher,
     config,
   )
 }
 
-export function useTransactionsByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
+export function useTransactionsByHeight(
+  height?: BigInt,
+  strict?: boolean,
+  config?: SWRInfiniteConfiguration,
+) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; sender?: string }[]>(
     (_, previousPageData) =>
       previousPageData?.length
         ? `/api/list/height?network=${network}&height=${
             BigInt(last(previousPageData)!.height) - BigInt(1)
-          }&type=transaction`
+          }&strict=${strict ? '1' : ''}&type=transaction`
         : height !== undefined
-        ? `/api/list/height?network=${network}&height=${height}&type=transaction`
+        ? `/api/list/height?network=${network}&height=${height}&strict=${
+            strict ? '1' : ''
+          }&type=transaction`
         : null,
     jsonFetcher,
     config,
   )
 }
 
-export function useUnclesByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
+export function useUnclesByHeight(
+  height?: BigInt,
+  strict?: boolean,
+  config?: SWRInfiniteConfiguration,
+) {
   const network = useNetwork()
   return useSWRInfinite<{ _id: string; height: string; author: string }[]>(
     (_, previousPageData) =>
       previousPageData?.length
         ? `/api/list/height?network=${network}&height=${
             BigInt(last(previousPageData)!.height) - BigInt(1)
-          }&type=uncle`
+          }&strict=${strict ? '1' : ''}&type=uncle`
         : height !== undefined
-        ? `/api/list/height?network=${network}&height=${height}&type=uncle`
+        ? `/api/list/height?network=${network}&height=${height}&strict=${
+            strict ? '1' : ''
+          }&type=uncle`
         : null,
     jsonFetcher,
     config,

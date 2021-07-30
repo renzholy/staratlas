@@ -119,7 +119,7 @@ export default function Address() {
               <TransactionListItem transaction={transaction._id} />
             </Fragment>
           ))}
-          {isReachingEnd ? null : (
+          {isReachingEnd && !isEmpty ? null : (
             <ListItemPlaceholder height={75}>
               {isEmpty ? 'No transactions' : <Spinner />}
             </ListItemPlaceholder>

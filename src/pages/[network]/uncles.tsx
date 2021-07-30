@@ -10,7 +10,7 @@ import useInfinite from 'hooks/use-infinite'
 
 export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
-  const list = useUnclesByHeight(info ? BigInt(info.head.number) : undefined, {
+  const list = useUnclesByHeight(info ? BigInt(info.head.number) : undefined, false, {
     revalidateOnFocus: false,
     revalidateAll: false,
   })
@@ -40,7 +40,7 @@ export default function Uncles() {
               <UncleListItem uncle={uncle._id} />
             </Fragment>
           ))}
-          {isReachingEnd ? null : (
+          {isReachingEnd && !isEmpty ? null : (
             <ListItemPlaceholder height={67}>
               {isEmpty ? 'No uncles' : <Spinner />}
             </ListItemPlaceholder>
