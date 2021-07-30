@@ -1,5 +1,7 @@
 import {
   Box,
+  Button,
+  ButtonGroup,
   Divider,
   Grid,
   GridItem,
@@ -9,9 +11,10 @@ import {
   Stat,
   StatLabel,
   StatNumber,
+  useColorMode,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment, useEffect, useRef } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import ResourceListItem from 'components/resource-list-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -23,12 +26,14 @@ import BalanceAmount from 'components/balance-amount'
 import { useListByAddress } from 'hooks/use-api'
 import useOnScreen from 'hooks/use-on-screen'
 import useInfinite from 'hooks/use-infinite'
+import startCase from 'lodash/startCase'
 
 export default function Address() {
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
   const { data: resources, error } = useResources(hash)
-  const list = useListByAddress('transaction', hash)
+  const [type, setType] = useState<'transaction' | 'block' | 'uncle'>('transaction')
+  const list = useListByAddress(type, hash)
   const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const { data: balances } = useBalances(hash)
   const ref = useRef<HTMLDivElement>(null)
@@ -38,6 +43,7 @@ export default function Address() {
       setSize((old) => old + 1)
     }
   }, [isNearBottom, setSize])
+  const { colorMode } = useColorMode()
 
   if (error) {
     return <NotFound />
@@ -112,7 +118,42 @@ export default function Address() {
         </CardWithHeader>
       </GridItem>
       <GridItem colSpan={1}>
-        <CardWithHeader title="Transactions">
+        <CardWithHeader
+          title={`${startCase(type)}s`}
+          subtitle={
+            <ButtonGroup
+              size="sm"
+              isAttached={true}
+              variant={colorMode === 'light' ? 'outline' : undefined}
+              spacing={0}
+              mr={-4}
+            >
+              <Button
+                mr="-px"
+                bg={colorMode === 'light' ? 'white' : undefined}
+                onClick={() => setType('transaction')}
+                isActive={type === 'transaction'}
+              >
+                Transactions
+              </Button>
+              <Button
+                mr="-px"
+                bg={colorMode === 'light' ? 'white' : undefined}
+                onClick={() => setType('block')}
+                isActive={type === 'block'}
+              >
+                Blocks
+              </Button>
+              <Button
+                bg={colorMode === 'light' ? 'white' : undefined}
+                onClick={() => setType('uncle')}
+                isActive={type === 'uncle'}
+              >
+                Uncles
+              </Button>
+            </ButtonGroup>
+          }
+        >
           {transactions?.map((transaction, index) => (
             <Fragment key={transaction._id}>
               {index === 0 ? null : <Divider />}
