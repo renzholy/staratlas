@@ -38,19 +38,6 @@ async function list(network: Network, type: Type, height: BigInt, strict: boolea
       }
       return cursor.toArray()
     }
-    case 'uncle': {
-      const cursor = collections[network].uncles
-        .find({
-          height: strict
-            ? new Decimal128(height.toString())
-            : { $lte: new Decimal128(height.toString()) },
-        })
-        .sort({ height: -1, _id: 1 })
-      if (!strict) {
-        cursor.limit(API_PAGE_SIZE)
-      }
-      return cursor.toArray()
-    }
     default: {
       return []
     }

@@ -5,10 +5,14 @@ import Link from 'next/link'
 import TimeAgo from 'timeago-react'
 import useNetwork from 'hooks/use-network'
 import { formatTimeSimple, formatNumber } from 'utils/formatter'
-import useJsonRpc from 'hooks/use-json-rpc'
+import { Static } from '@sinclair/typebox'
+import { BlockHeader } from 'utils/json-rpc/chain'
 
-export default function UncleListItem(props: { uncle: string; relativeTime?: boolean }) {
-  const { data: uncle } = useJsonRpc('chain.get_block_by_hash', [props.uncle])
+export default function UncleListItem(props: {
+  uncle: Static<typeof BlockHeader>
+  relativeTime?: boolean
+}) {
+  const { uncle } = props
   const network = useNetwork()
 
   return (
@@ -32,9 +36,9 @@ export default function UncleListItem(props: { uncle: string; relativeTime?: boo
       `}
     >
       <Box width={32} display="inline-block">
-        <Link href={`/${network}/uncle/${uncle?.header.block_hash}`} passHref={true}>
+        <Link href={`/${network}/uncle/${uncle?.block_hash}`} passHref={true}>
           <Button as="a" variant="link" color="purple.500">
-            #{uncle?.header.number}
+            #{uncle?.number}
           </Button>
         </Link>
       </Box>
@@ -45,30 +49,28 @@ export default function UncleListItem(props: { uncle: string; relativeTime?: boo
       >
         {uncle ? (
           props.relativeTime ? (
-            <TimeAgo datetime={uncle.header.timestamp} />
+            <TimeAgo datetime={uncle.timestamp} />
           ) : (
-            formatTimeSimple(parseInt(uncle.header.timestamp, 10))
+            formatTimeSimple(parseInt(uncle.timestamp, 10))
           )
         ) : (
           '-'
         )}
       </Text>
       Author:&nbsp;
-      <Link href={`/${network}/address/${uncle?.header.author}`} passHref={true}>
+      <Link href={`/${network}/address/${uncle?.author}`} passHref={true}>
         <Button
           as="a"
           variant="link"
           color="green.500"
           width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
         >
-          {uncle?.header.author}
+          {uncle?.author}
         </Button>
       </Link>
       <br />
-      <Text minWidth={32}>
-        Gas:&nbsp;{uncle ? formatNumber(BigInt(uncle.header.gas_used)) : '-'}
-      </Text>
-      <Text>Difficulty:&nbsp;{uncle ? formatNumber(BigInt(uncle.header.difficulty)) : '-'}</Text>
+      <Text minWidth={32}>Gas:&nbsp;{uncle ? formatNumber(BigInt(uncle.gas_used)) : '-'}</Text>
+      <Text>Difficulty:&nbsp;{uncle ? formatNumber(BigInt(uncle.difficulty)) : '-'}</Text>
     </Box>
   )
 }

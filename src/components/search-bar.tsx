@@ -17,7 +17,7 @@ import useNetwork from 'hooks/use-network'
 import { useResources } from 'hooks/use-provider'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useByHash, useListByHeight } from 'hooks/use-api'
+import useJsonRpc from 'hooks/use-json-rpc'
 import ComboBox from './combo-box'
 
 type Item = {
@@ -34,69 +34,28 @@ export default function SearchBar() {
   const { data: address, isValidating: addressValidating } = useResources(
     isHash ? trimedKeyword : undefined,
   )
-  const { data: block, isValidating: blockValidating } = useByHash(
-    'block',
-    isHash ? trimedKeyword : undefined,
+  const { data: block, isValidating: blockValidating } = useJsonRpc(
+    isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
+    isHash ? [trimedKeyword] : isHeight ? [parseInt(trimedKeyword, 10)] : undefined,
   )
-  const { data: blocks, isValidating: blocksValidating } = useListByHeight(
-    'block',
-    isHeight ? BigInt(trimedKeyword) : undefined,
-    true,
-  )
-  const { data: transaction, isValidating: transactionValidating } = useByHash(
-    'transaction',
-    isHash ? trimedKeyword : undefined,
-  )
-  const { data: uncle, isValidating: uncleValidating } = useByHash(
-    'uncle',
-    isHash ? trimedKeyword : undefined,
-  )
-  const { data: uncles, isValidating: unclesValidating } = useListByHeight(
-    'uncle',
-    isHeight ? BigInt(trimedKeyword) : undefined,
-    true,
+  const { data: transaction, isValidating: transactionValidating } = useJsonRpc(
+    'chain.get_transaction',
+    isHash ? [trimedKeyword] : undefined,
   )
   const isLoading = useMemo(
-    () =>
-      trimedKeyword &&
-      (addressValidating ||
-        blockValidating ||
-        blocksValidating ||
-        transactionValidating ||
-        uncleValidating ||
-        unclesValidating),
-    [
-      addressValidating,
-      blockValidating,
-      blocksValidating,
-      transactionValidating,
-      trimedKeyword,
-      uncleValidating,
-      unclesValidating,
-    ],
+    () => trimedKeyword && (addressValidating || blockValidating || transactionValidating),
+    [addressValidating, blockValidating, transactionValidating, trimedKeyword],
   )
   const data = useMemo<Item[]>(
     () =>
-      trimedKeyword && !isLoading
+      trimedKeyword
         ? compact([
             address ? { type: 'Address', prefix: 'address', value: trimedKeyword } : undefined,
             block ? { type: 'Block', prefix: 'block', value: trimedKeyword } : undefined,
-            blocks?.[0]?.[0]
-              ? { type: 'Block', prefix: 'block', value: blocks[0][0]._id }
-              : undefined,
             transaction ? { type: 'Transaction', prefix: 'tx', value: trimedKeyword } : undefined,
-            uncle ? { type: 'Uncle', prefix: 'uncle', value: trimedKeyword } : undefined,
-            ...(uncles?.[0].map(
-              (u) =>
-                ({
-                  type: 'Uncle',
-                  prefix: 'uncle',
-                  value: u._id,
-                } as Item),
-            ) || []),
           ])
         : [],
-    [address, block, blocks, isLoading, transaction, trimedKeyword, uncle, uncles],
+    [address, block, transaction, trimedKeyword],
   )
   const network = useNetwork()
   const router = useRouter()

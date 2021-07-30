@@ -27,12 +27,13 @@ import { useListByAddress } from 'hooks/use-api'
 import useOnScreen from 'hooks/use-on-screen'
 import useInfinite from 'hooks/use-infinite'
 import startCase from 'lodash/startCase'
+import { Type } from 'utils/api'
 
 export default function Address() {
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
   const { data: resources, error } = useResources(hash)
-  const [type, setType] = useState<'transaction' | 'block' | 'uncle'>('transaction')
+  const [type, setType] = useState<Type>('transaction')
   const list = useListByAddress(type, hash)
   const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const { data: balances } = useBalances(hash)
@@ -143,13 +144,6 @@ export default function Address() {
                 isActive={type === 'block'}
               >
                 Blocks
-              </Button>
-              <Button
-                bg={colorMode === 'light' ? 'white' : undefined}
-                onClick={() => setType('uncle')}
-                isActive={type === 'uncle'}
-              >
-                Uncles
               </Button>
             </ButtonGroup>
           }

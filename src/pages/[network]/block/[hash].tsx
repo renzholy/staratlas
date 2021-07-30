@@ -49,6 +49,22 @@ export default function Block() {
       setSize((old) => old + 1)
     }
   }, [isNearBottom, setSize])
+  const { data: blocks } = useJsonRpc(
+    'chain.get_epoch_uncles_by_number',
+    block ? [parseInt(block.header.number, 10)] : undefined,
+  )
+  useEffect(() => {
+    if (!blocks || !block) {
+      return
+    }
+    if (
+      blocks.find(({ uncles }) =>
+        uncles.find(({ block_hash }) => block_hash === block.header.block_hash),
+      )
+    ) {
+      router.push(`/${network}/uncle/${block.header.block_hash}`)
+    }
+  }, [blocks, network, router, block])
 
   if (error) {
     return <NotFound />
@@ -166,7 +182,7 @@ export default function Block() {
             block.uncles.map((uncle, index) => (
               <Fragment key={uncle.block_hash}>
                 {index === 0 ? null : <Divider />}
-                <UncleListItem uncle={uncle.block_hash} />
+                <UncleListItem uncle={uncle} />
               </Fragment>
             ))
           ) : (

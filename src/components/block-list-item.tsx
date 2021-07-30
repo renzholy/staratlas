@@ -5,10 +5,14 @@ import Link from 'next/link'
 import TimeAgo from 'timeago-react'
 import useNetwork from 'hooks/use-network'
 import { formatTimeSimple, formatNumber } from 'utils/formatter'
-import useJsonRpc from 'hooks/use-json-rpc'
+import { Static } from '@sinclair/typebox'
+import { BlockSimple } from 'utils/json-rpc/chain'
 
-export default function BlockListItem(props: { block: string; relativeTime?: boolean }) {
-  const { data: block } = useJsonRpc('chain.get_block_by_hash', [props.block])
+export default function BlockListItem(props: {
+  block: Static<typeof BlockSimple>
+  relativeTime?: boolean
+}) {
+  const { block } = props
   const network = useNetwork()
 
   return (
@@ -65,7 +69,7 @@ export default function BlockListItem(props: { block: string; relativeTime?: boo
         </Button>
       </Link>
       <br />
-      <Text minWidth={32}>Txns:&nbsp;{block ? formatNumber(block.body.Full.length) : '-'}</Text>
+      <Text minWidth={32}>Txns:&nbsp;{block ? formatNumber(block.body.Hashes.length) : '-'}</Text>
       <Text minWidth={32}>Uncles:&nbsp;{block ? formatNumber(block.uncles.length) : '-'}</Text>
       <Text minWidth={32}>
         Gas:&nbsp;{block ? formatNumber(BigInt(block.header.gas_used)) : '-'}

@@ -2,17 +2,42 @@ import { Fragment, useEffect, useRef } from 'react'
 import { Divider, Grid, GridItem, Spinner } from '@chakra-ui/react'
 import { CardWithHeader } from 'layouts/card-with-header'
 import UncleListItem from 'components/uncle-list-item'
-import { useListByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 import useOnScreen from 'hooks/use-on-screen'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import useInfinite from 'hooks/use-infinite'
+import { useSWRInfinite } from 'swr'
+import { jsonRpc } from 'utils/json-rpc'
+import useNetwork from 'hooks/use-network'
+import { Network } from 'utils/types'
+import { flatMap } from 'lodash'
 
 export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
-  const list = useListByHeight('uncle', info ? BigInt(info.head.number) : undefined, false, {
-    revalidateOnFocus: false,
-  })
+  const network = useNetwork()
+  const list = useSWRInfinite(
+    (_, previousPageData) => {
+      if (!info) {
+        return null
+      }
+      if (previousPageData && !previousPageData.length) {
+        return null
+      }
+      if (previousPageData) {
+        return [network, previousPageData[0].epoch.start_block_number - 1]
+      }
+      return [network, parseInt(info.head.number, 10)]
+    },
+    async (net: Network, number: number) => {
+      const [uncles, epoch] = await Promise.all([
+        jsonRpc(net, 'chain.get_epoch_uncles_by_number', [number]),
+        jsonRpc(net, 'chain.get_epoch_info_by_number', [number]),
+      ])
+      return flatMap(uncles.reverse(), (block) =>
+        block.uncles.map((uncle) => ({ uncle, ...epoch })),
+      )
+    },
+  )
   const { data: uncles, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
@@ -33,10 +58,10 @@ export default function Uncles() {
     >
       <GridItem colSpan={{ base: 1, xl: 2 }} colStart={{ base: 1, xl: 2 }}>
         <CardWithHeader title="Uncles">
-          {uncles?.map((uncle, index) => (
-            <Fragment key={uncle._id}>
+          {uncles?.map(({ uncle }, index) => (
+            <Fragment key={uncle.block_hash}>
               {index === 0 ? null : <Divider />}
-              <UncleListItem uncle={uncle._id} />
+              <UncleListItem uncle={uncle} />
             </Fragment>
           ))}
           {isReachingEnd && !isEmpty ? null : (

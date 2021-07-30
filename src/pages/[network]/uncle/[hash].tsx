@@ -1,4 +1,4 @@
-import { Grid, GridItem, Box, Heading, Spinner, Button } from '@chakra-ui/react'
+import { Grid, GridItem, Box, Heading, Spinner, Button, Spacer, Divider } from '@chakra-ui/react'
 import { css } from '@emotion/react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -9,12 +9,31 @@ import CopyLink from 'components/copy-link'
 import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
 import useJsonRpc from 'hooks/use-json-rpc'
+import { Fragment, useEffect } from 'react'
+import UncleListItem from 'components/uncle-list-item'
 
 export default function Uncle() {
   const network = useNetwork()
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
   const { data: uncle, error } = useJsonRpc('chain.get_block_by_hash', hash ? [hash] : undefined)
+  const { data: blocks } = useJsonRpc(
+    'chain.get_epoch_uncles_by_number',
+    uncle ? [parseInt(uncle.header.number, 10)] : undefined,
+  )
+  useEffect(() => {
+    if (!blocks || !uncle) {
+      return
+    }
+    if (
+      blocks.find(({ uncles }) =>
+        uncles.find(({ block_hash }) => block_hash === uncle.header.block_hash),
+      )
+    ) {
+      return
+    }
+    router.push(`/${network}/block/${uncle.header.block_hash}`)
+  }, [blocks, network, router, uncle])
 
   if (error) {
     return <NotFound />
@@ -42,6 +61,7 @@ export default function Uncle() {
                   display: inline-block;
                   text-align: start;
                   font-weight: normal;
+                  vertical-align: text-bottom;
                 }
               `}
             >
@@ -83,6 +103,21 @@ export default function Uncle() {
           ) : (
             <ListItemPlaceholder height={429}>
               <Spinner />
+            </ListItemPlaceholder>
+          )}
+        </CardWithHeader>
+        <Spacer h={6} />
+        <CardWithHeader title="Uncles">
+          {uncle?.uncles.length ? (
+            uncle.uncles.map((u, index) => (
+              <Fragment key={u.block_hash}>
+                {index === 0 ? null : <Divider />}
+                <UncleListItem uncle={u} />
+              </Fragment>
+            ))
+          ) : (
+            <ListItemPlaceholder height={67}>
+              {uncle?.uncles.length === 0 ? 'No uncle' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>

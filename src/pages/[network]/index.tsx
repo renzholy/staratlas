@@ -9,10 +9,22 @@ import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import { API_PAGE_SIZE } from 'utils/constants'
 import { useLatest } from 'hooks/use-api'
+import { jsonRpc } from 'utils/json-rpc'
+import useSWR from 'swr'
 
 export default function Index() {
   const network = useNetwork()
-  const { data: blocks } = useLatest('block', { refreshInterval: 2000 })
+  const { data: blocks } = useSWR(
+    [network, 'block', 'latest'],
+    async () => {
+      const info = await jsonRpc(network, 'chain.info', [])
+      return jsonRpc(network, 'chain.get_blocks_by_number', [
+        parseInt(info.head.number, 10),
+        API_PAGE_SIZE,
+      ])
+    },
+    { refreshInterval: 2000 },
+  )
   const { data: transactions } = useLatest('transaction', { refreshInterval: 2000 })
   const buttonBackground = useColorModeValue('white', undefined)
 
@@ -37,9 +49,9 @@ export default function Index() {
           <AnimateSharedLayout>
             {blocks?.length ? (
               blocks.map((block, index) => (
-                <motion.div layout={true} key={block._id}>
+                <motion.div layout={true} key={block.header.block_hash}>
                   {index === 0 ? null : <Divider />}
-                  <BlockListItem block={block._id} relativeTime={true} />
+                  <BlockListItem block={block} relativeTime={true} />
                 </motion.div>
               ))
             ) : (

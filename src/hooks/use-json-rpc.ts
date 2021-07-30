@@ -3,7 +3,7 @@ import type { Static } from '@sinclair/typebox'
 import { useMemo } from 'react'
 
 import useNetwork from 'hooks/use-network'
-import { API, call } from 'utils/json-rpc'
+import { API, jsonRpc } from 'utils/json-rpc'
 
 export default function useJsonRpc<T extends keyof typeof API>(
   method?: T,
@@ -15,5 +15,9 @@ export default function useJsonRpc<T extends keyof typeof API>(
     () => (method && params ? [network, 'rpc', method, JSON.stringify(params)] : null),
     [method, network, params],
   )
-  return useSWR<Static<typeof API[T]['result']>>(key, () => call(network, method!, params!), config)
+  return useSWR<Static<typeof API[T]['result']>>(
+    key,
+    () => jsonRpc(network, method!, params!),
+    config,
+  )
 }

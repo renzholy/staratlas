@@ -16,7 +16,7 @@ import { useMemo, useState, useEffect, useCallback } from 'react'
 import useNetwork from 'hooks/use-network'
 import useAsync from 'hooks/use-async'
 import { CardWithHeader } from 'layouts/card-with-header'
-import { API, call } from 'utils/json-rpc'
+import { API, jsonRpc } from 'utils/json-rpc'
 import JsonCode from './json-code'
 
 export default function JsonRpcUtil() {
@@ -36,7 +36,7 @@ export default function JsonRpcUtil() {
   const network = useNetwork()
   const handleCall = useAsync(
     useCallback(
-      () => (method && params ? call(network, method, params) : undefined),
+      () => (method && params ? jsonRpc(network, method, params) : undefined),
       [method, network, params],
     ),
   )

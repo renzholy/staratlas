@@ -10,7 +10,7 @@ export const API = {
   ...chain,
 }
 
-export async function call<T extends keyof typeof API>(
+export async function jsonRpc<T extends keyof typeof API>(
   network: string,
   method: T,
   params: Static<typeof API[T]['params']>,

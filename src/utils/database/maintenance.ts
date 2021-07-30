@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { call } from 'utils/json-rpc'
+import { jsonRpc } from 'utils/json-rpc'
 import { Network } from 'utils/types'
 import flatMap from 'lodash/flatMap'
 import { Decimal128, Binary } from 'bson'
@@ -8,6 +8,7 @@ import Bluebird from 'bluebird'
 import { arrayify } from 'utils/encoding'
 import difference from 'lodash/difference'
 import { RPC_BLOCK_LIMIT } from 'utils/constants'
+import { MongoBulkWriteError } from 'mongodb'
 import { collections } from './mongo'
 
 const MAINTENANCE_SIZE = 8
@@ -42,17 +43,16 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
  * fetch data from top to top + RPC_API_BLOCK_LIMIT and load them into database
  */
 export async function load(network: Network, top: BigInt) {
-  const blocks = await call(network, 'chain.get_blocks_by_number', [
+  const blocks = await jsonRpc(network, 'chain.get_blocks_by_number', [
     parseInt(top.toString(), 10),
     RPC_BLOCK_LIMIT,
   ])
-  const uncles = flatMap(blocks, (block) => block.uncles)
   const hashes = flatMap(blocks, (block) => block.body.Hashes)
-  console.log('load', network, top, blocks.length, uncles.length, hashes.length)
+  console.log('load', network, top, blocks.length, hashes.length)
   const transactions = flatMap(
     await Bluebird.map(
       blocks,
-      (block) => call(network, 'chain.get_block_by_hash', [block.header.block_hash]),
+      (block) => jsonRpc(network, 'chain.get_block_by_hash', [block.header.block_hash]),
       { concurrency: 4 },
     ),
     (block) => block.body.Full.map((transaction) => ({ ...transaction, block: block.header })),
@@ -64,7 +64,7 @@ export async function load(network: Network, top: BigInt) {
   )
   const blockMetaTransactions = await Bluebird.map(
     blockMetaTransactionHashes,
-    (transaction) => call(network, 'chain.get_transaction', [transaction]),
+    (transaction) => jsonRpc(network, 'chain.get_transaction', [transaction]),
     { concurrency: 4 },
   )
   const blockOperations = blocks.map((block) => ({
@@ -116,32 +116,31 @@ export async function load(network: Network, top: BigInt) {
       upsert: true,
     },
   }))
-  const uncleOperations = uncles.map((uncle) => ({
-    updateOne: {
-      filter: {
-        _id: new Binary(arrayify(uncle.block_hash)),
-      },
-      update: {
-        $set: {
-          _id: new Binary(arrayify(uncle.block_hash)),
-          height: new Decimal128(uncle.number),
-          author: new Binary(arrayify(uncle.author)),
-        },
-      },
-      upsert: true,
-    },
-  }))
   if (transactionOperations.length) {
     await collections[network].transactions.bulkWrite(transactionOperations)
   }
   if (blockMetaTransactionOperations.length) {
     await collections[network].transactions.bulkWrite(blockMetaTransactionOperations)
   }
-  if (uncleOperations.length) {
-    await collections[network].uncles.bulkWrite(uncleOperations)
-  }
   if (blockOperations.length) {
-    await collections[network].blocks.bulkWrite(blockOperations)
+    try {
+      await collections[network].blocks.bulkWrite(blockOperations)
+    } catch (err) {
+      if (err instanceof MongoBulkWriteError) {
+        const blockDeleteOperations = err.result
+          .getWriteErrors()
+          .filter((error) => error.code === 11000)
+          .map((error) => ({
+            deleteOne: {
+              filter: { _id: error.getOperation()._id },
+            },
+          }))
+        if (blockDeleteOperations.length) {
+          await collections[network].blocks.bulkWrite(blockDeleteOperations)
+        }
+      }
+      throw err
+    }
   }
 }
 
@@ -149,7 +148,7 @@ export async function load(network: Network, top: BigInt) {
  * start a maintenance job
  */
 export async function maintenance(network: Network, height?: bigint) {
-  const top = height || BigInt((await call(network, 'chain.info', [])).head.number)
+  const top = height || BigInt((await jsonRpc(network, 'chain.info', [])).head.number)
   try {
     await find(network, top)
     return null

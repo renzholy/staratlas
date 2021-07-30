@@ -25,15 +25,7 @@ async function prepare(network: Network) {
   await transactions.createIndex({ height: -1 }, { background: true })
   await transactions.createIndex({ sender: 1 }, { background: true, sparse: true })
 
-  const uncles = db.collection<{
-    _id: Binary
-    height: Decimal128
-    author: Binary
-  }>(`${network}.uncles`)
-  await uncles.createIndex({ height: -1 }, { background: true })
-  await uncles.createIndex({ author: 1 }, { background: true })
-
-  return { blocks, transactions, uncles }
+  return { blocks, transactions }
 }
 
 export const collections = {

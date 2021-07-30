@@ -29,16 +29,6 @@ async function list(network: Network, type: Type, address: string, height?: stri
         .limit(API_PAGE_SIZE)
         .toArray()
     }
-    case 'uncle': {
-      return collections[network].uncles
-        .find({
-          author: new Binary(arrayify(address)),
-          ...(height ? { height: { $lte: new Decimal128(height) } } : {}),
-        })
-        .sort({ height: -1 })
-        .limit(API_PAGE_SIZE)
-        .toArray()
-    }
     default: {
       return []
     }
