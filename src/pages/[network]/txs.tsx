@@ -10,10 +10,16 @@ import useInfinite from 'hooks/use-infinite'
 
 export default function Transactions() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
-  const list = useListByHeight('transaction', info ? BigInt(info.head.number) : undefined, false, {
-    revalidateOnFocus: false,
-  })
-  const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
+  const {
+    data: transactions,
+    setSize,
+    isEmpty,
+    isReachingEnd,
+  } = useInfinite(
+    useListByHeight('transaction', info ? BigInt(info.head.number) : undefined, false, {
+      revalidateOnFocus: false,
+    }),
+  )
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {

@@ -15,30 +15,36 @@ import { flatMap } from 'lodash'
 export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const network = useNetwork()
-  const list = useSWRInfinite(
-    (_, previousPageData) => {
-      if (!info) {
-        return null
-      }
-      if (previousPageData && !previousPageData.length) {
-        return null
-      }
-      if (previousPageData) {
-        return [network, previousPageData[0].epoch.start_block_number - 1]
-      }
-      return [network, parseInt(info.head.number, 10)]
-    },
-    async (net: Network, number: number) => {
-      const [uncles, epoch] = await Promise.all([
-        jsonRpc(net, 'chain.get_epoch_uncles_by_number', [number]),
-        jsonRpc(net, 'chain.get_epoch_info_by_number', [number]),
-      ])
-      return flatMap(uncles.reverse(), (block) =>
-        block.uncles.map((uncle) => ({ uncle, ...epoch })),
-      )
-    },
+  const {
+    data: uncles,
+    setSize,
+    isEmpty,
+    isReachingEnd,
+  } = useInfinite(
+    useSWRInfinite(
+      (_, previousPageData) => {
+        if (!info) {
+          return null
+        }
+        if (previousPageData && !previousPageData.length) {
+          return null
+        }
+        if (previousPageData) {
+          return [network, previousPageData[0].epoch.start_block_number - 1]
+        }
+        return [network, parseInt(info.head.number, 10)]
+      },
+      async (net: Network, number: number) => {
+        const [blocks, epoch] = await Promise.all([
+          jsonRpc(net, 'chain.get_epoch_uncles_by_number', [number]),
+          jsonRpc(net, 'chain.get_epoch_info_by_number', [number]),
+        ])
+        return flatMap(blocks.reverse(), (block) =>
+          block.uncles.map((uncle) => ({ uncle, ...epoch })),
+        )
+      },
+    ),
   )
-  const { data: uncles, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {

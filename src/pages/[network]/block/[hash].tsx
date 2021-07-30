@@ -43,8 +43,14 @@ export default function Block() {
       revalidateOnFocus: false,
     },
   )
-  const list = useListByHeight('transaction', block ? BigInt(block.header.number) : undefined, true)
-  const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
+  const {
+    data: transactions,
+    setSize,
+    isEmpty,
+    isReachingEnd,
+  } = useInfinite(
+    useListByHeight('transaction', block ? BigInt(block.header.number) : undefined, true),
+  )
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {

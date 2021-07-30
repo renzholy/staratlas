@@ -16,23 +16,29 @@ import { RPC_BLOCK_LIMIT } from 'utils/constants'
 export default function Blocks() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const network = useNetwork()
-  const list = useSWRInfinite(
-    (_, previousPageData) => {
-      if (!info) {
-        return null
-      }
-      if (previousPageData && !previousPageData.length) {
-        return null
-      }
-      if (previousPageData) {
-        return [network, parseInt(last(previousPageData)!.header.number, 10) - 1]
-      }
-      return [network, parseInt(info.head.number, 10)]
-    },
-    async (net: Network, number: number) =>
-      jsonRpc(net, 'chain.get_blocks_by_number', [number, RPC_BLOCK_LIMIT]),
+  const {
+    data: blocks,
+    setSize,
+    isEmpty,
+    isReachingEnd,
+  } = useInfinite(
+    useSWRInfinite(
+      (_, previousPageData) => {
+        if (!info) {
+          return null
+        }
+        if (previousPageData && !previousPageData.length) {
+          return null
+        }
+        if (previousPageData) {
+          return [network, parseInt(last(previousPageData)!.header.number, 10) - 1]
+        }
+        return [network, parseInt(info.head.number, 10)]
+      },
+      async (net: Network, number: number) =>
+        jsonRpc(net, 'chain.get_blocks_by_number', [number, RPC_BLOCK_LIMIT]),
+    ),
   )
-  const { data: blocks, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {

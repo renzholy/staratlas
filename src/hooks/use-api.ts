@@ -32,8 +32,7 @@ export function useListByHeight<T extends Type>(
   )
 }
 
-export function useListByAddress<T extends Type>(
-  type: T,
+export function useTransactionsByAddress<T extends Type>(
   address?: string,
   config?: SWRConfiguration,
 ) {
@@ -47,11 +46,11 @@ export function useListByAddress<T extends Type>(
         return null
       }
       if (previousPageData) {
-        return `/api/list/address?network=${network}&address=${address}&height=${
+        return `/api/transactions-by-address?network=${network}&address=${address}&height=${
           BigInt(last(previousPageData)!.height) - BigInt(1)
-        }&type=${type}`
+        }`
       }
-      return `/api/list/address?network=${network}&address=${address}&type=${type}`
+      return `/api/transactions-by-address?network=${network}&address=${address}`
     },
     jsonFetcher,
     config,

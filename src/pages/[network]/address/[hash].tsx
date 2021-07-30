@@ -1,7 +1,5 @@
 import {
   Box,
-  Button,
-  ButtonGroup,
   Divider,
   Grid,
   GridItem,
@@ -11,10 +9,9 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  useColorMode,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import ResourceListItem from 'components/resource-list-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -23,11 +20,9 @@ import TransactionListItem from 'components/transaction-list-item'
 import { useBalances, useResources } from 'hooks/use-provider'
 import { CardWithHeader } from 'layouts/card-with-header'
 import BalanceAmount from 'components/balance-amount'
-import { useListByAddress } from 'hooks/use-api'
+import { useTransactionsByAddress } from 'hooks/use-api'
 import useOnScreen from 'hooks/use-on-screen'
 import useInfinite from 'hooks/use-infinite'
-import startCase from 'lodash/startCase'
-import { Type } from 'utils/api'
 
 export default function Address() {
   const router = useRouter()
@@ -35,9 +30,12 @@ export default function Address() {
   const { data: resources, error } = useResources(hash, {
     revalidateOnFocus: false,
   })
-  const [type, setType] = useState<Type>('transaction')
-  const list = useListByAddress(type, hash)
-  const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
+  const {
+    data: transactions,
+    setSize,
+    isEmpty,
+    isReachingEnd,
+  } = useInfinite(useTransactionsByAddress(hash))
   const { data: balances } = useBalances(hash)
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
@@ -46,7 +44,6 @@ export default function Address() {
       setSize((old) => old + 1)
     }
   }, [isNearBottom, setSize])
-  const { colorMode } = useColorMode()
 
   if (error) {
     return <NotFound />
@@ -121,35 +118,7 @@ export default function Address() {
         </CardWithHeader>
       </GridItem>
       <GridItem colSpan={1}>
-        <CardWithHeader
-          title={`${startCase(type)}s`}
-          subtitle={
-            <ButtonGroup
-              size="sm"
-              isAttached={true}
-              variant={colorMode === 'light' ? 'outline' : undefined}
-              spacing={0}
-              mr={-4}
-            >
-              <Button
-                mr="-px"
-                bg={colorMode === 'light' ? 'white' : undefined}
-                onClick={() => setType('transaction')}
-                isActive={type === 'transaction'}
-              >
-                Transactions
-              </Button>
-              <Button
-                mr="-px"
-                bg={colorMode === 'light' ? 'white' : undefined}
-                onClick={() => setType('block')}
-                isActive={type === 'block'}
-              >
-                Blocks
-              </Button>
-            </ButtonGroup>
-          }
-        >
+        <CardWithHeader title="Transactions">
           {transactions?.map((transaction, index) => (
             <Fragment key={transaction._id}>
               {index === 0 ? null : <Divider />}
