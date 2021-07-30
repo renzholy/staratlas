@@ -39,6 +39,9 @@ export default function Block() {
   const { data: block, error } = useJsonRpc(
     isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
     hash ? (isHash ? [hash] : isHeight ? [parseInt(hash, 10)] : undefined) : undefined,
+    {
+      revalidateOnFocus: false,
+    },
   )
   const list = useListByHeight('transaction', block ? BigInt(block.header.number) : undefined, true)
   const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)

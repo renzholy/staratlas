@@ -16,7 +16,9 @@ export default function Uncle() {
   const network = useNetwork()
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
-  const { data: uncle, error } = useJsonRpc('chain.get_block_by_hash', hash ? [hash] : undefined)
+  const { data: uncle, error } = useJsonRpc('chain.get_block_by_hash', hash ? [hash] : undefined, {
+    revalidateOnFocus: false,
+  })
   const { data: blocks } = useJsonRpc(
     'chain.get_epoch_uncles_by_number',
     uncle ? [parseInt(uncle.header.number, 10)] : undefined,

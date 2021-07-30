@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react'
 import useSWR, { SWRConfiguration } from 'swr'
-import { providers, utils, bcs, encoding } from '@starcoin/starcoin'
+import { providers, utils, bcs, encoding, types } from '@starcoin/starcoin'
 import { arrayify, hexlify } from 'utils/encoding'
 import useAsync from './use-async'
 import useNetwork from './use-network'
@@ -22,10 +22,17 @@ export function useResource(address: string, resource: string, config?: SWRConfi
   )
 }
 
-export function useResources(address?: string) {
+export function useResources(address?: string, config?: SWRConfiguration) {
   const provider = useProvider()
-  return useSWR(address ? [provider.connection.url, 'getResources', address] : null, () =>
-    provider.getResources(address!),
+  return useSWR<
+    | {
+        [k: string]: types.MoveStruct
+      }
+    | undefined
+  >(
+    address ? [provider.connection.url, 'getResources', address] : null,
+    () => provider.getResources(address!),
+    config,
   )
 }
 

@@ -38,6 +38,9 @@ export default function Transaction() {
   const { data: transaction, error } = useJsonRpc(
     'chain.get_transaction',
     hash ? [hash] : undefined,
+    {
+      revalidateOnFocus: false,
+    },
   )
   const { data: events } = useJsonRpc('chain.get_events_by_txn_hash', hash ? [hash] : undefined)
   const { data: info } = useJsonRpc('chain.get_transaction_info', hash ? [hash] : undefined)

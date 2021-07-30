@@ -32,7 +32,9 @@ import { Type } from 'utils/api'
 export default function Address() {
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
-  const { data: resources, error } = useResources(hash)
+  const { data: resources, error } = useResources(hash, {
+    revalidateOnFocus: false,
+  })
   const [type, setType] = useState<Type>('transaction')
   const list = useListByAddress(type, hash)
   const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
