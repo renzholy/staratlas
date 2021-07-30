@@ -183,7 +183,6 @@ export default function Layout(props: { children?: ReactNode }) {
           bg={buttonBackground}
           onClick={toggleColorMode}
           icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-          display={{ base: 'none', xl: 'inline-flex' }}
         />
       </Flex>
       {props.children}
