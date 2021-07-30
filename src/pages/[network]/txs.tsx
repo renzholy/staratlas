@@ -12,7 +12,6 @@ export default function Transactions() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const list = useListByHeight('transaction', info ? BigInt(info.head.number) : undefined, false, {
     revalidateOnFocus: false,
-    revalidateAll: false,
   })
   const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)

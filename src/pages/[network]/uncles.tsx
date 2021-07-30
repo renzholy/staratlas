@@ -12,7 +12,6 @@ export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const list = useListByHeight('uncle', info ? BigInt(info.head.number) : undefined, false, {
     revalidateOnFocus: false,
-    revalidateAll: false,
   })
   const { data: uncles, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)

@@ -12,7 +12,6 @@ export default function Blocks() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const list = useListByHeight('block', info ? BigInt(info.head.number) : undefined, false, {
     revalidateOnFocus: false,
-    revalidateAll: false,
   })
   const { data: blocks, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)
