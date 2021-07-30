@@ -8,12 +8,12 @@ import EpochStat from 'components/epoch-stat'
 import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import { API_PAGE_SIZE } from 'utils/constants'
-import { useBlocksLatest, useTransactionsLatest } from 'hooks/use-api'
+import { useLatest } from 'hooks/use-api'
 
 export default function Index() {
   const network = useNetwork()
-  const { data: blocks } = useBlocksLatest({ refreshInterval: 2000 })
-  const { data: transactions } = useTransactionsLatest({ refreshInterval: 2000 })
+  const { data: blocks } = useLatest('block', { refreshInterval: 2000 })
+  const { data: transactions } = useLatest('transaction', { refreshInterval: 2000 })
   const buttonBackground = useColorModeValue('white', undefined)
 
   return (

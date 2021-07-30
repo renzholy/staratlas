@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef } from 'react'
 import { Divider, Spinner, GridItem, Grid } from '@chakra-ui/react'
 import { CardWithHeader } from 'layouts/card-with-header'
 import TransactionListItem from 'components/transaction-list-item'
-import { useTransactionsByHeight } from 'hooks/use-api'
+import { useListByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 import useOnScreen from 'hooks/use-on-screen'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -10,7 +10,7 @@ import useInfinite from 'hooks/use-infinite'
 
 export default function Transactions() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
-  const list = useTransactionsByHeight(info ? BigInt(info.head.number) : undefined, false, {
+  const list = useListByHeight('transaction', info ? BigInt(info.head.number) : undefined, false, {
     revalidateOnFocus: false,
     revalidateAll: false,
   })

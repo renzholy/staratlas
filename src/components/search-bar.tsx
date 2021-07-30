@@ -17,13 +17,7 @@ import useNetwork from 'hooks/use-network'
 import { useResources } from 'hooks/use-provider'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import {
-  useBlockByHash,
-  useBlocksByHeight,
-  useTransactionByHash,
-  useUncleByHash,
-  useUnclesByHeight,
-} from 'hooks/use-api'
+import { useByHash, useListByHeight } from 'hooks/use-api'
 import ComboBox from './combo-box'
 
 type Item = {
@@ -40,20 +34,25 @@ export default function SearchBar() {
   const { data: address, isValidating: addressValidating } = useResources(
     isHash ? trimedKeyword : undefined,
   )
-  const { data: block, isValidating: blockValidating } = useBlockByHash(
+  const { data: block, isValidating: blockValidating } = useByHash(
+    'block',
     isHash ? trimedKeyword : undefined,
   )
-  const { data: blocks, isValidating: blocksValidating } = useBlocksByHeight(
+  const { data: blocks, isValidating: blocksValidating } = useListByHeight(
+    'block',
     isHeight ? BigInt(trimedKeyword) : undefined,
     true,
   )
-  const { data: transaction, isValidating: transactionValidating } = useTransactionByHash(
+  const { data: transaction, isValidating: transactionValidating } = useByHash(
+    'transaction',
     isHash ? trimedKeyword : undefined,
   )
-  const { data: uncle, isValidating: uncleValidating } = useUncleByHash(
+  const { data: uncle, isValidating: uncleValidating } = useByHash(
+    'uncle',
     isHash ? trimedKeyword : undefined,
   )
-  const { data: uncles, isValidating: unclesValidating } = useUnclesByHeight(
+  const { data: uncles, isValidating: unclesValidating } = useListByHeight(
+    'uncle',
     isHeight ? BigInt(trimedKeyword) : undefined,
     true,
   )

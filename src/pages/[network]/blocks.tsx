@@ -1,7 +1,7 @@
 import { Fragment, useRef, useEffect } from 'react'
 import { Divider, Grid, GridItem, Spinner } from '@chakra-ui/react'
 import BlockListItem from 'components/block-list-item'
-import { useBlocksByHeight } from 'hooks/use-api'
+import { useListByHeight } from 'hooks/use-api'
 import useJsonRpc from 'hooks/use-json-rpc'
 import { CardWithHeader } from 'layouts/card-with-header'
 import useOnScreen from 'hooks/use-on-screen'
@@ -10,7 +10,7 @@ import useInfinite from 'hooks/use-infinite'
 
 export default function Blocks() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
-  const list = useBlocksByHeight(info ? BigInt(info.head.number) : undefined, false, {
+  const list = useListByHeight('block', info ? BigInt(info.head.number) : undefined, false, {
     revalidateOnFocus: false,
     revalidateAll: false,
   })

@@ -20,7 +20,7 @@ import TransactionListItem from 'components/transaction-list-item'
 import { useBalances, useResources } from 'hooks/use-provider'
 import { CardWithHeader } from 'layouts/card-with-header'
 import BalanceAmount from 'components/balance-amount'
-import { useTransactionsByAddress } from 'hooks/use-api'
+import { useListByAddress } from 'hooks/use-api'
 import useOnScreen from 'hooks/use-on-screen'
 import useInfinite from 'hooks/use-infinite'
 
@@ -28,7 +28,7 @@ export default function Address() {
   const router = useRouter()
   const { hash } = router.query as { hash?: string }
   const { data: resources, error } = useResources(hash)
-  const list = useTransactionsByAddress(hash)
+  const list = useListByAddress('transaction', hash)
   const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const { data: balances } = useBalances(hash)
   const ref = useRef<HTMLDivElement>(null)

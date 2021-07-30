@@ -25,7 +25,7 @@ import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
 import useJsonRpc from 'hooks/use-json-rpc'
-import { useTransactionsByHeight } from 'hooks/use-api'
+import { useListByHeight } from 'hooks/use-api'
 import useOnScreen from 'hooks/use-on-screen'
 import useInfinite from 'hooks/use-infinite'
 
@@ -40,7 +40,7 @@ export default function Block() {
     isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
     hash ? (isHash ? [hash] : isHeight ? [parseInt(hash, 10)] : undefined) : undefined,
   )
-  const list = useTransactionsByHeight(block ? BigInt(block.header.number) : undefined, true)
+  const list = useListByHeight('transaction', block ? BigInt(block.header.number) : undefined, true)
   const { data: transactions, setSize, isEmpty, isReachingEnd } = useInfinite(list)
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
