@@ -1,7 +1,5 @@
 /* eslint-disable no-await-in-loop */
 
-import first from 'lodash/first'
-import last from 'lodash/last'
 import { Decimal128 } from 'bson'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
@@ -39,13 +37,7 @@ export default async function transactionsByHeight(
   let cursor = height
   while (cursor > 0) {
     const data = await list(network, height, strict)
-    if (
-      strict ||
-      (data.length >= API_PAGE_SIZE &&
-        BigInt(first(data as { height: Decimal128 }[])!.height.toString()) === height &&
-        height - BigInt(last(data as { height: Decimal128 }[])!.height.toString()) ===
-          BigInt(data.length - 1))
-    ) {
+    if (strict || data.length >= API_PAGE_SIZE) {
       res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
       res.json(data.map(mapper))
       return
