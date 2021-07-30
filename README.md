@@ -8,4 +8,3 @@ An explorer for [starcoin](https://starcoin.org/)
 - format package code
 - format resources
 - format dry run result
-- use contract.call
