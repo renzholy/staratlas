@@ -10,7 +10,8 @@ import { useSWRInfinite } from 'swr'
 import { jsonRpc } from 'utils/json-rpc'
 import useNetwork from 'hooks/use-network'
 import { Network } from 'utils/types'
-import { flatMap } from 'lodash'
+import last from 'lodash/last'
+import flatMap from 'lodash/flatMap'
 
 export default function Uncles() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
@@ -30,7 +31,7 @@ export default function Uncles() {
           return null
         }
         if (previousPageData) {
-          return [network, previousPageData[0].epoch.start_block_number - 1]
+          return [network, last(previousPageData)!.epoch.start_block_number - 1]
         }
         return [network, parseInt(info.head.number, 10)]
       },
@@ -44,6 +45,7 @@ export default function Uncles() {
         )
       },
     ),
+    1,
   )
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
@@ -51,7 +53,7 @@ export default function Uncles() {
     if (isNearBottom) {
       setSize((old) => old + 1)
     }
-  }, [isNearBottom, setSize])
+  }, [isNearBottom, setSize, uncles])
 
   return (
     <Grid
