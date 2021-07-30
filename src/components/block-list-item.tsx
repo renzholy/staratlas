@@ -63,7 +63,7 @@ export default function BlockListItem(props: {
           as="a"
           variant="link"
           color="green.500"
-          width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
+          maxWidth={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
         >
           {block?.header.author || '-'}
         </Button>
