@@ -30,9 +30,6 @@ export async function jsonRpc<T extends keyof typeof API>(
     if (ajv.validate(API[method].result, json.result)) {
       return json.result
     }
-    if (json.result === null) {
-      return jsonRpc(network, method, params)
-    }
     throw new Error(`${method}(${params.join(', ')}) result ${ajv.errorsText(ajv.errors)}`)
   }
   if ('error' in json && 'message' in json.error) {

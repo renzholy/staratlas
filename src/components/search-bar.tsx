@@ -18,6 +18,7 @@ import { useResources } from 'hooks/use-provider'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import useJsonRpc from 'hooks/use-json-rpc'
+import flatMap from 'lodash/flatMap'
 import ComboBox from './combo-box'
 
 type Item = {
@@ -38,6 +39,15 @@ export default function SearchBar() {
     isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
     isHash ? [trimedKeyword] : isHeight ? [parseInt(trimedKeyword, 10)] : undefined,
   )
+  const { data: blocks } = useJsonRpc(
+    'chain.get_epoch_uncles_by_number',
+    isHeight && trimedKeyword
+      ? [parseInt(trimedKeyword, 10)]
+      : block
+      ? [parseInt(block.header.number, 10)]
+      : undefined,
+  )
+  const uncles = useMemo(() => (blocks ? flatMap(blocks, (b) => b.uncles) : undefined), [blocks])
   const { data: transaction, isValidating: transactionValidating } = useJsonRpc(
     'chain.get_transaction',
     isHash ? [trimedKeyword] : undefined,
@@ -51,11 +61,24 @@ export default function SearchBar() {
       trimedKeyword
         ? compact([
             address ? { type: 'Address', prefix: 'address', value: trimedKeyword } : undefined,
-            block ? { type: 'Block', prefix: 'block', value: trimedKeyword } : undefined,
-            transaction ? { type: 'Transaction', prefix: 'tx', value: trimedKeyword } : undefined,
+            block && !uncles?.find((uncle) => uncle.block_hash === block.header.block_hash)
+              ? { type: 'Block', prefix: 'block', value: block.header.block_hash }
+              : undefined,
+            transaction
+              ? { type: 'Transaction', prefix: 'tx', value: transaction.transaction_hash }
+              : undefined,
+            ...(uncles
+              ?.filter(
+                (uncle) => uncle.block_hash === trimedKeyword || uncle.number === trimedKeyword,
+              )
+              .map<Item>((uncle) => ({
+                type: 'Uncle',
+                prefix: 'uncle',
+                value: uncle.block_hash,
+              })) || []),
           ])
         : [],
-    [address, block, transaction, trimedKeyword],
+    [address, block, transaction, trimedKeyword, uncles],
   )
   const network = useNetwork()
   const router = useRouter()
