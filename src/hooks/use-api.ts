@@ -9,8 +9,7 @@ type Response<T extends Type> = T extends 'transaction'
   ? { _id: string; height: string; sender?: string }
   : { _id: string; height: string; author: string }
 
-export function useListByHeight<T extends Type>(
-  type: T,
+export function useTransactionsByHeight<T extends Type>(
   height?: BigInt,
   strict?: boolean,
   config?: SWRInfiniteConfiguration,
@@ -19,13 +18,13 @@ export function useListByHeight<T extends Type>(
   return useSWRInfinite<Response<T>[]>(
     (_, previousPageData) =>
       previousPageData?.length
-        ? `/api/list/height?network=${network}&height=${
+        ? `/api/transactions-by-height?network=${network}&height=${
             BigInt(last(previousPageData)!.height) - BigInt(1)
-          }&strict=${strict ? '1' : ''}&type=${type}`
+          }&strict=${strict ? '1' : ''}`
         : height !== undefined
-        ? `/api/list/height?network=${network}&height=${height}&strict=${
+        ? `/api/transactions-by-height?network=${network}&height=${height}&strict=${
             strict ? '1' : ''
-          }&type=${type}`
+          }`
         : null,
     jsonFetcher,
     config,

@@ -25,7 +25,7 @@ import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
 import useJsonRpc from 'hooks/use-json-rpc'
-import { useListByHeight } from 'hooks/use-api'
+import { useTransactionsByHeight } from 'hooks/use-api'
 import useOnScreen from 'hooks/use-on-screen'
 import useInfinite from 'hooks/use-infinite'
 
@@ -48,9 +48,7 @@ export default function Block() {
     setSize,
     isEmpty,
     isReachingEnd,
-  } = useInfinite(
-    useListByHeight('transaction', block ? BigInt(block.header.number) : undefined, true),
-  )
+  } = useInfinite(useTransactionsByHeight(block ? BigInt(block.header.number) : undefined, true))
   const ref = useRef<HTMLDivElement>(null)
   const isNearBottom = useOnScreen(ref, '-20px')
   useEffect(() => {
