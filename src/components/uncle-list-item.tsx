@@ -58,16 +58,16 @@ export default function UncleListItem(props: {
         )}
       </Text>
       Author:&nbsp;
-      <Link href={`/${network}/address/${uncle?.author}`} passHref={true}>
-        <Button
-          as="a"
-          variant="link"
-          color="green.500"
-          maxWidth={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
-        >
-          {uncle?.author}
-        </Button>
-      </Link>
+      <Box
+        width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
+        display="inline-block"
+      >
+        <Link href={`/${network}/address/${uncle?.author}`} passHref={true}>
+          <Button as="a" variant="link" color="green.500">
+            {uncle?.author}
+          </Button>
+        </Link>
+      </Box>
       <br />
       <Text minWidth={32}>Gas:&nbsp;{uncle ? formatNumber(BigInt(uncle.gas_used)) : '-'}</Text>
       <Text>Difficulty:&nbsp;{uncle ? formatNumber(BigInt(uncle.difficulty)) : '-'}</Text>

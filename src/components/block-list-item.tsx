@@ -58,16 +58,16 @@ export default function BlockListItem(props: {
         )}
       </Text>
       Author:&nbsp;
-      <Link href={`/${network}/address/${block?.header.author}`} passHref={true}>
-        <Button
-          as="a"
-          variant="link"
-          color="green.500"
-          maxWidth={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
-        >
-          {block?.header.author || '-'}
-        </Button>
-      </Link>
+      <Box
+        width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
+        display="inline-block"
+      >
+        <Link href={`/${network}/address/${block?.header.author}`} passHref={true}>
+          <Button as="a" variant="link" color="green.500">
+            {block?.header.author || '-'}
+          </Button>
+        </Link>
+      </Box>
       <br />
       <Text minWidth={32}>Txns:&nbsp;{block ? formatNumber(block.body.Hashes.length) : '-'}</Text>
       <Text minWidth={32}>Uncles:&nbsp;{block ? formatNumber(block.uncles.length) : '-'}</Text>
