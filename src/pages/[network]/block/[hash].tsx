@@ -11,9 +11,10 @@ import {
   IconButton,
   Button,
   useColorMode,
+  useToast,
 } from '@chakra-ui/react'
 import { css } from '@emotion/react'
-import { Fragment, useEffect, useRef } from 'react'
+import { Fragment, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -25,6 +26,7 @@ import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
 import useJsonRpc from 'hooks/use-json-rpc'
+import flatMap from 'lodash/flatMap'
 
 export default function Block() {
   const router = useRouter()
@@ -49,18 +51,17 @@ export default function Block() {
     'chain.get_epoch_uncles_by_number',
     block ? [parseInt(block.header.number, 10)] : undefined,
   )
+  const toast = useToast()
+  const uncles = useMemo(() => (blocks ? flatMap(blocks, (b) => b.uncles) : undefined), [blocks])
   useEffect(() => {
-    if (!blocks || !block) {
+    if (!uncles || !block) {
       return
     }
-    if (
-      blocks.find(({ uncles }) =>
-        uncles.find(({ block_hash }) => block_hash === block.header.block_hash),
-      )
-    ) {
+    if (uncles.find(({ block_hash }) => block_hash === block.header.block_hash)) {
       router.push(`/${network}/uncle/${block.header.block_hash}`)
+      toast({ title: `This is an uncle`, description: block.header.block_hash, status: 'warning' })
     }
-  }, [blocks, network, router, block])
+  }, [uncles, network, router, block, toast])
 
   if (error) {
     return <NotFound />
