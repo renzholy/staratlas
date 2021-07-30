@@ -10,14 +10,10 @@ class HTTPError extends Error {
   }
 }
 
-async function jsonResponse(response: Response) {
+export async function jsonFetcher<T>(input: RequestInfo): Promise<T> {
+  const response = await fetch(input)
   if (response.ok) {
     return response.json()
   }
   throw new HTTPError(response.status, response.statusText)
-}
-
-export async function jsonFetcher<T>(input: RequestInfo): Promise<T> {
-  const response = await fetch(input)
-  return jsonResponse(response)
 }

@@ -8,7 +8,7 @@ import EpochStat from 'components/epoch-stat'
 import { CardWithHeader } from 'layouts/card-with-header'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import { API_PAGE_SIZE } from 'utils/constants'
-import { useLatest } from 'hooks/use-api'
+import { useLatestTransactions } from 'hooks/use-api'
 import { jsonRpc } from 'utils/json-rpc'
 import useSWR from 'swr'
 
@@ -25,7 +25,7 @@ export default function Index() {
     },
     { refreshInterval: 2000 },
   )
-  const { data: transactions } = useLatest('transaction', { refreshInterval: 2000 })
+  const { data: transactions } = useLatestTransactions({ refreshInterval: 2000 })
   const buttonBackground = useColorModeValue('white', undefined)
 
   return (

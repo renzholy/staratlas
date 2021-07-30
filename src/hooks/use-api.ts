@@ -1,21 +1,18 @@
 import last from 'lodash/last'
 import useSWR, { SWRConfiguration, SWRInfiniteConfiguration, useSWRInfinite } from 'swr'
-import { Type } from 'utils/api'
 import { jsonFetcher } from 'utils/fetcher'
 import { jsonRpc } from 'utils/json-rpc'
 import useNetwork from './use-network'
 
-type Response<T extends Type> = T extends 'transaction'
-  ? { _id: string; height: string; sender?: string }
-  : { _id: string; height: string; author: string }
+type TransactionList = { _id: string; height: string; sender?: string }[]
 
-export function useTransactionsByHeight<T extends Type>(
+export function useTransactionsByHeight(
   height?: BigInt,
   strict?: boolean,
   config?: SWRInfiniteConfiguration,
 ) {
   const network = useNetwork()
-  return useSWRInfinite<Response<T>[]>(
+  return useSWRInfinite<TransactionList>(
     (_, previousPageData) =>
       previousPageData?.length
         ? `/api/transactions-by-height?network=${network}&height=${
@@ -31,12 +28,9 @@ export function useTransactionsByHeight<T extends Type>(
   )
 }
 
-export function useTransactionsByAddress<T extends Type>(
-  address?: string,
-  config?: SWRConfiguration,
-) {
+export function useTransactionsByAddress(address?: string, config?: SWRConfiguration) {
   const network = useNetwork()
-  return useSWRInfinite<Response<T>[]>(
+  return useSWRInfinite<TransactionList>(
     (_, previousPageData) => {
       if (!address) {
         return null
@@ -56,14 +50,14 @@ export function useTransactionsByAddress<T extends Type>(
   )
 }
 
-export function useLatest<T extends Type>(type: T, config?: SWRConfiguration) {
+export function useLatestTransactions(config?: SWRConfiguration) {
   const network = useNetwork()
-  return useSWR<Response<T>[]>(
-    [network, type, 'latest'],
+  return useSWR<TransactionList>(
+    [network, 'latest'],
     async () => {
       const info = await jsonRpc(network, 'chain.info', [])
       return jsonFetcher(
-        `/api/list/height?network=${network}&height=${info.head.number}&type=${type}`,
+        `/api/transactions-by-height?network=${network}&height=${info.head.number}`,
       )
     },
     config,
