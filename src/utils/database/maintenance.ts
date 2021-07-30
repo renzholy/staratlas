@@ -8,7 +8,7 @@ import Bluebird from 'bluebird'
 import { arrayify } from 'utils/encoding'
 import difference from 'lodash/difference'
 import { RPC_BLOCK_LIMIT } from 'utils/constants'
-import { MongoBulkWriteError } from 'mongodb'
+import { MongoServerError } from 'mongodb'
 import { collections } from './mongo'
 
 const MAINTENANCE_SIZE = 8
@@ -126,17 +126,10 @@ export async function load(network: Network, top: BigInt) {
     try {
       await collections[network].blocks.bulkWrite(blockOperations)
     } catch (err) {
-      if (err instanceof MongoBulkWriteError) {
-        const blockDeleteOperations = err.result
-          .getWriteErrors()
-          .filter((error) => error.code === 11000)
-          .map((error) => ({
-            deleteOne: {
-              filter: { _id: error.getOperation()._id },
-            },
-          }))
-        if (blockDeleteOperations.length) {
-          await collections[network].blocks.bulkWrite(blockDeleteOperations)
+      if (err instanceof MongoServerError && err.code === 11000) {
+        const height = err.message.match(/dup key: \{ height: (\d+) \}/)?.[1]
+        if (height) {
+          await collections[network].blocks.deleteOne({ height: new Decimal128(height) })
         }
       }
       throw err
