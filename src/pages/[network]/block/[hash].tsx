@@ -25,9 +25,6 @@ import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
 import useJsonRpc from 'hooks/use-json-rpc'
-import { useTransactionsByHeight } from 'hooks/use-api'
-import useOnScreen from 'hooks/use-on-screen'
-import useInfinite from 'hooks/use-infinite'
 
 export default function Block() {
   const router = useRouter()
@@ -43,19 +40,11 @@ export default function Block() {
       revalidateOnFocus: false,
     },
   )
-  const {
-    data: transactions,
-    setSize,
-    isEmpty,
-    isReachingEnd,
-  } = useInfinite(useTransactionsByHeight(block ? BigInt(block.header.number) : undefined, true))
+  const { data: transactions } = useJsonRpc(
+    'chain.get_block_txn_infos',
+    hash && isHash ? [hash] : block ? [block.header.body_hash] : undefined,
+  )
   const ref = useRef<HTMLDivElement>(null)
-  const isNearBottom = useOnScreen(ref, '-20px')
-  useEffect(() => {
-    if (isNearBottom) {
-      setSize((old) => old + 1)
-    }
-  }, [isNearBottom, setSize])
   const { data: blocks } = useJsonRpc(
     'chain.get_epoch_uncles_by_number',
     block ? [parseInt(block.header.number, 10)] : undefined,
@@ -202,14 +191,14 @@ export default function Block() {
       <GridItem colSpan={1}>
         <CardWithHeader title="Transactions">
           {transactions?.map((transaction, index) => (
-            <Fragment key={transaction._id}>
+            <Fragment key={transaction.transaction_hash}>
               {index === 0 ? null : <Divider />}
-              <TransactionListItem transaction={transaction._id} />
+              <TransactionListItem transaction={transaction.transaction_hash} />
             </Fragment>
           ))}
-          {isReachingEnd && !isEmpty ? null : (
+          {transactions?.length ? null : (
             <ListItemPlaceholder height={67}>
-              {isEmpty ? 'No transactions' : <Spinner />}
+              {transactions?.length === 0 ? 'No transactions' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>

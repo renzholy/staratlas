@@ -16,7 +16,7 @@ export default function Transactions() {
     isEmpty,
     isReachingEnd,
   } = useInfinite(
-    useTransactionsByHeight(info ? BigInt(info.head.number) : undefined, false, {
+    useTransactionsByHeight(info ? BigInt(info.head.number) : undefined, {
       revalidateOnFocus: false,
     }),
   )

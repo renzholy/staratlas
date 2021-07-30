@@ -6,22 +6,16 @@ import useNetwork from './use-network'
 
 type TransactionList = { _id: string; height: string; sender?: string }[]
 
-export function useTransactionsByHeight(
-  height?: BigInt,
-  strict?: boolean,
-  config?: SWRInfiniteConfiguration,
-) {
+export function useTransactionsByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<TransactionList>(
     (_, previousPageData) =>
       previousPageData?.length
         ? `/api/transactions-by-height?network=${network}&height=${
             BigInt(last(previousPageData)!.height) - BigInt(1)
-          }&strict=${strict ? '1' : ''}`
-        : height !== undefined
-        ? `/api/transactions-by-height?network=${network}&height=${height}&strict=${
-            strict ? '1' : ''
           }`
+        : height !== undefined
+        ? `/api/transactions-by-height?network=${network}&height=${height}`
         : null,
     jsonFetcher,
     config,
