@@ -27,7 +27,8 @@ export default async function transactionsByAddress(
     .limit(API_PAGE_SIZE)
     .toArray()
 
-  maintenance(network, height)
+  // eslint-disable-next-line no-console
+  maintenance(network, height).catch(console.error)
 
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json(data.map(mapper))
