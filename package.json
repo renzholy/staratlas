@@ -8,7 +8,7 @@
     "export": "next export",
     "format": "prettier --config .prettierrc.json --write .",
     "lint": "eslint .",
-    "bootstrap": "node bootstrap.js"
+    "maintenance": "node maintenance.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.14",

@@ -17,6 +17,6 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "src"
   },
-  "include": ["./src", "next.config.js", "next-env.d.ts"],
+  "include": ["./src", "next.config.js", "next-env.d.ts", "maintenance.js"],
   "exclude": ["node_modules"]
 }

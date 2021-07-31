@@ -32,5 +32,6 @@
     "no-underscore-dangle": "off",
     "no-nested-ternary": "off",
     "no-bitwise": "off"
-  }
+  },
+  "ignorePatterns": ["maintenance.js", "sentry.*.config.js"]
 }
