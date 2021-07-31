@@ -40,7 +40,7 @@ export default function Events() {
     1,
   )
   const ref = useRef<HTMLDivElement>(null)
-  const isNearBottom = useOnScreen(ref, '-20px')
+  const isNearBottom = useOnScreen(ref)
   useEffect(() => {
     if (isNearBottom) {
       setSize((old) => old + 1)
