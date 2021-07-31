@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 
-import { Heading, Text } from '@chakra-ui/react'
+import { Divider, Heading, Text } from '@chakra-ui/react'
 import { bcs, types } from '@starcoin/starcoin'
 import { Fragment, useCallback, useMemo } from 'react'
 import { arrayify } from 'utils/encoding'
@@ -28,7 +28,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
       >['ScriptFunction'],
     ) => (
       <>
-        <Text color="gray.500">{functionId || ''}</Text>
+        {functionId ? <Text color="gray.500">{functionId}</Text> : null}
         {scriptFunction.ty_args.length ? (
           <>
             <Heading size="sm" mt={4}>
@@ -48,7 +48,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
             </Heading>
             {scriptFunction.args.map((arg, index) => (
               <Fragment key={`${arg}${index}`}>
-                {index === 0 ? null : <br />}
+                {index === 0 ? null : <Divider marginY={1} />}
                 <Text color="gray.500">
                   {resolvedFunction?.args[index + 1]
                     ? `${types.formatTypeTag(resolvedFunction.args[index + 1].type_tag)}: ${
@@ -78,10 +78,11 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
           <Heading size="sm" mt={4}>
             Code
           </Heading>
-          {payload.Package.modules.map((module) => (
-            <Text key={module.code} color="gray.500">
-              {module.code}
-            </Text>
+          {payload.Package.modules.map((module, index) => (
+            <Fragment key={module.code}>
+              {index === 0 ? null : <Divider marginY={1} />}
+              <Text color="gray.500">{module.code}</Text>
+            </Fragment>
           ))}
           {payload.Package.init_script ? (
             <>
