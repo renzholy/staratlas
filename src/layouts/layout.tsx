@@ -89,6 +89,11 @@ export default function Layout(props: { children?: ReactNode }) {
                   Uncles
                 </MenuItemOption>
               </Link>
+              <Link href={`/${network}/events`} passHref={true}>
+                <MenuItemOption as="a" isChecked={/\/events/.test(router.asPath)}>
+                  Events
+                </MenuItemOption>
+              </Link>
               <Link href={`/${network}/tools`} passHref={true}>
                 <MenuItemOption as="a" isChecked={/\/tools/.test(router.asPath)}>
                   Tools
@@ -139,6 +144,17 @@ export default function Layout(props: { children?: ReactNode }) {
             display={{ base: 'none', xl: 'inline-flex' }}
           >
             Uncles
+          </Button>
+        </Link>
+        <Link href={`/${network}/events`} passHref={true}>
+          <Button
+            as="a"
+            bg={/\/events/.test(router.asPath) ? buttonBackground : undefined}
+            variant={/\/events/.test(router.asPath) ? 'solid' : 'ghost'}
+            mr={2}
+            display={{ base: 'none', xl: 'inline-flex' }}
+          >
+            Events
           </Button>
         </Link>
         <Link href={`/${network}/tools`} passHref={true}>

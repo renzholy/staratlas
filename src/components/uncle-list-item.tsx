@@ -69,7 +69,6 @@ export default function UncleListItem(props: {
         </Link>
       </Box>
       <br />
-      <Text minWidth={32}>Gas:&nbsp;{uncle ? formatNumber(BigInt(uncle.gas_used)) : '-'}</Text>
       <Text>Difficulty:&nbsp;{uncle ? formatNumber(BigInt(uncle.difficulty)) : '-'}</Text>
     </Box>
   )

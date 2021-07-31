@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef } from 'react'
-import { Divider, Grid, GridItem, Spinner } from '@chakra-ui/react'
+import { Divider, Spinner, GridItem, Grid } from '@chakra-ui/react'
 import { CardWithHeader } from 'layouts/card-with-header'
-import UncleListItem from 'components/uncle-list-item'
+import EventListItem from 'components/event-list-item'
 import useJsonRpc from 'hooks/use-json-rpc'
 import useOnScreen from 'hooks/use-on-screen'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -9,38 +9,33 @@ import useInfinite from 'hooks/use-infinite'
 import { useSWRInfinite } from 'swr'
 import { jsonRpc } from 'utils/json-rpc'
 import useNetwork from 'hooks/use-network'
+import { RPC_BLOCK_LIMIT } from 'utils/constants'
 import { Network } from 'utils/types'
+import { Static } from '@sinclair/typebox'
+import { TransactionEvent } from 'utils/json-rpc/chain'
 import last from 'lodash/last'
-import flatMap from 'lodash/flatMap'
 
-export default function Uncles() {
+export default function Events() {
   const { data: info } = useJsonRpc('chain.info', [], { revalidateOnFocus: false })
   const network = useNetwork()
   const {
-    data: uncles,
+    data: events,
     setSize,
     isEmpty,
     isReachingEnd,
   } = useInfinite(
-    useSWRInfinite(
+    useSWRInfinite<Static<typeof TransactionEvent>[]>(
       (_, previousPageData) => {
         if (previousPageData && !previousPageData.length) {
           return null
         }
         if (previousPageData) {
-          return [network, last(previousPageData)!.epoch.start_block_number - 1, 'uncles']
+          return [network, parseInt(last(previousPageData)!.block_number, 10) - 1, 'events']
         }
-        return [network, info ? parseInt(info.head.number, 10) : 0, 'uncles']
+        return [network, info ? parseInt(info.head.number, 10) : RPC_BLOCK_LIMIT, 'events']
       },
-      async (net: Network, number: number) => {
-        const [blocks, epoch] = await Promise.all([
-          jsonRpc(net, 'chain.get_epoch_uncles_by_number', [number]),
-          jsonRpc(net, 'chain.get_epoch_info_by_number', [number]),
-        ])
-        return flatMap(blocks.reverse(), (block) =>
-          block.uncles.map((uncle) => ({ uncle, ...epoch })),
-        )
-      },
+      async (net: Network, height: number) =>
+        jsonRpc(net, 'chain.get_events', [{ from_block: height - 1, to_block: height }]),
     ),
     1,
   )
@@ -50,7 +45,7 @@ export default function Uncles() {
     if (isNearBottom) {
       setSize((old) => old + 1)
     }
-  }, [isNearBottom, setSize, uncles])
+  }, [isNearBottom, setSize])
 
   return (
     <Grid
@@ -62,16 +57,16 @@ export default function Uncles() {
       padding={6}
     >
       <GridItem colSpan={{ base: 1, xl: 2 }} colStart={{ base: 1, xl: 2 }}>
-        <CardWithHeader title="Uncles">
-          {uncles?.map(({ uncle }, index) => (
-            <Fragment key={uncle.block_hash}>
+        <CardWithHeader title="Events">
+          {events?.map((event, index) => (
+            <Fragment key={event.block_hash + event.transaction_hash + event.event_seq_number}>
               {index === 0 ? null : <Divider />}
-              <UncleListItem uncle={uncle} />
+              <EventListItem event={event} showHash={true} />
             </Fragment>
           ))}
           {isReachingEnd && !isEmpty ? null : (
             <ListItemPlaceholder height={67}>
-              {isEmpty ? 'No uncles' : <Spinner />}
+              {isEmpty ? 'No events' : <Spinner />}
             </ListItemPlaceholder>
           )}
         </CardWithHeader>

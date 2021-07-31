@@ -6,7 +6,7 @@ import ListItemPlaceholder from 'components/list-item-placeholder'
 import useNetwork from 'hooks/use-network'
 import { CardWithHeader } from 'layouts/card-with-header'
 import CopyLink from 'components/copy-link'
-import BlockStat from 'components/block-stat'
+import UncleStat from 'components/uncle-stat'
 import NotFound from 'components/not-fount'
 import useJsonRpc from 'hooks/use-json-rpc'
 import { Fragment, useEffect, useMemo } from 'react'
@@ -46,7 +46,7 @@ export default function Uncle() {
       gap={6}
       padding={6}
     >
-      <BlockStat block={uncle?.header} />
+      <UncleStat uncle={uncle?.header} />
       <GridItem colSpan={1}>
         <CardWithHeader title="Uncle">
           {uncle ? (
