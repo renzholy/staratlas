@@ -1,10 +1,7 @@
-import { createStandaloneToast } from '@chakra-ui/react'
 import { Static } from '@sinclair/typebox'
 import addFormats from 'ajv-formats'
 import Ajv from 'ajv/dist/2019'
 import chain from './chain'
-
-const toast = createStandaloneToast()
 
 const ajv = addFormats(new Ajv()).addKeyword('kind').addKeyword('modifier')
 
@@ -35,13 +32,6 @@ export async function jsonRpc<T extends keyof typeof API>(
     throw new Error(`${method}(${params.join(', ')}) result ${ajv.errorsText(ajv.errors)}`)
   }
   if ('error' in json && 'message' in json.error) {
-    toast({
-      id: network + method,
-      title: 'JSON RPC Error',
-      description: json.error.message,
-      status: 'error',
-      isClosable: true,
-    })
     throw new Error(`${method}(${params.join(', ')}) result ${json.error.message}`)
   }
   throw new Error('unknown json rpc error')
