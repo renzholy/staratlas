@@ -6,6 +6,7 @@ import useNetwork from 'hooks/use-network'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { TransactionEvent } from 'utils/json-rpc/chain'
+import CopyLink from './copy-link'
 import JsonCode from './json-code'
 
 type EventName =
@@ -104,9 +105,13 @@ export default function EventListItem(props: {
         }
       `}
     >
+      <Heading size="sm">Key</Heading>
+      <CopyLink>{props.event.event_key}</CopyLink>
       {props.showHash ? (
         <>
-          <Heading size="sm">Block</Heading>
+          <Heading size="sm" mt={4}>
+            Block
+          </Heading>
           <Link href={`/${network}/block/${props.event.block_hash}`} passHref={true}>
             <Button as="a" variant="link" color="blue.500">
               {props.event.block_hash}
@@ -122,7 +127,7 @@ export default function EventListItem(props: {
           </Link>
         </>
       ) : null}
-      <Heading size="sm" mt={props.showHash ? 4 : 0}>
+      <Heading size="sm" mt={4}>
         {event.module}::{event.name}
       </Heading>
       <JsonCode>{event.data}</JsonCode>
