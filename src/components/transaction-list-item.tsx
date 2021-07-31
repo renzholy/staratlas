@@ -54,7 +54,7 @@ export default function TransactionListItem(props: {
           variant="link"
           color="orange.500"
           width={{ base: undefined, md: 32 }}
-          marginRight={{ base: undefined, md: 12 }}
+          marginRight={{ base: undefined, md: 8 }}
         >
           {transaction?.transaction_hash}
         </Button>
@@ -77,7 +77,7 @@ export default function TransactionListItem(props: {
       Sender:&nbsp;
       {transaction?.user_transaction?.raw_txn.sender ? (
         <Box
-          width={{ base: '100%', md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 140px)' }}
+          width={{ base: '100%', md: 'calc(100% - (4px * 6 * 2) - (40px * 4) - 140px)' }}
           display="inline-block"
         >
           <Link
@@ -93,7 +93,7 @@ export default function TransactionListItem(props: {
         'none'
       )}
       <br />
-      <Text minWidth={44}>{payload ? Object.keys(payload)[0] : 'No payload'}</Text>
+      <Text minWidth={40}>{payload ? Object.keys(payload)[0] : 'No payload'}</Text>
       <Text minWidth={32} color={status === 'Executed' ? undefined : 'red.500'}>
         {status}
       </Text>
