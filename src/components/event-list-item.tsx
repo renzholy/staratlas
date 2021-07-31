@@ -87,7 +87,7 @@ export default function EventListItem(props: {
 
   return (
     <Box paddingX={6} paddingY={4} width="100%" css={textClass}>
-      <Heading size="sm" mt={4}>
+      <Heading size="sm">
         {event.module}::{event.name}
       </Heading>
       <CopyLink>{props.event.event_key}</CopyLink>
