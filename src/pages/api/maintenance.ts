@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Network } from 'utils/types'
 import { maintenance } from 'utils/database/maintenance'
-import { withSentry } from '@sentry/nextjs'
 
-async function Maintenance(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+export default async function Maintenance(
+  req: NextApiRequest,
+  res: NextApiResponse,
+): Promise<void> {
   const { network, height } = req.query as { network: Network; height?: string }
 
   const top = await maintenance(network, height ? BigInt(height) : undefined)
@@ -12,5 +14,3 @@ async function Maintenance(req: NextApiRequest, res: NextApiResponse): Promise<v
     top: top?.toString(),
   })
 }
-
-export default withSentry(Maintenance)
