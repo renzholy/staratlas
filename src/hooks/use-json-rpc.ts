@@ -10,7 +10,9 @@ export default function useJsonRpc<T extends keyof typeof API>(
 ) {
   const network = useNetwork()
   return useSWR<Static<typeof API[T]['result']>>(
-    method && params ? [network, 'rpc', method, JSON.stringify(params)] : null,
+    method && params
+      ? [network, 'jsonRpc', method, ...params.map((param) => JSON.stringify(param))]
+      : null,
     () => jsonRpc(network, method!, params!),
     config,
   )

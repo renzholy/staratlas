@@ -9,14 +9,17 @@ type TransactionList = { _id: string; height: string; sender?: string }[]
 export function useTransactionsByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<TransactionList>(
-    (_, previousPageData) =>
-      previousPageData?.length
-        ? `/api/transactions-by-height?network=${network}&height=${
-            BigInt(last(previousPageData)!.height) - BigInt(1)
-          }`
-        : height !== undefined
-        ? `/api/transactions-by-height?network=${network}&height=${height}`
-        : null,
+    (_, previousPageData) => {
+      if (previousPageData && !previousPageData.length) {
+        return null
+      }
+      if (previousPageData) {
+        return `/api/transactions-by-height?network=${network}&height=${
+          BigInt(last(previousPageData)!.height) - BigInt(1)
+        }`
+      }
+      return `/api/transactions-by-height?network=${network}&height=${height || 0}`
+    },
     jsonFetcher,
     config,
   )
@@ -26,9 +29,6 @@ export function useTransactionsByAddress(address?: string, config?: SWRConfigura
   const network = useNetwork()
   return useSWRInfinite<TransactionList>(
     (_, previousPageData) => {
-      if (!address) {
-        return null
-      }
       if (previousPageData && !previousPageData.length) {
         return null
       }
@@ -37,7 +37,7 @@ export function useTransactionsByAddress(address?: string, config?: SWRConfigura
           BigInt(last(previousPageData)!.height) - BigInt(1)
         }`
       }
-      return `/api/transactions-by-address?network=${network}&address=${address}`
+      return `/api/transactions-by-address?network=${network}&address=${address || ''}`
     },
     jsonFetcher,
     config,
