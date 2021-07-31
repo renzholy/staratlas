@@ -2,7 +2,7 @@
 
 import { Heading, Text } from '@chakra-ui/react'
 import { bcs, types } from '@starcoin/starcoin'
-import { useCallback, useMemo } from 'react'
+import { Fragment, useCallback, useMemo } from 'react'
 import { arrayify } from 'utils/encoding'
 import { useResolveFunction } from 'hooks/use-contract'
 import { formatArgsWithTypeTag } from 'utils/formatter'
@@ -47,16 +47,19 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
               Args
             </Heading>
             {scriptFunction.args.map((arg, index) => (
-              <Text key={`${arg}${index}`} color="gray.500">
-                {resolvedFunction?.args[index + 1]
-                  ? `${types.formatTypeTag(resolvedFunction.args[index + 1].type_tag)}: ${
-                      formatArgsWithTypeTag(
-                        new bcs.BcsDeserializer(arrayify(arg)),
-                        resolvedFunction.args[index + 1].type_tag,
-                      ) || arg
-                    }`
-                  : arg}
-              </Text>
+              <Fragment key={`${arg}${index}`}>
+                {index === 0 ? null : <br />}
+                <Text color="gray.500">
+                  {resolvedFunction?.args[index + 1]
+                    ? `${types.formatTypeTag(resolvedFunction.args[index + 1].type_tag)}: ${
+                        formatArgsWithTypeTag(
+                          new bcs.BcsDeserializer(arrayify(arg)),
+                          resolvedFunction.args[index + 1].type_tag,
+                        ) || arg
+                      }`
+                    : arg}
+                </Text>
+              </Fragment>
             ))}
           </>
         ) : null}

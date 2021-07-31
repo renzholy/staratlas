@@ -8,7 +8,7 @@ import TimeAgo from 'timeago-react'
 import useNetwork from 'hooks/use-network'
 import { formatTimeSimple, formatNumber } from 'utils/formatter'
 import useJsonRpc from 'hooks/use-json-rpc'
-import { textClass } from 'utils/style'
+import { textInListItemStyle } from 'utils/style'
 
 export default function TransactionListItem(props: {
   transaction: string
@@ -47,7 +47,7 @@ export default function TransactionListItem(props: {
   )
 
   return (
-    <Box paddingX={6} paddingY={2} textColor="gray.500" width="100%" css={textClass}>
+    <Box paddingX={6} paddingY={2} textColor="gray.500" width="100%" css={textInListItemStyle}>
       <Link href={`/${network}/tx/${transaction?.transaction_hash}`} passHref={true}>
         <Button
           as="a"

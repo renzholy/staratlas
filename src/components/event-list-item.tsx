@@ -5,7 +5,7 @@ import useNetwork from 'hooks/use-network'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { TransactionEvent } from 'utils/json-rpc/chain'
-import { textClass } from 'utils/style'
+import { textInListItemStyle } from 'utils/style'
 import JsonCode from './json-code'
 
 type EventName =
@@ -85,7 +85,7 @@ export default function EventListItem(props: {
   }, [props.event])
 
   return (
-    <Box paddingX={6} paddingY={4} width="100%" css={textClass}>
+    <Box paddingX={6} paddingY={4} width="100%" css={textInListItemStyle}>
       <Heading size="sm">
         {event.module}::{event.name}
       </Heading>

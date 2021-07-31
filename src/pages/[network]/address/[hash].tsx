@@ -22,7 +22,7 @@ import BalanceAmount from 'components/balance-amount'
 import { useTransactionsByAddress } from 'hooks/use-api'
 import useOnScreen from 'hooks/use-on-screen'
 import useInfinite from 'hooks/use-infinite'
-import { textClass } from 'utils/style'
+import { textInCardStyle } from 'utils/style'
 
 export default function Address() {
   const router = useRouter()
@@ -83,7 +83,7 @@ export default function Address() {
         <Spacer height={6} />
         <CardWithHeader title="Resources">
           {resources ? (
-            <Box paddingX={6} paddingY={4} css={textClass}>
+            <Box paddingX={6} paddingY={4} css={textInCardStyle}>
               {Object.entries(resources).map(([key, value], index) => (
                 <Fragment key={key}>
                   {index === 0 ? null : <Divider mt={3} />}

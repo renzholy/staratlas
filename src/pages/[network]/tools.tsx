@@ -5,7 +5,7 @@ import JsonRpcUtil from 'components/json-rpc-util'
 
 import TransactionPayload from 'components/transaction-payload'
 import { CardWithHeader } from 'layouts/card-with-header'
-import { textClass } from 'utils/style'
+import { textInCardStyle } from 'utils/style'
 
 export default function Tools() {
   const [text, setText] = useState('')
@@ -28,7 +28,7 @@ export default function Tools() {
     >
       <GridItem colSpan={1}>
         <CardWithHeader title="Decode payload hex">
-          <Box paddingX={6} paddingY={4} css={textClass}>
+          <Box paddingX={6} paddingY={4} css={textInCardStyle}>
             <Textarea
               mb={payload || error ? 4 : 0}
               value={text}

@@ -20,7 +20,7 @@ import useJsonRpc from 'hooks/use-json-rpc'
 import { Fragment, useEffect, useMemo } from 'react'
 import UncleListItem from 'components/uncle-list-item'
 import flatMap from 'lodash/flatMap'
-import { textClass } from 'utils/style'
+import { textInCardStyle } from 'utils/style'
 
 export default function Uncle() {
   const network = useNetwork()
@@ -64,7 +64,7 @@ export default function Uncle() {
       <GridItem colSpan={1}>
         <CardWithHeader title="Uncle">
           {uncle ? (
-            <Box paddingX={6} paddingY={4} css={textClass}>
+            <Box paddingX={6} paddingY={4} css={textInCardStyle}>
               <Heading size="sm">Hash</Heading>
               <Text color="gray.500">{uncle.header.block_hash}</Text>
               <Heading size="sm" mt={4}>

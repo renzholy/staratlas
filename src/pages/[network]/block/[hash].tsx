@@ -26,7 +26,7 @@ import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
 import useJsonRpc from 'hooks/use-json-rpc'
 import flatMap from 'lodash/flatMap'
-import { textClass } from 'utils/style'
+import { textInCardStyle } from 'utils/style'
 
 export default function Block() {
   const router = useRouter()
@@ -120,7 +120,7 @@ export default function Block() {
           }
         >
           {block ? (
-            <Box paddingX={6} paddingY={4} css={textClass}>
+            <Box paddingX={6} paddingY={4} css={textInCardStyle}>
               <Heading size="sm">Hash</Heading>
               <Text color="gray.500">{block.header.block_hash}</Text>
               <Heading size="sm" mt={4}>

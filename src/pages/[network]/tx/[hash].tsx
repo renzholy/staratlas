@@ -26,7 +26,7 @@ import useNetwork from 'hooks/use-network'
 import { CardWithHeader } from 'layouts/card-with-header'
 import dynamic from 'next/dynamic'
 import useJsonRpc from 'hooks/use-json-rpc'
-import { textClass } from 'utils/style'
+import { textInCardStyle } from 'utils/style'
 
 const DryRunModal = dynamic(() => import('components/dry-run-modal'), { ssr: false })
 
@@ -75,7 +75,7 @@ export default function Transaction() {
           }
         >
           {transaction ? (
-            <Box paddingX={6} paddingY={4} css={textClass}>
+            <Box paddingX={6} paddingY={4} css={textInCardStyle}>
               <Heading size="sm">Hash</Heading>
               <Text color="gray.500">{transaction.transaction_hash}</Text>
               {info && typeof info.status === 'object' ? (
@@ -152,7 +152,7 @@ export default function Transaction() {
             }
           >
             {payload ? (
-              <Box paddingX={6} paddingY={4} css={textClass}>
+              <Box paddingX={6} paddingY={4} css={textInCardStyle}>
                 <TransactionPayload payload={payload} />
               </Box>
             ) : (
@@ -164,7 +164,7 @@ export default function Transaction() {
         ) : null}
         {!transaction || transaction.block_metadata ? (
           <CardWithHeader title="Block metadata">
-            <Box paddingX={6} paddingY={4} css={textClass}>
+            <Box paddingX={6} paddingY={4} css={textInCardStyle}>
               <Heading size="sm">Author</Heading>
               <Link
                 href={`/${network}/address/${transaction?.block_metadata.author}`}
