@@ -35,7 +35,13 @@ export async function jsonRpc<T extends keyof typeof API>(
     throw new Error(`${method}(${params.join(', ')}) result ${ajv.errorsText(ajv.errors)}`)
   }
   if ('error' in json && 'message' in json.error) {
-    toast({ title: 'JSON RPC Error', description: json.error.message, status: 'error' })
+    toast({
+      id: network + method,
+      title: 'JSON RPC Error',
+      description: json.error.message,
+      status: 'error',
+      isClosable: true,
+    })
     throw new Error(`${method}(${params.join(', ')}) result ${json.error.message}`)
   }
   throw new Error('unknown json rpc error')

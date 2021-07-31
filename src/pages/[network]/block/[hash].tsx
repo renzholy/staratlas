@@ -59,7 +59,12 @@ export default function Block() {
     }
     if (uncles.find(({ block_hash }) => block_hash === block.header.block_hash)) {
       router.push(`/${network}/uncle/${block.header.block_hash}`)
-      toast({ title: `This is an uncle`, description: block.header.block_hash, status: 'warning' })
+      toast({
+        title: `This is an uncle`,
+        description: block.header.block_hash,
+        status: 'warning',
+        isClosable: true,
+      })
     }
   }, [uncles, network, router, block, toast])
 

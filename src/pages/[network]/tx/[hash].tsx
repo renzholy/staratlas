@@ -141,6 +141,7 @@ export default function Transaction() {
                         title: 'Copied to clipboard',
                         status: 'success',
                         duration: 1000,
+                        isClosable: true,
                       })
                     }
                   }}

@@ -53,7 +53,7 @@ export default function DryRunModal(props: {
     if (handleDryRun.status === 'success') {
       onOpen()
     } else if (handleDryRun.status === 'error') {
-      toast({ status: 'error', title: 'Dry run error', description: error })
+      toast({ status: 'error', title: 'Dry run error', description: error, isClosable: true })
     }
   }, [error, handleDryRun.status, onOpen, toast])
 

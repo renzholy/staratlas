@@ -43,7 +43,12 @@ export default function Uncle() {
       return
     }
     router.push(`/${network}/block/${uncle.header.block_hash}`)
-    toast({ title: `This is a block`, description: uncle.header.block_hash, status: 'warning' })
+    toast({
+      title: `This is a block`,
+      description: uncle.header.block_hash,
+      status: 'warning',
+      isClosable: true,
+    })
   }, [uncles, network, router, uncle, toast])
 
   if (error) {
