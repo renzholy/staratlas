@@ -16,6 +16,7 @@
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@monaco-editor/react": "^4.2.1",
+    "@sentry/nextjs": "^6.10.0",
     "@sinclair/typebox": "^0.20.4",
     "@starcoin/starcoin": "^1.4.3",
     "ajv": "^8.6.2",

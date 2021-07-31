@@ -6,11 +6,9 @@ import { mapper } from 'utils/api'
 import { maintenance } from 'utils/database/maintenance'
 import { arrayify } from 'utils/encoding'
 import { API_PAGE_SIZE } from 'utils/constants'
+import { withSentry } from '@sentry/nextjs'
 
-export default async function transactionsByAddress(
-  req: NextApiRequest,
-  res: NextApiResponse,
-): Promise<void> {
+async function TransactionsByAddress(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   const { network, address, ...query } = req.query as {
     network: Network
     address: string
@@ -33,3 +31,5 @@ export default async function transactionsByAddress(
   res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   res.json(data.map(mapper))
 }
+
+export default withSentry(TransactionsByAddress)
