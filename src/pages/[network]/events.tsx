@@ -61,7 +61,7 @@ export default function Events() {
           {events?.map((event, index) => (
             <Fragment key={event.block_hash + event.transaction_hash + event.event_seq_number}>
               {index === 0 ? null : <Divider />}
-              <EventListItem event={event} />
+              <EventListItem event={event} showHash={true} />
             </Fragment>
           ))}
           {isReachingEnd && !isEmpty ? null : (
