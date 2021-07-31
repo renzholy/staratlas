@@ -57,7 +57,7 @@ export default function ComboBox<T>(props: {
         position="absolute"
         display={isOpen && props.items.length ? 'unset' : 'none'}
         maxHeight="md"
-        width="100%"
+        minWidth="100%"
         overflowY="auto"
         zIndex="dropdown"
         borderRadius="md"

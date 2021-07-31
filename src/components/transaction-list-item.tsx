@@ -87,7 +87,7 @@ export default function TransactionListItem(props: {
       Sender:&nbsp;
       {transaction?.user_transaction?.raw_txn.sender ? (
         <Box
-          width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 140px)' }}
+          width={{ base: '100%', md: 'calc(100% - (4px * 6 * 2) - (44px * 4) - 140px)' }}
           display="inline-block"
         >
           <Link

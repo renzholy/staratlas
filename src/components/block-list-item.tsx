@@ -59,7 +59,7 @@ export default function BlockListItem(props: {
       </Text>
       Author:&nbsp;
       <Box
-        width={{ base: undefined, md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
+        width={{ base: '100%', md: 'calc(100% - (4px * 6 * 2) - (32px * 4) - 130px)' }}
         display="inline-block"
       >
         <Link href={`/${network}/address/${block?.header.author}`} passHref={true}>
