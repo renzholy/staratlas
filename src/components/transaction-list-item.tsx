@@ -15,12 +15,19 @@ export default function TransactionListItem(props: {
   relativeTime?: boolean
 }) {
   const network = useNetwork()
-  const { data: transaction } = useJsonRpc('chain.get_transaction', [props.transaction])
-  const { data: info } = useJsonRpc('chain.get_transaction_info', [props.transaction])
-  const { data: events } = useJsonRpc('chain.get_events_by_txn_hash', [props.transaction])
+  const { data: transaction } = useJsonRpc('chain.get_transaction', [props.transaction], {
+    revalidateOnFocus: false,
+  })
+  const { data: info } = useJsonRpc('chain.get_transaction_info', [props.transaction], {
+    revalidateOnFocus: false,
+  })
+  const { data: events } = useJsonRpc('chain.get_events_by_txn_hash', [props.transaction], {
+    revalidateOnFocus: false,
+  })
   const { data: block } = useJsonRpc(
     'chain.get_block_by_hash',
     transaction ? [transaction.block_hash] : undefined,
+    { revalidateOnFocus: false },
   )
   const payload = useMemo(
     () =>
