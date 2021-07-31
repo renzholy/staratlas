@@ -31,9 +31,9 @@ export default function Uncles() {
           return null
         }
         if (previousPageData) {
-          return [network, last(previousPageData)!.epoch.start_block_number - 1]
+          return [network, last(previousPageData)!.epoch.start_block_number - 1, 'uncles']
         }
-        return [network, parseInt(info.head.number, 10)]
+        return [network, parseInt(info.head.number, 10), 'uncles']
       },
       async (net: Network, number: number) => {
         const [blocks, epoch] = await Promise.all([

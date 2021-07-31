@@ -31,9 +31,9 @@ export default function Blocks() {
           return null
         }
         if (previousPageData) {
-          return [network, parseInt(last(previousPageData)!.header.number, 10) - 1]
+          return [network, parseInt(last(previousPageData)!.header.number, 10) - 1, 'blocks']
         }
-        return [network, parseInt(info.head.number, 10)]
+        return [network, parseInt(info.head.number, 10), 'blocks']
       },
       async (net: Network, number: number) =>
         jsonRpc(net, 'chain.get_blocks_by_number', [number, RPC_BLOCK_LIMIT]),

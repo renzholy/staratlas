@@ -37,7 +37,13 @@ export default function SearchBar() {
   )
   const { data: block, isValidating: blockValidating } = useJsonRpc(
     isHash ? 'chain.get_block_by_hash' : isHeight ? 'chain.get_block_by_number' : undefined,
-    isHash ? [trimedKeyword] : isHeight ? [parseInt(trimedKeyword, 10)] : undefined,
+    trimedKeyword
+      ? isHash
+        ? [trimedKeyword]
+        : isHeight
+        ? [parseInt(trimedKeyword, 10)]
+        : undefined
+      : undefined,
   )
   const { data: blocks } = useJsonRpc(
     'chain.get_epoch_uncles_by_number',
