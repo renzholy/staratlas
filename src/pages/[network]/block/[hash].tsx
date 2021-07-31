@@ -44,7 +44,7 @@ export default function Block() {
   )
   const { data: transactions } = useJsonRpc(
     'chain.get_block_txn_infos',
-    hash && isHash ? [hash] : block ? [block.header.body_hash] : undefined,
+    hash && isHash ? [hash] : block ? [block.header.block_hash] : undefined,
   )
   const ref = useRef<HTMLDivElement>(null)
   const { data: blocks } = useJsonRpc(
