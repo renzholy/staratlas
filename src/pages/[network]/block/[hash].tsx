@@ -13,7 +13,6 @@ import {
   useColorMode,
   useToast,
 } from '@chakra-ui/react'
-import { css } from '@emotion/react'
 import { Fragment, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -27,6 +26,7 @@ import NotFound from 'components/not-fount'
 import useNetwork from 'hooks/use-network'
 import useJsonRpc from 'hooks/use-json-rpc'
 import flatMap from 'lodash/flatMap'
+import { textClass } from 'utils/style'
 
 export default function Block() {
   const router = useRouter()
@@ -115,23 +115,7 @@ export default function Block() {
           }
         >
           {block ? (
-            <Box
-              paddingX={6}
-              paddingY={4}
-              css={css`
-                button,
-                a {
-                  text-overflow: ellipsis;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  max-width: 100%;
-                  display: inline-block;
-                  text-align: start;
-                  vertical-align: text-bottom;
-                  font-weight: normal;
-                }
-              `}
-            >
+            <Box paddingX={6} paddingY={4} css={textClass}>
               <Heading size="sm">Hash</Heading>
               <CopyLink>{block.header.block_hash}</CopyLink>
               <Heading size="sm" mt={4}>

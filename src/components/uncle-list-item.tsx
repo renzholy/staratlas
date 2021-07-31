@@ -7,6 +7,7 @@ import useNetwork from 'hooks/use-network'
 import { formatTimeSimple, formatNumber } from 'utils/formatter'
 import { Static } from '@sinclair/typebox'
 import { BlockHeader } from 'utils/json-rpc/chain'
+import { textClass } from 'utils/style'
 
 export default function UncleListItem(props: {
   uncle: Static<typeof BlockHeader>
@@ -16,25 +17,7 @@ export default function UncleListItem(props: {
   const network = useNetwork()
 
   return (
-    <Box
-      paddingX={6}
-      paddingY={2}
-      textColor="gray.500"
-      width="100%"
-      css={css`
-        a,
-        p {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-          max-width: 100%;
-          display: inline-block;
-          text-align: start;
-          vertical-align: text-bottom;
-          font-weight: normal;
-        }
-      `}
-    >
+    <Box paddingX={6} paddingY={2} textColor="gray.500" width="100%" css={textClass}>
       <Box width={32} display="inline-block">
         <Link href={`/${network}/uncle/${uncle?.block_hash}`} passHref={true}>
           <Button as="a" variant="link" color="purple.500">

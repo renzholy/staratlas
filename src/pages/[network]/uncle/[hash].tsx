@@ -1,5 +1,4 @@
 import { Grid, GridItem, Box, Heading, Spinner, Button, Divider, useToast } from '@chakra-ui/react'
-import { css } from '@emotion/react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -12,6 +11,7 @@ import useJsonRpc from 'hooks/use-json-rpc'
 import { Fragment, useEffect, useMemo } from 'react'
 import UncleListItem from 'components/uncle-list-item'
 import flatMap from 'lodash/flatMap'
+import { textClass } from 'utils/style'
 
 export default function Uncle() {
   const network = useNetwork()
@@ -50,23 +50,7 @@ export default function Uncle() {
       <GridItem colSpan={1}>
         <CardWithHeader title="Uncle">
           {uncle ? (
-            <Box
-              paddingX={6}
-              paddingY={4}
-              css={css`
-                button,
-                a {
-                  text-overflow: ellipsis;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  max-width: 100%;
-                  display: inline-block;
-                  text-align: start;
-                  font-weight: normal;
-                  vertical-align: text-bottom;
-                }
-              `}
-            >
+            <Box paddingX={6} paddingY={4} css={textClass}>
               <Heading size="sm">Hash</Heading>
               <CopyLink>{uncle.header.block_hash}</CopyLink>
               <Heading size="sm" mt={4}>

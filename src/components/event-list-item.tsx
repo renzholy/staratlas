@@ -1,11 +1,11 @@
 import { Box, Button, Heading } from '@chakra-ui/react'
-import { css } from '@emotion/react'
 import { Static } from '@sinclair/typebox'
 import { onchain_events } from '@starcoin/starcoin'
 import useNetwork from 'hooks/use-network'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { TransactionEvent } from 'utils/json-rpc/chain'
+import { textClass } from 'utils/style'
 import CopyLink from './copy-link'
 import JsonCode from './json-code'
 
@@ -86,25 +86,7 @@ export default function EventListItem(props: {
   }, [props.event])
 
   return (
-    <Box
-      paddingX={6}
-      paddingY={4}
-      width="100%"
-      css={css`
-        button,
-        p,
-        a {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-          max-width: 100%;
-          display: inline-block;
-          text-align: start;
-          vertical-align: text-bottom;
-          font-weight: normal;
-        }
-      `}
-    >
+    <Box paddingX={6} paddingY={4} width="100%" css={textClass}>
       <Heading size="sm">Key</Heading>
       <CopyLink>{props.event.event_key}</CopyLink>
       {props.showHash ? (

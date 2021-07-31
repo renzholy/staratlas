@@ -11,7 +11,6 @@ import {
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react'
-import { css } from '@emotion/react'
 import { encoding } from '@starcoin/starcoin'
 import copy from 'copy-to-clipboard'
 import { Fragment, Suspense, useMemo } from 'react'
@@ -28,6 +27,7 @@ import useNetwork from 'hooks/use-network'
 import { CardWithHeader } from 'layouts/card-with-header'
 import dynamic from 'next/dynamic'
 import useJsonRpc from 'hooks/use-json-rpc'
+import { textClass } from 'utils/style'
 
 const DryRunModal = dynamic(() => import('components/dry-run-modal'), { ssr: false })
 
@@ -76,23 +76,7 @@ export default function Transaction() {
           }
         >
           {transaction ? (
-            <Box
-              paddingX={6}
-              paddingY={4}
-              css={css`
-                button,
-                a {
-                  text-overflow: ellipsis;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  max-width: 100%;
-                  display: inline-block;
-                  text-align: start;
-                  vertical-align: text-bottom;
-                  font-weight: normal;
-                }
-              `}
-            >
+            <Box paddingX={6} paddingY={4} css={textClass}>
               <Heading size="sm">Hash</Heading>
               <CopyLink>{transaction.transaction_hash}</CopyLink>
               {info && typeof info.status === 'object' ? (
@@ -168,22 +152,7 @@ export default function Transaction() {
             }
           >
             {payload ? (
-              <Box
-                paddingX={6}
-                paddingY={4}
-                css={css`
-                  button {
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    max-width: 100%;
-                    display: inline-block;
-                    text-align: start;
-                    vertical-align: text-bottom;
-                    font-weight: normal;
-                  }
-                `}
-              >
+              <Box paddingX={6} paddingY={4} css={textClass}>
                 <TransactionPayload payload={payload} />
               </Box>
             ) : (
@@ -195,23 +164,7 @@ export default function Transaction() {
         ) : null}
         {!transaction || transaction.block_metadata ? (
           <CardWithHeader title="Block metadata">
-            <Box
-              paddingX={6}
-              paddingY={4}
-              css={css`
-                button,
-                a {
-                  text-overflow: ellipsis;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  max-width: 100%;
-                  display: inline-block;
-                  text-align: start;
-                  vertical-align: text-bottom;
-                  font-weight: normal;
-                }
-              `}
-            >
+            <Box paddingX={6} paddingY={4} css={textClass}>
               <Heading size="sm">Author</Heading>
               <Link
                 href={`/${network}/address/${transaction?.block_metadata.author}`}

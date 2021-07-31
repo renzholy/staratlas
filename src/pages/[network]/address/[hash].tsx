@@ -10,7 +10,6 @@ import {
   StatLabel,
   StatNumber,
 } from '@chakra-ui/react'
-import { css } from '@emotion/react'
 import { Fragment, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import ResourceListItem from 'components/resource-list-item'
@@ -23,6 +22,7 @@ import BalanceAmount from 'components/balance-amount'
 import { useTransactionsByAddress } from 'hooks/use-api'
 import useOnScreen from 'hooks/use-on-screen'
 import useInfinite from 'hooks/use-infinite'
+import { textClass } from 'utils/style'
 
 export default function Address() {
   const router = useRouter()
@@ -83,23 +83,7 @@ export default function Address() {
         <Spacer height={6} />
         <CardWithHeader title="Resources">
           {resources ? (
-            <Box
-              paddingX={6}
-              paddingY={4}
-              css={css`
-                button,
-                a {
-                  text-overflow: ellipsis;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  max-width: 100%;
-                  display: inline-block;
-                  text-align: start;
-                  vertical-align: text-bottom;
-                  font-weight: normal;
-                }
-              `}
-            >
+            <Box paddingX={6} paddingY={4} css={textClass}>
               {Object.entries(resources).map(([key, value], index) => (
                 <Fragment key={key}>
                   {index === 0 ? null : <Divider mt={3} />}
