@@ -87,7 +87,9 @@ export default function EventListItem(props: {
 
   return (
     <Box paddingX={6} paddingY={4} width="100%" css={textClass}>
-      <Heading size="sm">Key</Heading>
+      <Heading size="sm" mt={4}>
+        {event.module}::{event.name}
+      </Heading>
       <CopyLink>{props.event.event_key}</CopyLink>
       {props.showHash ? (
         <>
@@ -109,9 +111,6 @@ export default function EventListItem(props: {
           </Link>
         </>
       ) : null}
-      <Heading size="sm" mt={4}>
-        {event.module}::{event.name}
-      </Heading>
       <JsonCode>{event.data}</JsonCode>
     </Box>
   )
