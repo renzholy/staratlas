@@ -1,10 +1,19 @@
-import { Grid, GridItem, Box, Heading, Spinner, Button, Divider, useToast } from '@chakra-ui/react'
+import {
+  Grid,
+  GridItem,
+  Box,
+  Heading,
+  Spinner,
+  Button,
+  Divider,
+  Text,
+  useToast,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import useNetwork from 'hooks/use-network'
 import { CardWithHeader } from 'layouts/card-with-header'
-import CopyLink from 'components/copy-link'
 import UncleStat from 'components/uncle-stat'
 import NotFound from 'components/not-fount'
 import useJsonRpc from 'hooks/use-json-rpc'
@@ -52,7 +61,7 @@ export default function Uncle() {
           {uncle ? (
             <Box paddingX={6} paddingY={4} css={textClass}>
               <Heading size="sm">Hash</Heading>
-              <CopyLink>{uncle.header.block_hash}</CopyLink>
+              <Text color="gray.500">{uncle.header.block_hash}</Text>
               <Heading size="sm" mt={4}>
                 Author
               </Heading>
@@ -72,19 +81,19 @@ export default function Uncle() {
               <Heading size="sm" mt={4}>
                 Body hash
               </Heading>
-              <CopyLink>{uncle.header.body_hash}</CopyLink>
+              <Text color="gray.500">{uncle.header.body_hash}</Text>
               <Heading size="sm" mt={4}>
                 Block accumulator root
               </Heading>
-              <CopyLink>{uncle.header.block_accumulator_root}</CopyLink>
+              <Text color="gray.500">{uncle.header.block_accumulator_root}</Text>
               <Heading size="sm" mt={4}>
                 State root
               </Heading>
-              <CopyLink>{uncle.header.state_root}</CopyLink>
+              <Text color="gray.500">{uncle.header.state_root}</Text>
               <Heading size="sm" mt={4}>
                 Txn accumulator root
               </Heading>
-              <CopyLink>{uncle.header.txn_accumulator_root}</CopyLink>
+              <Text color="gray.500">{uncle.header.txn_accumulator_root}</Text>
             </Box>
           ) : (
             <ListItemPlaceholder height={429}>

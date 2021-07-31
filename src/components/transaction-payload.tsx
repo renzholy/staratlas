@@ -6,7 +6,6 @@ import { useCallback, useMemo } from 'react'
 import { arrayify } from 'utils/encoding'
 import { useResolveFunction } from 'hooks/use-contract'
 import { formatArgsWithTypeTag } from 'utils/formatter'
-import CopyLink from './copy-link'
 
 export default function TransactionPayload(props: { payload: types.TransactionPayload }) {
   const { payload } = props
@@ -29,16 +28,16 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
       >['ScriptFunction'],
     ) => (
       <>
-        <CopyLink>{functionId || ''}</CopyLink>
+        <Text color="gray.500">{functionId || ''}</Text>
         {scriptFunction.ty_args.length ? (
           <>
             <Heading size="sm" mt={4}>
               Type args
             </Heading>
             {scriptFunction.ty_args.map((arg, index) => (
-              <CopyLink key={`${types.formatTypeTag(arg)}${index}`}>
+              <Text key={`${types.formatTypeTag(arg)}${index}`} color="gray.500">
                 {types.formatTypeTag(arg)}
-              </CopyLink>
+              </Text>
             ))}
           </>
         ) : null}
@@ -72,7 +71,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
       {'ScriptFunction' in payload ? renderScriptFunction(payload.ScriptFunction) : null}
       {'Package' in payload ? (
         <>
-          <CopyLink>{payload.Package.package_address}</CopyLink>
+          <Text color="gray.500">{payload.Package.package_address}</Text>
           <Heading size="sm" mt={4}>
             Code
           </Heading>

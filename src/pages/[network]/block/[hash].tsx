@@ -10,6 +10,7 @@ import {
   ButtonGroup,
   IconButton,
   Button,
+  Text,
   useColorMode,
   useToast,
 } from '@chakra-ui/react'
@@ -19,7 +20,6 @@ import Link from 'next/link'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import TransactionListItem from 'components/transaction-list-item'
 import { CardWithHeader } from 'layouts/card-with-header'
-import CopyLink from 'components/copy-link'
 import UncleListItem from 'components/uncle-list-item'
 import BlockStat from 'components/block-stat'
 import NotFound from 'components/not-fount'
@@ -117,7 +117,7 @@ export default function Block() {
           {block ? (
             <Box paddingX={6} paddingY={4} css={textClass}>
               <Heading size="sm">Hash</Heading>
-              <CopyLink>{block.header.block_hash}</CopyLink>
+              <Text color="gray.500">{block.header.block_hash}</Text>
               <Heading size="sm" mt={4}>
                 Author
               </Heading>
@@ -137,19 +137,19 @@ export default function Block() {
               <Heading size="sm" mt={4}>
                 Body hash
               </Heading>
-              <CopyLink>{block.header.body_hash}</CopyLink>
+              <Text color="gray.500">{block.header.body_hash}</Text>
               <Heading size="sm" mt={4}>
                 Block accumulator root
               </Heading>
-              <CopyLink>{block.header.block_accumulator_root}</CopyLink>
+              <Text color="gray.500">{block.header.block_accumulator_root}</Text>
               <Heading size="sm" mt={4}>
                 State root
               </Heading>
-              <CopyLink>{block.header.state_root}</CopyLink>
+              <Text color="gray.500">{block.header.state_root}</Text>
               <Heading size="sm" mt={4}>
                 Txn accumulator root
               </Heading>
-              <CopyLink>{block.header.txn_accumulator_root}</CopyLink>
+              <Text color="gray.500">{block.header.txn_accumulator_root}</Text>
             </Box>
           ) : (
             <ListItemPlaceholder height={429}>

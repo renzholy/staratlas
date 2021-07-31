@@ -1,7 +1,5 @@
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-  }
+.chakra-ui-dark {
+  color-scheme: dark;
 }
 
 ::-webkit-scrollbar {

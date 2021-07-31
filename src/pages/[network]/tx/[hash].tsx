@@ -16,7 +16,6 @@ import copy from 'copy-to-clipboard'
 import { Fragment, Suspense, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import CopyLink from 'components/copy-link'
 import EventListItem from 'components/event-list-item'
 import JsonCode from 'components/json-code'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -78,7 +77,7 @@ export default function Transaction() {
           {transaction ? (
             <Box paddingX={6} paddingY={4} css={textClass}>
               <Heading size="sm">Hash</Heading>
-              <CopyLink>{transaction.transaction_hash}</CopyLink>
+              <Text color="gray.500">{transaction.transaction_hash}</Text>
               {info && typeof info.status === 'object' ? (
                 <>
                   <Heading size="sm" mt={4}>
@@ -113,11 +112,11 @@ export default function Transaction() {
               <Heading size="sm" mt={4}>
                 Event root hash
               </Heading>
-              <CopyLink>{info?.event_root_hash || ''}</CopyLink>
+              <Text color="gray.500">{info?.event_root_hash || ''}</Text>
               <Heading size="sm" mt={4}>
                 State root hash
               </Heading>
-              <CopyLink>{info?.state_root_hash || ''}</CopyLink>
+              <Text color="gray.500">{info?.state_root_hash || ''}</Text>
             </Box>
           ) : (
             <ListItemPlaceholder height={311}>

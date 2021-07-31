@@ -1,4 +1,4 @@
-import { Box, Button, Heading } from '@chakra-ui/react'
+import { Box, Button, Heading, Text } from '@chakra-ui/react'
 import { Static } from '@sinclair/typebox'
 import { onchain_events } from '@starcoin/starcoin'
 import useNetwork from 'hooks/use-network'
@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { useMemo } from 'react'
 import { TransactionEvent } from 'utils/json-rpc/chain'
 import { textClass } from 'utils/style'
-import CopyLink from './copy-link'
 import JsonCode from './json-code'
 
 type EventName =
@@ -90,7 +89,7 @@ export default function EventListItem(props: {
       <Heading size="sm">
         {event.module}::{event.name}
       </Heading>
-      <CopyLink>{props.event.event_key}</CopyLink>
+      <Text color="gray.500">{props.event.event_key}</Text>
       {props.showHash ? (
         <>
           <Heading size="sm" mt={4}>
