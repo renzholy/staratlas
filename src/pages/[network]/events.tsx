@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef } from 'react'
 import { Divider, Spinner, GridItem, Grid } from '@chakra-ui/react'
 import { CardWithHeader } from 'layouts/card-with-header'
-import EventListItem from 'components/event-list-item'
+import EventCardItem from 'components/event-card-item'
 import useJsonRpc from 'hooks/use-json-rpc'
 import useOnScreen from 'hooks/use-on-screen'
 import ListItemPlaceholder from 'components/list-item-placeholder'
@@ -61,7 +61,7 @@ export default function Events() {
           {events?.map((event, index) => (
             <Fragment key={event.block_hash + event.transaction_hash + event.event_seq_number}>
               {index === 0 ? null : <Divider />}
-              <EventListItem event={event} showHash={true} />
+              <EventCardItem event={event} showHash={true} />
             </Fragment>
           ))}
           {isReachingEnd && !isEmpty ? null : (

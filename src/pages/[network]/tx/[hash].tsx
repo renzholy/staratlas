@@ -16,7 +16,7 @@ import copy from 'copy-to-clipboard'
 import { Fragment, Suspense, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import EventListItem from 'components/event-list-item'
+import EventCardItem from 'components/event-card-item'
 import JsonCode from 'components/json-code'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import NotFound from 'components/not-fount'
@@ -195,7 +195,7 @@ export default function Transaction() {
             events.map((event, index) => (
               <Fragment key={event.event_key + event.event_seq_number}>
                 {index === 0 ? null : <Divider />}
-                <EventListItem event={event} />
+                <EventCardItem event={event} />
               </Fragment>
             ))
           ) : (
