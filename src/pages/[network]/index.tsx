@@ -17,11 +17,13 @@ export default function Index() {
   const { data: blocks } = useSWR(
     [network, 'block', 'latest'],
     async () => {
-      const info = await jsonRpc(network, 'chain.info', [])
-      return jsonRpc(network, 'chain.get_blocks_by_number', [
+      const info = await jsonRpc(network, 'chain.info')
+      return jsonRpc(
+        network,
+        'chain.get_blocks_by_number',
         parseInt(info.head.number, 10),
         API_PAGE_SIZE,
-      ])
+      )
     },
     { refreshInterval: 2000 },
   )

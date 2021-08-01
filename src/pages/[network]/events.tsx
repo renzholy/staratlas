@@ -35,7 +35,7 @@ export default function Events() {
         return [network, info ? parseInt(info.head.number, 10) : RPC_BLOCK_LIMIT, 'events']
       },
       async (net: Network, height: number) =>
-        jsonRpc(net, 'chain.get_events', [{ from_block: height - 1, to_block: height }]),
+        jsonRpc(net, 'chain.get_events', { from_block: height - 1, to_block: height }),
       { revalidateOnFocus: false },
     ),
     1,

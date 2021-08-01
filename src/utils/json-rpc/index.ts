@@ -12,7 +12,7 @@ export const API = {
 export async function jsonRpc<T extends keyof typeof API>(
   network: string,
   method: T,
-  params: Static<typeof API[T]['params']>,
+  ...params: Static<typeof API[T]['params']>
 ): Promise<Static<typeof API[T]['result']>> {
   if (!ajv.validate(API[method].params, params)) {
     throw new Error(`${method}(${params.join(', ')}) params ${ajv.errorsText(ajv.errors)}`)

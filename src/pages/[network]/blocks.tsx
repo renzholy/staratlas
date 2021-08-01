@@ -33,7 +33,7 @@ export default function Blocks() {
         return [network, info ? parseInt(info.head.number, 10) : 0, 'blocks']
       },
       async (net: Network, number: number) =>
-        jsonRpc(net, 'chain.get_blocks_by_number', [number, RPC_BLOCK_LIMIT]),
+        jsonRpc(net, 'chain.get_blocks_by_number', number, RPC_BLOCK_LIMIT),
       { revalidateOnFocus: false },
     ),
   )

@@ -36,7 +36,7 @@ export default function JsonRpcUtil() {
   const network = useNetwork()
   const handleCall = useAsync(
     useCallback(
-      () => (method && params ? jsonRpc(network, method, params) : undefined),
+      () => (method && params ? jsonRpc(network, method, ...params) : undefined),
       [method, network, params],
     ),
   )

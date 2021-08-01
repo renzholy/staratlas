@@ -13,7 +13,7 @@ export default function useJsonRpc<T extends keyof typeof API>(
     method && params
       ? [network, 'jsonRpc', method, ...params.map((param) => JSON.stringify(param))]
       : null,
-    () => jsonRpc(network, method!, params!),
+    () => jsonRpc(network, method!, ...params!),
     config,
   )
 }

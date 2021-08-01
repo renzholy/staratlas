@@ -34,8 +34,8 @@ export default function Uncles() {
       },
       async (net: Network, number: number) => {
         const [blocks, epoch] = await Promise.all([
-          jsonRpc(net, 'chain.get_epoch_uncles_by_number', [number]),
-          jsonRpc(net, 'chain.get_epoch_info_by_number', [number]),
+          jsonRpc(net, 'chain.get_epoch_uncles_by_number', number),
+          jsonRpc(net, 'chain.get_epoch_info_by_number', number),
         ])
         return flatMap(blocks.reverse(), (block) =>
           block.uncles.map((uncle) => ({ uncle, ...epoch })),

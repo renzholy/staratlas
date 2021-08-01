@@ -43,16 +43,18 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
  * fetch data from top to top + RPC_API_BLOCK_LIMIT and load them into database
  */
 export async function load(network: Network, top: BigInt) {
-  const blocks = await jsonRpc(network, 'chain.get_blocks_by_number', [
+  const blocks = await jsonRpc(
+    network,
+    'chain.get_blocks_by_number',
     parseInt(top.toString(), 10),
     RPC_BLOCK_LIMIT,
-  ])
+  )
   const hashes = flatMap(blocks, (block) => block.body.Hashes)
   console.log('load', network, top, blocks.length, hashes.length)
   const transactions = flatMap(
     await Bluebird.map(
       blocks,
-      (block) => jsonRpc(network, 'chain.get_block_by_hash', [block.header.block_hash]),
+      (block) => jsonRpc(network, 'chain.get_block_by_hash', block.header.block_hash),
       { concurrency: 4 },
     ),
     (block) => block.body.Full.map((transaction) => ({ ...transaction, block: block.header })),
@@ -64,7 +66,7 @@ export async function load(network: Network, top: BigInt) {
   )
   const blockMetaTransactions = await Bluebird.map(
     blockMetaTransactionHashes,
-    (transaction) => jsonRpc(network, 'chain.get_transaction', [transaction]),
+    (transaction) => jsonRpc(network, 'chain.get_transaction', transaction),
     { concurrency: 4 },
   )
   const blockOperations = blocks.map((block) => ({
@@ -141,7 +143,7 @@ export async function load(network: Network, top: BigInt) {
  * start a maintenance job
  */
 export async function maintenance(network: Network, height?: bigint) {
-  const top = height || BigInt((await jsonRpc(network, 'chain.info', [])).head.number)
+  const top = height || BigInt((await jsonRpc(network, 'chain.info')).head.number)
   try {
     await find(network, top)
     return null
