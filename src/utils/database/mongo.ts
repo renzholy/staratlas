@@ -12,10 +12,8 @@ async function prepare(network: Network) {
   const blocks = db.collection<{
     _id: Binary
     height: Long
-    author: Binary
   }>(`${network}.blocks`)
   await blocks.createIndex({ height: -1 }, { background: true, unique: true })
-  await blocks.createIndex({ author: 1 }, { background: true })
 
   const transactions = db.collection<{
     _id: Binary

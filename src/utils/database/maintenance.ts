@@ -78,7 +78,6 @@ export async function load(network: Network, top: BigInt) {
         $set: {
           _id: new Binary(arrayify(block.header.block_hash)),
           height: new Long(block.header.number),
-          author: new Binary(arrayify(block.header.author)),
         },
       },
       upsert: true,
