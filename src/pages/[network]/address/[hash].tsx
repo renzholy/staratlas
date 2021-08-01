@@ -70,7 +70,7 @@ export default function Address() {
                   <Heading size="sm" mt={index === 0 ? 0 : 4}>
                     {key}
                   </Heading>
-                  <BalanceAmount token={key} value={value} />
+                  <BalanceAmount token={key} value={value as bigint} />
                 </Fragment>
               ))}
             </Box>
