@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb'
 import { Network } from 'utils/types'
-import { Decimal128, Binary } from 'bson'
+import { Long, Binary } from 'bson'
 
 const client = await new MongoClient(process.env.MONGO_URL!, {
   readPreference: 'secondaryPreferred',
@@ -11,7 +11,7 @@ const db = client.db()
 async function prepare(network: Network) {
   const blocks = db.collection<{
     _id: Binary
-    height: Decimal128
+    height: Long
     author: Binary
   }>(`${network}.blocks`)
   await blocks.createIndex({ height: -1 }, { background: true, unique: true })
@@ -19,7 +19,7 @@ async function prepare(network: Network) {
 
   const transactions = db.collection<{
     _id: Binary
-    height: Decimal128
+    height: Long
     sender?: Binary
   }>(`${network}.transactions`)
   await transactions.createIndex({ height: -1 }, { background: true })
