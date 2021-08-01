@@ -1,6 +1,6 @@
 import flatten from 'lodash/flatten'
 import { useMemo } from 'react'
-import { SWRInfiniteResponse } from 'swr'
+import type { SWRInfiniteResponse } from 'swr/infinite'
 import { API_PAGE_SIZE } from 'utils/constants'
 
 export default function useInfinite<T>(

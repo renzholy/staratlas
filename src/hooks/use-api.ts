@@ -1,5 +1,6 @@
 import last from 'lodash/last'
-import useSWR, { SWRConfiguration, SWRInfiniteConfiguration, useSWRInfinite } from 'swr'
+import useSWR, { SWRConfiguration } from 'swr'
+import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite'
 import { jsonFetcher } from 'utils/fetcher'
 import { jsonRpc } from 'utils/json-rpc'
 import useNetwork from './use-network'
