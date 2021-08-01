@@ -23,15 +23,17 @@ export default function Uncles() {
     isReachingEnd,
   } = useInfinite(
     useSWRInfinite(
-      (_, previousPageData) => {
-        if (previousPageData && !previousPageData.length) {
-          return null
-        }
-        if (previousPageData) {
-          return [network, last(previousPageData)!.epoch.start_block_number - 1, 'uncles']
-        }
-        return [network, info ? parseInt(info.head.number, 10) : 0, 'uncles']
-      },
+      info
+        ? (_, previousPageData) => {
+            if (previousPageData && !previousPageData.length) {
+              return null
+            }
+            if (previousPageData) {
+              return [network, last(previousPageData)!.epoch.start_block_number - 1, 'uncles']
+            }
+            return [network, parseInt(info.head.number, 10), 'uncles']
+          }
+        : null,
       async (net: Network, number: number) => {
         const [blocks, epoch] = await Promise.all([
           jsonRpc(net, 'chain.get_epoch_uncles_by_number', number),

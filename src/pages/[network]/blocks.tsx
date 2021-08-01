@@ -23,15 +23,17 @@ export default function Blocks() {
     isReachingEnd,
   } = useInfinite(
     useSWRInfinite(
-      (_, previousPageData) => {
-        if (previousPageData && !previousPageData.length) {
-          return null
-        }
-        if (previousPageData) {
-          return [network, parseInt(last(previousPageData)!.header.number, 10) - 1, 'blocks']
-        }
-        return [network, info ? parseInt(info.head.number, 10) : 0, 'blocks']
-      },
+      info
+        ? (_, previousPageData) => {
+            if (previousPageData && !previousPageData.length) {
+              return null
+            }
+            if (previousPageData) {
+              return [network, parseInt(last(previousPageData)!.header.number, 10) - 1, 'blocks']
+            }
+            return [network, parseInt(info.head.number, 10), 'blocks']
+          }
+        : null,
       async (net: Network, number: number) =>
         jsonRpc(net, 'chain.get_blocks_by_number', number, RPC_BLOCK_LIMIT),
       { revalidateOnFocus: false },

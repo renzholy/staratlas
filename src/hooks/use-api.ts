@@ -10,17 +10,19 @@ type TransactionList = { _id: string; height: string; sender?: string }[]
 export function useTransactionsByHeight(height?: BigInt, config?: SWRInfiniteConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<TransactionList>(
-    (_, previousPageData) => {
-      if (previousPageData && !previousPageData.length) {
-        return null
-      }
-      if (previousPageData) {
-        return `/api/transactions-by-height?network=${network}&height=${
-          BigInt(last(previousPageData)!.height) - BigInt(1)
-        }`
-      }
-      return `/api/transactions-by-height?network=${network}&height=${height || 0}`
-    },
+    height !== undefined
+      ? (_, previousPageData) => {
+          if (previousPageData && !previousPageData.length) {
+            return null
+          }
+          if (previousPageData) {
+            return `/api/transactions-by-height?network=${network}&height=${
+              BigInt(last(previousPageData)!.height) - BigInt(1)
+            }`
+          }
+          return `/api/transactions-by-height?network=${network}&height=${height}`
+        }
+      : null,
     jsonFetcher,
     config,
   )
@@ -29,17 +31,19 @@ export function useTransactionsByHeight(height?: BigInt, config?: SWRInfiniteCon
 export function useTransactionsByAddress(address?: string, config?: SWRConfiguration) {
   const network = useNetwork()
   return useSWRInfinite<TransactionList>(
-    (_, previousPageData) => {
-      if (previousPageData && !previousPageData.length) {
-        return null
-      }
-      if (previousPageData) {
-        return `/api/transactions-by-address?network=${network}&address=${address}&height=${
-          BigInt(last(previousPageData)!.height) - BigInt(1)
-        }`
-      }
-      return `/api/transactions-by-address?network=${network}&address=${address || ''}`
-    },
+    address
+      ? (_, previousPageData) => {
+          if (previousPageData && !previousPageData.length) {
+            return null
+          }
+          if (previousPageData) {
+            return `/api/transactions-by-address?network=${network}&address=${address}&height=${
+              BigInt(last(previousPageData)!.height) - BigInt(1)
+            }`
+          }
+          return `/api/transactions-by-address?network=${network}&address=${address}`
+        }
+      : null,
     jsonFetcher,
     config,
   )

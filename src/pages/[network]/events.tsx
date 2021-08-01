@@ -9,7 +9,6 @@ import useInfinite from 'hooks/use-infinite'
 import useSWRInfinite from 'swr/infinite'
 import { jsonRpc } from 'utils/json-rpc'
 import useNetwork from 'hooks/use-network'
-import { RPC_BLOCK_LIMIT } from 'utils/constants'
 import { Network } from 'utils/types'
 import { Static } from '@sinclair/typebox'
 import { TransactionEvent } from 'utils/json-rpc/chain'
@@ -25,15 +24,17 @@ export default function Events() {
     isReachingEnd,
   } = useInfinite(
     useSWRInfinite<Static<typeof TransactionEvent>[]>(
-      (_, previousPageData) => {
-        if (previousPageData && !previousPageData.length) {
-          return null
-        }
-        if (previousPageData) {
-          return [network, parseInt(last(previousPageData)!.block_number, 10) - 1, 'events']
-        }
-        return [network, info ? parseInt(info.head.number, 10) : RPC_BLOCK_LIMIT, 'events']
-      },
+      info
+        ? (_, previousPageData) => {
+            if (previousPageData && !previousPageData.length) {
+              return null
+            }
+            if (previousPageData) {
+              return [network, parseInt(last(previousPageData)!.block_number, 10) - 1, 'events']
+            }
+            return [network, parseInt(info.head.number, 10), 'events']
+          }
+        : null,
       async (net: Network, height: number) =>
         jsonRpc(net, 'chain.get_events', { from_block: height - 1, to_block: height }),
       { revalidateOnFocus: false },
