@@ -130,7 +130,10 @@ export async function load(network: Network, top: BigInt) {
       if (err instanceof MongoServerError && err.code === 11000) {
         const height = err.message.match(/dup key: \{ height: (\d+) \}/)?.[1]
         if (height) {
-          await collections[network].blocks.deleteOne({ height: new Long(height) })
+          await Promise.all([
+            collections[network].transactions.deleteMany({ height: new Long(height) }),
+            collections[network].blocks.deleteOne({ height: new Long(height) }),
+          ])
         }
       }
       throw err
