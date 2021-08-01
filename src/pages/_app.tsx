@@ -2,11 +2,19 @@ import Head from 'next/head'
 import type { AppProps } from 'next/app'
 import Layout from 'layouts/layout'
 import Chakra from 'layouts/chakra'
+import Script from 'next/script'
 import './global.css'
 
 function App({ Component, pageProps }: AppProps) {
   return (
     <>
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-E2LXM6218N" />
+      <Script>
+        {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-E2LXM6218N');`}
+      </Script>
       <Head>
         <meta charSet="UTF-8" />
         <link
