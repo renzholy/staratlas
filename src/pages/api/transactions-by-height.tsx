@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 
-import { Decimal128 } from 'bson'
+import { Long } from 'bson'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { Network } from 'utils/types'
@@ -20,7 +20,7 @@ export default async function transactionsByHeight(
 
   const data = await collections[network].transactions
     .find({
-      height: { $lte: new Decimal128(height.toString()) },
+      height: { $lte: new Long(height) },
     })
     .sort({ height: -1, _id: 1 })
     .limit(API_PAGE_SIZE)

@@ -1,9 +1,9 @@
-import type { Decimal128, Binary } from 'bson'
+import type { Long, Binary } from 'bson'
 import { hexlify } from './encoding'
 
-export function mapper<
-  T extends { _id: Binary; height: Decimal128; author?: Binary; sender?: Binary },
->(datum: T) {
+export function mapper<T extends { _id: Binary; height: Long; author?: Binary; sender?: Binary }>(
+  datum: T,
+) {
   return {
     _id: hexlify(datum._id.buffer),
     height: datum.height.toString(),

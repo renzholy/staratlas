@@ -1,4 +1,4 @@
-import { Binary, Decimal128 } from 'bson'
+import { Binary, Long } from 'bson'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
 import { Network } from 'utils/types'
@@ -21,7 +21,7 @@ export default async function transactionsByAddress(
   const data = await collections[network].transactions
     .find({
       sender: new Binary(arrayify(address)),
-      ...(height ? { height: { $lte: new Decimal128(height.toString()) } } : {}),
+      ...(height ? { height: { $lte: new Long(height) } } : {}),
     })
     .sort({ height: -1 })
     .limit(API_PAGE_SIZE)

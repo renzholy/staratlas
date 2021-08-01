@@ -3,7 +3,7 @@
 import { jsonRpc } from 'utils/json-rpc'
 import { Network } from 'utils/types'
 import flatMap from 'lodash/flatMap'
-import { Decimal128, Binary } from 'bson'
+import { Long, Binary } from 'bson'
 import Bluebird from 'bluebird'
 import { arrayify } from 'utils/encoding'
 import difference from 'lodash/difference'
@@ -24,8 +24,8 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
   }
   const count = await collections[network].blocks.countDocuments({
     height: {
-      $lte: new Decimal128(top.toString()),
-      $gte: new Decimal128(bottom.toString()),
+      $lte: new Long(top),
+      $gte: new Long(bottom),
     },
   })
   console.log('find', network, top, bottom, top - bottom + BigInt(1), count, depth)
@@ -75,7 +75,7 @@ export async function load(network: Network, top: BigInt) {
       update: {
         $set: {
           _id: new Binary(arrayify(block.header.block_hash)),
-          height: new Decimal128(block.header.number),
+          height: new Long(block.header.number),
           author: new Binary(arrayify(block.header.author)),
         },
       },
@@ -90,7 +90,7 @@ export async function load(network: Network, top: BigInt) {
       update: {
         $set: {
           _id: new Binary(arrayify(transaction.transaction_hash)),
-          height: new Decimal128(transaction.block.number),
+          height: new Long(transaction.block.number),
           sender: transaction.raw_txn
             ? new Binary(arrayify(transaction.raw_txn.sender))
             : undefined,
@@ -107,7 +107,7 @@ export async function load(network: Network, top: BigInt) {
       update: {
         $set: {
           _id: new Binary(arrayify(transaction.transaction_hash)),
-          height: new Decimal128(transaction.block_number),
+          height: new Long(transaction.block_number),
           sender: transaction.user_transaction
             ? new Binary(arrayify(transaction.user_transaction?.raw_txn.sender))
             : undefined,
@@ -129,7 +129,7 @@ export async function load(network: Network, top: BigInt) {
       if (err instanceof MongoServerError && err.code === 11000) {
         const height = err.message.match(/dup key: \{ height: (\d+) \}/)?.[1]
         if (height) {
-          await collections[network].blocks.deleteOne({ height: new Decimal128(height) })
+          await collections[network].blocks.deleteOne({ height: new Long(height) })
         }
       }
       throw err
