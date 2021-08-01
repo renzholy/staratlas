@@ -41,6 +41,7 @@ export default function Uncles() {
           block.uncles.map((uncle) => ({ uncle, ...epoch })),
         )
       },
+      { revalidateOnFocus: false },
     ),
     1,
   )

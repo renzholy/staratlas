@@ -36,6 +36,7 @@ export default function Events() {
       },
       async (net: Network, height: number) =>
         jsonRpc(net, 'chain.get_events', [{ from_block: height - 1, to_block: height }]),
+      { revalidateOnFocus: false },
     ),
     1,
   )

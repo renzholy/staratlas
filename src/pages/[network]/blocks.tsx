@@ -34,6 +34,7 @@ export default function Blocks() {
       },
       async (net: Network, number: number) =>
         jsonRpc(net, 'chain.get_blocks_by_number', [number, RPC_BLOCK_LIMIT]),
+      { revalidateOnFocus: false },
     ),
   )
   const ref = useRef<HTMLDivElement>(null)
