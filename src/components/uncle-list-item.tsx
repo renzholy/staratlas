@@ -5,8 +5,8 @@ import Link from 'next/link'
 import TimeAgo from 'timeago-react'
 import useNetwork from 'hooks/use-network'
 import { formatTimeSimple, formatNumber } from 'utils/formatter'
-import { Static } from '@sinclair/typebox'
-import { BlockHeader } from 'utils/json-rpc/chain'
+import type { Static } from '@sinclair/typebox'
+import type { BlockHeader } from 'utils/json-rpc/chain'
 import { textInListItemStyle } from 'utils/style'
 
 export default function UncleListItem(props: {

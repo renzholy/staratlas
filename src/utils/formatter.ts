@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { types, serde } from '@starcoin/starcoin'
+import type { types, serde } from '@starcoin/starcoin'
 import { hexlify } from './encoding'
 
 const numberFormat = Intl.NumberFormat()

@@ -1,4 +1,4 @@
-import { types } from '@starcoin/starcoin'
+import type { types } from '@starcoin/starcoin'
 import useSWR from 'swr'
 
 import { useProvider } from './use-provider'

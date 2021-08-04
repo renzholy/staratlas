@@ -1,7 +1,7 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
-import { BlockHeader } from 'utils/json-rpc/chain'
+import type { BlockHeader } from 'utils/json-rpc/chain'
 import { formatNumber, formatTime } from 'utils/formatter'
-import { Static } from '@sinclair/typebox'
+import type { Static } from '@sinclair/typebox'
 
 export default function BlockStat(props: { block?: Static<typeof BlockHeader> }) {
   const { block } = props

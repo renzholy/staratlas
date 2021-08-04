@@ -9,7 +9,7 @@ import useInfinite from 'hooks/use-infinite'
 import useSWRInfinite from 'swr/infinite'
 import { jsonRpc } from 'utils/json-rpc'
 import useNetwork from 'hooks/use-network'
-import { Network } from 'utils/types'
+import type { Network } from 'utils/types'
 import last from 'lodash/last'
 import flatMap from 'lodash/flatMap'
 

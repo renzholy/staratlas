@@ -1,5 +1,5 @@
 import { Text } from '@chakra-ui/react'
-import { types } from '@starcoin/starcoin'
+import type { types } from '@starcoin/starcoin'
 import { Fragment } from 'react'
 
 import JsonCode from './json-code'

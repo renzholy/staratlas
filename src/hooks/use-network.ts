@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { Network } from 'utils/types'
+import type { Network } from 'utils/types'
 
 export default function useNetwork() {
   const router = useRouter()

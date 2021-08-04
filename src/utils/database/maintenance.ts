@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import { jsonRpc } from 'utils/json-rpc'
-import { Network } from 'utils/types'
+import type { Network } from 'utils/types'
 import flatMap from 'lodash/flatMap'
 import { Long, Binary } from 'bson'
 import Bluebird from 'bluebird'

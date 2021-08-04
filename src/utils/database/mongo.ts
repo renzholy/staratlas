@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb'
-import { Network } from 'utils/types'
-import { Long, Binary } from 'bson'
+import type { Network } from 'utils/types'
+import type { Long, Binary } from 'bson'
 
 const client = await new MongoClient(process.env.MONGO_URL!, {
   readPreference: 'secondaryPreferred',

@@ -9,9 +9,9 @@ import useInfinite from 'hooks/use-infinite'
 import useSWRInfinite from 'swr/infinite'
 import { jsonRpc } from 'utils/json-rpc'
 import useNetwork from 'hooks/use-network'
-import { Network } from 'utils/types'
-import { Static } from '@sinclair/typebox'
-import { TransactionEvent } from 'utils/json-rpc/chain'
+import type { Network } from 'utils/types'
+import type { Static } from '@sinclair/typebox'
+import type { TransactionEvent } from 'utils/json-rpc/chain'
 import last from 'lodash/last'
 
 export default function Events() {

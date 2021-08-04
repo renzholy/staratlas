@@ -1,10 +1,10 @@
 import { Grid, GridItem, Stat, StatLabel, Skeleton, StatNumber } from '@chakra-ui/react'
-import { Static } from '@sinclair/typebox'
-import { types } from '@starcoin/starcoin'
+import type { Static } from '@sinclair/typebox'
+import type { types } from '@starcoin/starcoin'
 import useJsonRpc from 'hooks/use-json-rpc'
 import { useMemo } from 'react'
 import { formatNumber, formatTime } from 'utils/formatter'
-import { TransactionInfo } from 'utils/json-rpc/chain'
+import type { TransactionInfo } from 'utils/json-rpc/chain'
 
 export default function TransactionStat(props: {
   payload?: types.TransactionPayload

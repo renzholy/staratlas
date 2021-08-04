@@ -1,10 +1,10 @@
 import { Box, Button, Heading, Text } from '@chakra-ui/react'
-import { Static } from '@sinclair/typebox'
+import type { Static } from '@sinclair/typebox'
 import { onchain_events } from '@starcoin/starcoin'
 import useNetwork from 'hooks/use-network'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { TransactionEvent } from 'utils/json-rpc/chain'
+import type { TransactionEvent } from 'utils/json-rpc/chain'
 import { textInCardStyle } from 'utils/style'
 import JsonCode from './json-code'
 

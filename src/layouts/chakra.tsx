@@ -4,8 +4,8 @@ import {
   localStorageManager,
   StorageManager,
 } from '@chakra-ui/react'
-import { GetServerSidePropsContext } from 'next'
-import { ReactNode } from 'react'
+import type { GetServerSidePropsContext } from 'next'
+import type { ReactNode } from 'react'
 
 export default function Chakra(props: { cookies: StorageManager; children: ReactNode }) {
   const colorModeManager =

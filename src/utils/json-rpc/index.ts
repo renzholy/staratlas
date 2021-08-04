@@ -1,4 +1,4 @@
-import { Static } from '@sinclair/typebox'
+import type { Static } from '@sinclair/typebox'
 import addFormats from 'ajv-formats'
 import Ajv from 'ajv/dist/2019'
 import chain from './chain'

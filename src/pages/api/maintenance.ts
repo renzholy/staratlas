@@ -1,5 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { Network } from 'utils/types'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import type { Network } from 'utils/types'
 import { maintenance } from 'utils/database/maintenance'
 
 export default async function Maintenance(

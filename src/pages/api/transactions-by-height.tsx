@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
 
 import { Long } from 'bson'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { collections } from 'utils/database/mongo'
-import { Network } from 'utils/types'
+import type { Network } from 'utils/types'
 import { mapper } from 'utils/api'
 import { maintenance } from 'utils/database/maintenance'
 import { API_PAGE_SIZE } from 'utils/constants'

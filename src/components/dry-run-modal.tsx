@@ -14,8 +14,8 @@ import { useMemo, useEffect } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 import { useDryRunRaw } from 'hooks/use-provider'
-import { Static } from '@sinclair/typebox'
-import { SignedUserTransaction } from 'utils/json-rpc/chain'
+import type { Static } from '@sinclair/typebox'
+import type { SignedUserTransaction } from 'utils/json-rpc/chain'
 import JsonCode from './json-code'
 
 export default function DryRunModal(props: {
