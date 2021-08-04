@@ -40,7 +40,7 @@ async function find(network: Network, top: bigint, bottom: bigint = BigInt(0), d
 }
 
 /**
- * fetch data from top to top + RPC_API_BLOCK_LIMIT and load them into database
+ * fetch data from top to top - RPC_API_BLOCK_LIMIT and load them into database
  */
 export async function load(network: Network, top: BigInt) {
   const blocks = await jsonRpc(
