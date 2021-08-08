@@ -1079,10 +1079,10 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.20.4.tgz#d1c68a9aa320f2e1ae77d1bed595c03b3853176b"
   integrity sha512-cWmUFRMdGanzrrDzE1uHyWG0FeDGf8EWtzxbGQ0zD+Dad8Y4f0xSBe1kK+27TWQKQKcC9/GuOTysmOqaQfK3Aw==
 
-"@starcoin/starcoin@^1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@starcoin/starcoin/-/starcoin-1.4.3.tgz#0c13eaff851399a9c3890d15ca67c0ac8c894819"
-  integrity sha512-6bwkMAzBdCfVgnQvtoiBfIs39f+bU0kYI5nyX5Iv3fXGU+ImCM2pQTH4xpODHN/eafjDkdNpGWPoule/QccuRA==
+"@starcoin/starcoin@^1.4.5":
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@starcoin/starcoin/-/starcoin-1.4.5.tgz#42a010bb2894703495170724bd20d59dc55c3b2f"
+  integrity sha512-P9mJDd7HzpPLSKhm3T4I+6PDQsmBxOwN6f/y7oONk2UwZLsuT+c4CjQTm0rZcQ2Pcp4VLdMm4oJg/tyN+f0Bpg==
   dependencies:
     "@ethersproject/basex" "^5.0.4"
     "@ethersproject/bignumber" "^5.0"
@@ -1170,10 +1170,10 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/react@^17.0.15":
-  version "17.0.15"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.15.tgz#c7533dc38025677e312606502df7656a6ea626d0"
-  integrity sha512-uTKHDK9STXFHLaKv6IMnwp52fm0hwU+N89w/p9grdUqcFA6WuqDyPhaWopbNyE1k/VhgzmHl8pu1L4wITtmlLw==
+"@types/react@^17.0.16":
+  version "17.0.16"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.16.tgz#056f40c45645761527baeb7d89d842a6abdf285a"
+  integrity sha512-3kCUiOOlQTwUUvjNFkbBTWMTxdTGybz/PfjCw9JmaRGcEDBQh+nGMg7/E9P2rklhJuYVd25IYLNcvqgSPCPksg==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -1727,14 +1727,6 @@ buffer@^5.6.0:
     base64-js "^1.3.1"
     ieee754 "^1.1.13"
 
-buffer@^6.0.3:
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/buffer/-/buffer-6.0.3.tgz#2ace578459cc8fbe2a70aaa8f52ee63b6a74c6c6"
-  integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
-  dependencies:
-    base64-js "^1.3.1"
-    ieee754 "^1.2.1"
-
 builtin-status-codes@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz#85982878e21b98e1c66425e03d0174788f569ee8"
@@ -2131,10 +2123,10 @@ domain-browser@^1.1.1:
   resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.2.0.tgz#3d31f50191a6749dd1375a7f522e823d42e54eda"
   integrity sha512-jnjyiM6eRyZl2H+W8Q/zLMA481hzi0eszAaBUzIVnmYVDBbnLxVNnfu1HgEBvCbL+71FrxMl3E6lpKH7Ge3OXA==
 
-downshift@^6.1.5:
-  version "6.1.5"
-  resolved "https://registry.yarnpkg.com/downshift/-/downshift-6.1.5.tgz#f6ffbead35680df6263c15e6eeb55cec77dadc50"
-  integrity sha512-9hpSCQLQ0KzlnI9ebpdbLuw5ogm7MXXI1D5N1zGWYSjHph+Xe02enXKyfDDE14akGr0jppAg0S1t/cjXp677ew==
+downshift@^6.1.6:
+  version "6.1.6"
+  resolved "https://registry.yarnpkg.com/downshift/-/downshift-6.1.6.tgz#c002cff93da293466d9274ea3d9ac0a7f377aea4"
+  integrity sha512-Ae+wVfOrS9ZtS4brOSM5X7pcMtOfZOUh9M2L6XU6dUoyLvx6wAXt9D/jUqnI4FpcHuCDwcwmoXFo4Z3z76xh/g==
   dependencies:
     "@babel/runtime" "^7.14.8"
     compute-scroll-into-view "^1.0.17"
@@ -2880,7 +2872,7 @@ iconv-lite@^0.6.2:
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
-ieee754@^1.1.13, ieee754@^1.1.4, ieee754@^1.2.1:
+ieee754@^1.1.13, ieee754@^1.1.4:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==

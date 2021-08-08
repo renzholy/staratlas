@@ -35,9 +35,10 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
               Type args
             </Heading>
             {scriptFunction.ty_args.map((arg, index) => (
-              <Text key={`${types.formatTypeTag(arg)}${index}`} color="gray.500">
-                {types.formatTypeTag(arg)}
-              </Text>
+              <Fragment key={`${types.formatTypeTag(arg)}${index}`}>
+                {index === 0 ? null : <Divider />}
+                <Text color="gray.500">{types.formatTypeTag(arg)}</Text>
+              </Fragment>
             ))}
           </>
         ) : null}
@@ -48,7 +49,7 @@ export default function TransactionPayload(props: { payload: types.TransactionPa
             </Heading>
             {scriptFunction.args.map((arg, index) => (
               <Fragment key={`${arg}${index}`}>
-                {index === 0 ? null : <Divider marginY={1} />}
+                {index === 0 ? null : <Divider />}
                 <Text color="gray.500">
                   {resolvedFunction?.args[index + 1]
                     ? `${types.formatTypeTag(resolvedFunction.args[index + 1].type_tag)}: ${
