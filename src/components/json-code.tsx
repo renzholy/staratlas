@@ -21,7 +21,7 @@ export default function JsonCode(props: { children?: unknown }) {
       ),
     [props.children],
   )
-  const { data } = useSWR(monaco ? ['colorize', monaco, str] : null, () =>
+  const { data } = useSWR(monaco ? ['colorize', colorMode, monaco, str] : null, () =>
     monaco!.editor.colorize(str, 'json', { tabSize: 2 }),
   )
 
