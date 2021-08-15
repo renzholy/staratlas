@@ -28,7 +28,7 @@ async function prepare(network: Network) {
 
 export const collections = {
   main: await prepare('main'),
-  proxima: await prepare('proxima'),
   barnard: await prepare('barnard'),
+  proxima: await prepare('proxima'),
   halley: await prepare('halley'),
 }

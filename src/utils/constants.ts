@@ -1,9 +1,9 @@
 import type { Network } from './types'
 
-enum ChainId {
+export enum ChainId {
   MAINNET = 1,
-  PROXIMA = 2,
   BARNARD = 251,
+  PROXIMA = 2,
   HALLEY = 253,
 }
 
