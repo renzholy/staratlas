@@ -110,9 +110,6 @@ export default function EventCardItem(props: {
           </Link>
         </>
       ) : null}
-      <Heading size="sm" mt={4}>
-        Data
-      </Heading>
       <JsonCode>{event.data}</JsonCode>
     </Box>
   )

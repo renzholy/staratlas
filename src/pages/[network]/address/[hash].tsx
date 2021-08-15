@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { Fragment, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import ResourceListItem from 'components/resource-list-item'
+import ResourceCardItem from 'components/resource-card-item'
 import ListItemPlaceholder from 'components/list-item-placeholder'
 import NotFound from 'components/not-fount'
 import TransactionListItem from 'components/transaction-list-item'
@@ -83,14 +83,14 @@ export default function Address() {
         <Spacer height={6} />
         <CardWithHeader title="Resources">
           {resources ? (
-            <Box paddingX={6} paddingY={4} css={textInCardStyle}>
+            <Box paddingY={4} css={textInCardStyle}>
               {Object.entries(resources).map(([key, value], index) => (
                 <Fragment key={key}>
                   {index === 0 ? null : <Divider mt={3} />}
-                  <Heading size="sm" mt={index === 0 ? 0 : 4}>
+                  <Heading paddingX={6} size="sm" mt={index === 0 ? 0 : 4}>
                     {key}
                   </Heading>
-                  <ResourceListItem resource={value} />
+                  <ResourceCardItem resource={value} />
                 </Fragment>
               ))}
             </Box>
