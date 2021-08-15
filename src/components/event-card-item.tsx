@@ -1,6 +1,16 @@
 import { Box, Button, Heading, Text } from '@chakra-ui/react'
 import type { Static } from '@sinclair/typebox'
 import { onchain_events } from '@starcoin/starcoin'
+import type {
+  AcceptTokenEvent,
+  BlockRewardEvent,
+  BurnEvent,
+  DepositEvent,
+  MintEvent,
+  NewBlockEvent,
+  VoteChangedEvent,
+  WithdrawEvent,
+} from '@starcoin/starcoin/dist/src/types'
 import useNetwork from 'hooks/use-network'
 import Link from 'next/link'
 import { useMemo } from 'react'
@@ -8,48 +18,21 @@ import type { TransactionEvent } from 'utils/json-rpc/chain'
 import { textInCardStyle } from 'utils/style'
 import JsonCode from './json-code'
 
-type EventName =
-  | 'AcceptTokenEvent'
-  | 'BlockRewardEvent'
-  | 'BurnEvent'
-  | 'MintEvent'
-  | 'DepositEvent'
-  | 'WithdrawEvent'
-  | 'NewBlockEvent'
-  | 'VoteChangedEvent'
-  | 'ProposalCreatedEvent'
-
-type Type = {
-  AcceptTokenEvent: unknown
-  BlockRewardEvent: {
-    block_number: string
-    block_reward: string
-    gas_fees: string
-    miner: string
-  }
-  BurnEvent: unknown
-  MintEvent: unknown
-  DepositEvent: {
-    amount: string
-    metadata: unknown[]
-    token_code: {
-      address: string
-      module: string
-      name: string
-    }
-  }
-  WithdrawEvent: string
-  NewBlockEvent: {
-    number: string
-    author: string
-    timestamp: string
-    uncles: string
-  }
-  VoteChangedEvent: string
+type EventType = {
+  AcceptTokenEvent: AcceptTokenEvent
+  BlockRewardEvent: BlockRewardEvent
+  BurnEvent: BurnEvent
+  MintEvent: MintEvent
+  DepositEvent: DepositEvent
+  WithdrawEvent: WithdrawEvent
+  NewBlockEvent: NewBlockEvent
+  VoteChangedEvent: VoteChangedEvent
   ProposalCreatedEvent: string
 }
 
-function decodeEventData(eventName: string, eventData: string) {
+type EventName = keyof EventType
+
+function decodeEventData(eventName: EventName, eventData: string) {
   try {
     return onchain_events.decodeEventData(eventName, eventData).toJS()
   } catch {
@@ -63,20 +46,14 @@ export default function EventCardItem(props: {
 }) {
   const network = useNetwork()
   const event = useMemo<{
-    key: { address: string; salt: bigint }
     module: string
     name: EventName
-    data: Type[EventName]
+    data: EventType[EventName]
     seq: string
   }>(() => {
     const [, module, name] = props.event.type_tag.split('::')
-    const key = onchain_events.decodeEventKey(props.event.event_key) as {
-      address: string
-      salt: bigint
-    }
-    const data = decodeEventData(name, props.event.data)
+    const data = decodeEventData(name as EventName, props.event.data)
     return {
-      key,
       module,
       name: name as EventName,
       data,
