@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useMonaco } from '@monaco-editor/react'
 import useSWR from 'swr'
 import { Code, useColorMode } from '@chakra-ui/react'
@@ -6,12 +6,6 @@ import { Code, useColorMode } from '@chakra-ui/react'
 export default function JsonCode(props: { children?: unknown }) {
   const { colorMode } = useColorMode()
   const monaco = useMonaco()
-  useEffect(() => {
-    if (!monaco) {
-      return
-    }
-    monaco.editor.setTheme(colorMode === 'light' ? 'vs' : 'vs-dark')
-  }, [colorMode, monaco])
   const str = useMemo(
     () =>
       JSON.stringify(
@@ -21,9 +15,10 @@ export default function JsonCode(props: { children?: unknown }) {
       ),
     [props.children],
   )
-  const { data } = useSWR(monaco ? ['colorize', colorMode, monaco, str] : null, () =>
-    monaco!.editor.colorize(str, 'json', { tabSize: 2 }),
-  )
+  const { data } = useSWR(monaco ? ['colorize', colorMode, monaco, str] : null, () => {
+    monaco!.editor.setTheme(colorMode === 'light' ? 'vs' : 'vs-dark')
+    return monaco!.editor.colorize(str, 'json', { tabSize: 2 })
+  })
 
   return (
     <Code
