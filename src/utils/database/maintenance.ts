@@ -11,7 +11,7 @@ import { RPC_BLOCK_LIMIT } from 'utils/constants'
 import { MongoServerError } from 'mongodb'
 import { collections } from './mongo'
 
-const MAINTENANCE_SIZE = 8
+const MAINTENANCE_SIZE = 4
 
 class AbortError extends Error {}
 
