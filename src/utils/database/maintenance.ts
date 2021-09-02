@@ -151,7 +151,7 @@ export async function maintenance(network: Network, height?: bigint) {
     if (err instanceof AbortError) {
       await Promise.all(
         Array.from({ length: MAINTENANCE_SIZE }).map((_, index) =>
-          load(network, BigInt(err.message) - BigInt(index * RPC_BLOCK_LIMIT)),
+          load(network, BigInt((err as AbortError).message) - BigInt(index * RPC_BLOCK_LIMIT)),
         ),
       )
       return BigInt(err.message)

@@ -90,6 +90,7 @@ export function useDryRunRaw(
       maxGasAmount,
       senderSequenceNumber,
       Math.round(Date.now() / 1000) + 60,
+      Date.now() / 1000 + 30 * 60,
       chainId,
     )
     const se = new bcs.BcsSerializer()

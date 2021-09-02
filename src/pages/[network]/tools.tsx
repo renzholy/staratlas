@@ -15,7 +15,7 @@ export default function Tools() {
       setError(undefined)
       return text.trim() ? encoding.decodeTransactionPayload(text.trim()) : undefined
     } catch (err) {
-      setError(err)
+      setError(err as Error)
       return undefined
     }
   }, [text])

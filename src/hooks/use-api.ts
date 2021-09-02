@@ -55,7 +55,7 @@ export function useLatestTransactions(config?: SWRConfiguration) {
     [network, 'latest'],
     async () => {
       const info = await jsonRpc(network, 'chain.info')
-      return jsonFetcher(
+      return jsonFetcher<TransactionList>(
         `/api/transactions-by-height?network=${network}&height=${info.head.number}`,
       )
     },
